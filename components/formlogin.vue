@@ -37,11 +37,11 @@
 
       <div class="flex justify-between">
         <div>
-            <q-btn label="Submit" type="submit" color="primary"/>
+            <q-btn label="Log-In" type="submit" color="primary"/>
             <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
         </div>
         <div>
-            <q-btn label="Register" color="secondary"/>
+            <NuxtLink to="/register"><q-btn label="Register" color="secondary"/></NuxtLink>
         </div>  
       </div>
     </q-form>
@@ -59,14 +59,14 @@ import { ref } from 'vue'
 const firebaseUser = useFirebaseUser()
 const email = ref(null);
 const password = ref(null);
-const loginError = ref(false)
+
 
 const $q = useQuasar()
 
 const onReset = () => {
   email.value = null
   password.value = null
-  loginError.value = false
+  
 }
 
 const loginUser = async () => {
