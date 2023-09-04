@@ -32,12 +32,7 @@ export const signInUser = async (email, password) => {
     const auth = getAuth();
     const credentials = await signInWithEmailAndPassword(auth, email, password)
         .catch((error) => {
-            // Made this easier to handle errors.
-            // if something goes wrong it will return boolean false
-            // on every error type. I can show you error handling
-            // at a later time.
-            // return error
-            return false;
+            return error
         });
     return credentials;
 }
@@ -77,18 +72,16 @@ export const initUser = async () => {
     const firebaseUser = useFirebaseUser();
     const authNeeded = useAuthNeeded();
     const isAdmin = useIsAdminUser();
+    const isAuthStateUpdated = useIsAuthStateUpdated();
 
     onAuthStateChanged(auth, async (user) => {
-
         if(user){
             firebaseUser.value = user
-            authNeeded.value = false;
         } else {
-            firebaseUser.value = "AuthNeeded";
-            authNeeded.value = true;
-            navigateTo("/login")
+            firebaseUser.value = false;  
         }
-        const db = getFirestore();
+        isAuthStateUpdated.value = true;
+        //const db = getFirestore();
         // try {
         //     const docRef = doc(db, "admins", auth.currentUser.uid );
         //     const docSnap = await getDoc(docRef);

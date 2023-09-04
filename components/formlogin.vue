@@ -1,93 +1,72 @@
 <template>
+  <div>
     <div class="flex justify-center">
-        <div class="tw-p-10  tw-w-11/12">
-            
-  <div class="q-pa-md">
-    <div><h2 class="tw-text-4xl tw-pb-10">Log In</h2></div>
-    <q-form
-      @submit.prevent="loginUser"
-      @reset="onReset"
-      class="q-gutter-md"
-    >
-      <q-input
-        filled
-        v-model="email"
-        type="email"
-        label="Email"
-        hint="Your BCEHS Email"
-        lazy-rules
-        :rules="[
-          val => !!val || 'BCEHS Email Required',
-          
-        ]" 
-      />
+      <div class="tw-p-10  tw-w-11/12">
 
-      <q-input
-        filled
-        type="password"
-        v-model="password"
-        label="Password"
-        lazy-rules
-        :rules="[
-          val => !!val || 'Password Required',
-          val => val !== null && val !== '' || 'Please type your password',
-          val => val.length > 6 || 'Password is minimum 6 characters',
-        ]"
-      />
+        <div class="q-pa-md">
+          <div>
+            <h2 class="tw-text-4xl tw-pb-10">Log In</h2>
+          </div>
+          <q-form @submit.prevent="loginUser" @reset="onReset" class="q-gutter-md">
+            <q-input filled v-model="email" type="email" label="Email" hint="Your BCEHS Email" lazy-rules :rules="[
+              val => (isValidEmail(val).valid) || (isValidEmail(val).message),
+            ]" />
 
-      <div class="flex justify-between">
-        <div>
-            <q-btn label="Log-In" type="submit" color="primary"/>
-            <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+            <q-input filled type="password" v-model="password" label="Password" lazy-rules :rules="[
+              val => (isValidPassword(val).valid) || (isValidPassword(val).message),
+            ]" />
+
+            <div class="flex justify-between">
+              <div>
+                <q-btn label="Log-In" type="submit" color="primary" />
+                <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+              </div>
+              <div>
+                <q-btn label="Register" color="secondary" @click="$emit('change', 'Register')" />
+              </div>
+            </div>
+          </q-form>
+
         </div>
-        <div>
-            <NuxtLink to="/register"><q-btn label="Register" color="secondary"/></NuxtLink>
-        </div>  
+
       </div>
-    </q-form>
-
-  </div>
-
-        </div>
     </div>
+  </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { useQuasar } from 'quasar'
 import { ref } from 'vue'
+const emit = defineEmits(["change"])
 
 const firebaseUser = useFirebaseUser()
-const email = ref(null);
-const password = ref(null);
+const email = ref("");
+const password = ref("");
 
 
-const $q = useQuasar()
+const q = useQuasar()
 
 const onReset = () => {
-  email.value = null
-  password.value = null
-  
+  email.value = ""
+  password.value = ""
+
 }
 
 const loginUser = async () => {
-    const result = await signInUser(email.value, password.value);
-    
-    if (!result){
-        $q.notify({
-            color: 'red-5',
-            textColor: 'white',
-            icon: 'warning',
-            message: 'Invalid User or Password',
-            position: 'top'
-          })
 
-    } else {
-        firebaseUser.value = result;
-        navigateTo("/")
-    }
+  await signInUser(email.value, password.value)
+    .then((result) => {
+      if (result.code) {
+        q.notify({
+          color: 'red-5',
+          textColor: 'white',
+          icon: 'warning',
+          message: 'Invalid User or Password',
+          position: 'top'
+        })
+      }
+    })
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
