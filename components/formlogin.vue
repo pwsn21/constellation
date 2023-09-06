@@ -15,11 +15,14 @@
             <q-input filled type="password" v-model="password" label="Password" lazy-rules :rules="[
               val => (isValidPassword(val).valid) || (isValidPassword(val).message),
             ]" />
+            <div>
+              <q-btn flat padding="none" label="Forgot Password?" no-caps @click="$emit('change', 'passwordreset')" />
+            </div>
 
             <div class="flex justify-between">
               <div>
                 <q-btn label="Log-In" type="submit" color="primary" />
-                <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+                <q-btn label="Clear" type="reset" color="primary" flat class="q-ml-sm" />
               </div>
               <div>
                 <q-btn label="Register" color="secondary" @click="$emit('change', 'Register')" />
@@ -56,6 +59,7 @@ const loginUser = async () => {
 
   await signInUser(email.value, password.value)
     .then((result) => {
+      console.log(result.code)
       if (result.code) {
         q.notify({
           color: 'red-5',

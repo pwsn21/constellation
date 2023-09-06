@@ -22,8 +22,8 @@
           <div class="flex justify-between">
             <div>
               <q-btn label="Register" type="submit" color="primary" />
-              <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
-              <q-btn label="Cancel" color="primary" @click="$emit('change', 'Login')" flat class="q-ml-sm" />
+              <q-btn label="Clear" type="reset" color="primary" flat class="q-ml-sm" />
+              <q-btn label="Back" color="primary" @click="$emit('change', 'Login')" flat class="q-ml-sm" />
             </div>
             <div>
 
@@ -45,23 +45,33 @@ const emit = defineEmits(["change"])
 const email = ref("");
 const password = ref("");
 const passwordConfirm = ref("")
+const error = ref("")
 
 
-const $q = useQuasar()
+const q = useQuasar()
 
 const onReset = () => {
   email.value = ""
   password.value = ""
+  passwordConfirm.value = ""
 
 }
 
-const registerUser = () => {
+const registerUser = async () => {
 
-  createUser(email.value, password.value);
-
-}
-
-
+  await createUser(email.value, password.value)
+    .then((result) => {
+      if (result.code = "auth/email-already-in-use") {
+        q.notify({
+          color: 'red-5',
+          textColor: 'white',
+          icon: 'warning',
+          message: 'This BCEHS email is already registered',
+          position: 'top'
+        })
+      }
+    })
+};
 </script>
 
 <style scoped></style>

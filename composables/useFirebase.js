@@ -25,7 +25,6 @@ export const createUser = async (email, password) => {
             return error
         });
     return credentials;  
-   
 }
 
 export const signInUser = async (email, password) => {

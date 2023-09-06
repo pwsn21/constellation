@@ -6,7 +6,9 @@
             <div v-if="formType == 'Register'">
                 <formregister @change="onChangeForm" />
             </div>
-
+            <div v-else-if="formType == 'passwordreset'">
+                <formpasswordreset @change="onChangeForm" />
+            </div>
             <div v-else>
                 <formlogin @change="onChangeForm" />
             </div>
