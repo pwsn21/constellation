@@ -5,17 +5,21 @@
         <AuthForms />
       </div>
       <div v-else>
-        <ClientOnly>
-          <NuxtLayout>
-            <NuxtPage />
-          </NuxtLayout>
-        </ClientOnly>
+        <div v-if="firebaseUser.emailVerified">
+          <ClientOnly>
+            <NuxtLayout>
+              <NuxtPage />
+            </NuxtLayout>
+          </ClientOnly>
+        </div>
+        <div v-else>
+          <verificationlink />
+        </div>
       </div>
     </div>
     <div v-else>
       <SplashScreen />
     </div>
-
   </div>
 </template>
 <script setup>

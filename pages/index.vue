@@ -13,11 +13,12 @@
       <div class="md:tw-w-1/2">
         <q-card class="my-card">
           <q-card-section class="bg-primary text-white">
-            <div class="text-h6">Mentee #1</div>
-            <div class="text-subtitle2">Cohort: 24-01</div>
+            <div class="text-h6">Debuggin</div>
+            <div class="text-subtitle2"></div>
           </q-card-section>
           <q-card-section>
             <div>Email verified: {{ firebaseUser.emailVerified }}</div>
+            <div>{{ firebaseUser.uid }}</div>
           </q-card-section>
 
           <q-separator />

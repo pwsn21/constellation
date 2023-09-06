@@ -13,6 +13,7 @@ import {
     getFirestore
 } from "firebase/firestore";
 
+
 export const createUser = async (email, password) => {
     const auth = getAuth();
         const credentials = await createUserWithEmailAndPassword(auth, email, password)
@@ -34,7 +35,12 @@ export const createUser = async (email, password) => {
 export const signInUser = async (email, password) => {
     const auth = getAuth();
     const credentials = await signInWithEmailAndPassword(auth, email, password)
+        // .then((result)=>{
+        //     console.log(result)
+        // })
         .catch((error) => {
+            // all login errors are treated the same here
+            console.log(error)
             return error
         });
     return credentials;
@@ -76,20 +82,13 @@ export const initUser = async () => {
     const authNeeded = useAuthNeeded();
     const isAdmin = useIsAdminUser();
     const isAuthStateUpdated = useIsAuthStateUpdated();
+    
 
     onAuthStateChanged(auth, async (user) => {
         if(user){
-            if(user.emailVerified){
-                console.log("emailisverified")
-                firebaseUser.value = user
-            } else {
-                console.log("emailnotverified")
-                firebaseUser.value = false;
-            }
-
+            firebaseUser.value = user
         } else {
             firebaseUser.value = false;  
-
         }
         isAuthStateUpdated.value = true;
         //const db = getFirestore();

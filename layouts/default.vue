@@ -7,7 +7,7 @@
           <div class="flex justify-between items-center tw-w-screen">
             <div class="flex items-center justify-start">
               <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
-              <q-toolbar-title>
+              <q-toolbar-title class="lg:tw-hidden">
                 Constellation
               </q-toolbar-title>
             </div>
@@ -44,6 +44,9 @@
         </ul>
         <ul class="tw-text-3xl">
           <q-separator />
+          <li class="tw-py-2">
+            <NuxtLink to="/profile"><q-icon name="account_circle" class="tw-mx-2" />Profile</NuxtLink>
+          </li>
           <li class="tw-py-2">
             <NuxtLink to="/" @click="logout"><q-icon name="logout" class="tw-mx-2" />Log-out</NuxtLink>
           </li>
