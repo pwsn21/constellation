@@ -17,6 +17,24 @@
             <div class="text-subtitle2">Cohort: 24-01</div>
           </q-card-section>
           <q-card-section>
+            <div>Email verified: {{ firebaseUser.emailVerified }}</div>
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions>
+            <q-btn flat @click="schedulemeeting">Schedule Meeting</q-btn>
+            <q-btn flat @click="reviewpaperwork">Review Forms\Paperwork</q-btn>
+          </q-card-actions>
+        </q-card>
+      </div>
+      <div class="md:tw-w-1/2">
+        <q-card class="my-card">
+          <q-card-section class="bg-primary text-white">
+            <div class="text-h6">Mentee #1</div>
+            <div class="text-subtitle2">Cohort: 24-01</div>
+          </q-card-section>
+          <q-card-section>
             <div>Mentee #1 is within 8 shifts of completing their current milestone</div>
           </q-card-section>
 
@@ -43,7 +61,7 @@ const schedulemeeting = () => {
   q.notify({
     color: 'positive',
     textColor: 'white',
-    icon: '',
+    icon: 'event',
     message: 'Meeting Scheduled for MM/DD/YYY',
     position: 'center'
   })
@@ -53,7 +71,7 @@ const reviewpaperwork = () => {
   q.notify({
     color: 'positive',
     textColor: 'white',
-    icon: '',
+    icon: 'assignment',
     message: 'Link for reviewing paperwork',
     position: 'center'
   })

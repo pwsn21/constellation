@@ -17,6 +17,10 @@ export const createUser = async (email, password) => {
     const auth = getAuth();
         const credentials = await createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
+            const result = sendEmailVerification(auth.currentUser)
+            .then(() => {
+                console.log('Verified email sent successfully');
+                return true})
             navigateTo("/")
         })
         .catch((error) => {
@@ -75,9 +79,17 @@ export const initUser = async () => {
 
     onAuthStateChanged(auth, async (user) => {
         if(user){
-            firebaseUser.value = user
+            if(user.emailVerified){
+                console.log("emailisverified")
+                firebaseUser.value = user
+            } else {
+                console.log("emailnotverified")
+                firebaseUser.value = false;
+            }
+
         } else {
             firebaseUser.value = false;  
+
         }
         isAuthStateUpdated.value = true;
         //const db = getFirestore();
