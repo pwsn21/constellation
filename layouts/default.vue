@@ -41,7 +41,11 @@
           <li class="tw-py-2">
             <NuxtLink to="/acpo"><q-icon name="assignment" class="tw-mx-2" />ACP-Orientation</NuxtLink>
           </li>
+          <li class="tw-py-2">
+            <NuxtLink to="/users"><q-icon name="people" class="tw-mx-2" />Users</NuxtLink>
+          </li>
         </ul>
+
         <ul class="tw-text-3xl">
           <q-separator />
           <li class="tw-py-2">

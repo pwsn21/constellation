@@ -5,7 +5,8 @@
         <AuthForms />
       </div>
       <div v-else>
-        <div v-if="firebaseUser.emailVerified">
+        <!-- <div v-if="firebaseUser.emailVerified"> -->
+        <div v-if="firebaseUser">
           <ClientOnly>
             <NuxtLayout>
               <NuxtPage />
