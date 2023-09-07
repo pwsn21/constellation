@@ -34,6 +34,8 @@
             </div>
         </q-form>
         {{ station }}
+        <q-separator />
+        {{ carOptions }}
     </div>
 </template>
 
@@ -115,6 +117,7 @@ querystnSnapshot.forEach((doc) => {
         name: doc.data().number + ' - ' + doc.data().city
     })
 });
+
 
 const querycarSnapshot = await getDocs(carsCollection);
 querycarSnapshot.forEach((doc) => {
