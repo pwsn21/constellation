@@ -14,7 +14,7 @@
           </ClientOnly>
         </div>
         <div v-else>
-          <verificationlink />
+          <formVerification />
         </div>
       </div>
     </div>

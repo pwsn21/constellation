@@ -4,13 +4,13 @@
         <ClientOnly>
 
             <div v-if="formType == 'Register'">
-                <formregister @change="onChangeForm" />
+                <formRegister @change="onChangeForm" />
             </div>
             <div v-else-if="formType == 'passwordreset'">
-                <formpasswordreset @change="onChangeForm" />
+                <formPasswordReset @change="onChangeForm" />
             </div>
             <div v-else>
-                <formlogin @change="onChangeForm" />
+                <formLogin @change="onChangeForm" />
             </div>
         </ClientOnly>
 

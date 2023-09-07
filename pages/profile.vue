@@ -21,7 +21,7 @@
             <q-select filled v-model="status" :options="statusOptions" label="Status" lazy-rules
                 :rules="[val => !!val || 'Status is required']" />
 
-            <q-select filled v-model="car" :options="carOptions" label="Car" lazy-rules
+            <q-select filled v-model="car" :options="carOptions" label="Car" lazy-rules option-label="unit"
                 :rules="[val => !!val || 'car is required']" />
 
             <q-select filled v-model="role" :options="roleOptions" label="Role" lazy-rules
