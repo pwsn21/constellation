@@ -1,57 +1,46 @@
 <template>
   <div class="q-pa-md" style="max-width: 400px">
+    <q-form @submit.prevent="countrysubmit" class="q-gutter-md flex">
+      <q-select filled v-model="profileData.country" :options="countryNames" label="Country" />
 
-    <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-      <q-input filled v-model="name" label="Your name *" hint="Name and surname" lazy-rules
-        :rules="[val => val && val.length > 0 || 'Please type something']" />
+      <q-select filled v-model="profileData.state" :options="stateOptions" label="State" />
 
-      <q-input filled type="number" v-model="age" label="Your age *" lazy-rules :rules="[
-        val => val !== null && val !== '' || 'Please type your age',
-        val => val > 0 && val < 100 || 'Please type a real age'
-      ]" />
-
-      <q-toggle v-model="accept" label="I accept the license and terms" />
+      <!-- <q-select filled v-model="profileData.city" :options="cityOptions" label="City" /> -->
 
       <div>
-        <q-btn label="Submit" type="submit" color="primary" />
-        <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+        <q-btn label="Save" type="submit" color="primary" />
       </div>
     </q-form>
-
   </div>
 </template>
   
 <script setup>
-import { useQuasar } from 'quasar'
-import { ref } from 'vue'
+import { Country, State, City } from 'country-state-city';
 
-const $q = useQuasar()
-const name = ref(null)
-const age = ref(null)
-const accept = ref(false)
+let profileData = reactive({
 
-const onSubmit = () => {
-  if (!accept.value) {
-    $q.notify({
-      color: 'red-5',
-      textColor: 'white',
-      icon: 'warning',
-      message: 'You need to accept the license and terms first'
-    })
-  } else {
-    $q.notify({
-      color: 'green-4',
-      textColor: 'white',
-      icon: 'cloud_done',
-      message: 'Submitted'
-    })
-  }
-}
+  // city: "",
+  province: "",
+  country: "",
+})
 
-const onReset = () => {
-  name.value = null
-  age.value = null
-  accept.value = false
-}
+const countrysubmit = (
+  console.log(profileData)
+
+)
+
+
+const countries = Country.getAllCountries()
+const countryNames = countries.map(countries => countries.name);
+
+const states = State.getStatesOfCountry('CA')
+const stateOptions = states.map(states => states.name);
+
+// const cities = City.getCitiesOfState('CA', 'BC')
+// const cityOptions = cities.map(cities => cities.name);
+
+
+
+
 </script>
   

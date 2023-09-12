@@ -6,7 +6,6 @@
     <div class="q-pa-md">
       <q-table title="Mentees" :rows="rows" :columns="columns" row-key="id" table-header-class="bg-primary text-white" />
     </div>
-
   </div>
 </template>
 

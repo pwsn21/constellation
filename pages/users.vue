@@ -21,11 +21,12 @@ onSnapshot(userCollection, (querySnapshot) => {
     querySnapshot.forEach((doc) => {
         const user = {
             name: doc.data().firstName + ' ' + doc.data().lastName,
-            station: doc.data().station.label,
+            station: doc.data().station.value,
             role: doc.data().role,
             id: doc.id,
         }
         fbUser.push(user)
+
     });
     users.value = fbUser
 });

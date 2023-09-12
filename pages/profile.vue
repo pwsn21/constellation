@@ -1,9 +1,9 @@
 <template>
-    <div class="q-pa-md tw-grid-cols-2" style="max-width: 600px">
+    <div class="q-pa-md">
 
         <q-page padding>
-            <q-form @submit.prevent="saveprofile" class="q-gutter-md">
-                <q-card>
+            <q-form @submit.prevent="saveprofile" class="q-gutter-md flex">
+                <q-card class="tw-w-2/5">
 
                     <q-card-section>
                         <div class="text-h5 tw-pb-2">Personal</div>
@@ -17,20 +17,23 @@
                             v-model="profileData.phoneNumber" label="Phone Number" lazy-rules
                             :rules="[val => (isValidPhone(val).valid) || (isValidPhone(val).message),]" />
                     </q-card-section>
-
+                    <q-separator />
                     <q-card-section>
                         <!-- Address Fields -->
                         <q-input filled v-model="profileData.address" label="Address" lazy-rules
                             :rules="[val => !!val || 'Address is required']" />
+                        <q-select filled v-model="profileData.country" :options="countryOptions" option-label="name"
+                            label="Country" lazy-rules :rules="[val => !!val || 'Country is required']"
+                            @update:model-value="countrySelected" />
+                        <q-select filled v-model="profileData.state" :options="stateOptions" label="Province\State"
+                            lazy-rules :rules="[val => !!val || 'Province\State is required']" />
+                        {{ stateOptions }}
+
                         <q-input filled v-model="profileData.city" label="City" lazy-rules
                             :rules="[val => !!val || 'City is required']" />
-                        <q-input filled v-model="profileData.province" label="Province" lazy-rules
-                            :rules="[val => !!val || 'Province is required']" />
-                        <q-input filled v-model="profileData.country" label="Country" lazy-rules
-                            :rules="[val => !!val || 'Country is required']" />
                     </q-card-section>
                 </q-card>
-                <q-card>
+                <q-card class="tw-w-2/5">
                     <q-card-section>
                         <div class="text-h5 tw-pb-2">Employee Information</div>
                         <q-input filled mask="######" v-model="profileData.employeeNumber" label="Employee Number"
@@ -45,9 +48,11 @@
                             :rules="[val => !!val || 'Status is required']" />
 
                         <q-select filled v-model="profileData.car" :options="carOptions" label="Car" lazy-rules
-                            option-label="unit" v-if="profileData.status === 'Full-time Regularly Scheduled'"
-                            :rules="[val => !!val || 'car is required']" />
+                            v-if="profileData.status === 'Full-time Regularly Scheduled'"
+                            :rules="[val => !!val || 'Car is required']" />
+                        {{ carOptions }}
                     </q-card-section>
+                    <q-separator />
                     <q-card-section>
                         <q-select filled v-model="profileData.role" :options="roleOptions" label="Role" lazy-rules
                             :rules="[val => !!val || 'Role is required']" />
@@ -68,12 +73,33 @@
 
 <script setup>
 import { doc, setDoc, getDoc, getDocs, collection, onSnapshot, updateDoc, getFirestore } from "firebase/firestore";
+import { Country, State, City } from 'country-state-city';
+
+const countryOptions = Country.getAllCountries()
+const stateOptions = []
 
 const stationOptions = []
-const cohortOptions = []
 const statusOptions = ['Casual', 'Full-time Irregularly Scheduled', 'Full-time Regularly Scheduled']
-const roleOptions = ['Mentee', 'Mentor', 'Admin']
 const carOptions = ref([])
+const roleOptions = ['Mentee', 'Mentor', 'Admin']
+const cohortOptions = []
+
+// const countries = Country.getAllCountries()
+// const countryNames = countries.map(countries => countries);
+
+
+
+const countrySelected = async () => {
+    profileData.province = "";
+    const countryCode = Country.getCountryByCode(profileData.country.isoCode)
+
+    const statesByCountry = State.getStatesOfCountry(countryCode.isoCode)
+    statesByCountry.forEach((state) => {
+        stateOptions.push(state.name)
+    })
+
+};
+
 
 let profileData = reactive({
     firstName: "",
@@ -81,7 +107,7 @@ let profileData = reactive({
     phoneNumber: "",
     address: "",
     city: "",
-    province: "",
+    state: "",
     country: "",
     employeeNumber: "",
     station: "",
@@ -126,16 +152,6 @@ stationCollection.forEach((station) => {
     });
 });
 
-const acpoCohortCollection = await getDocs(collection(db, "acpoCohort"));
-
-acpoCohortCollection.forEach((cohort) => {
-    cohortOptions.push({
-        label: cohort.id,
-        value: cohort.id
-    });
-});
-
-
 const stationSelected = async () => {
     profileData.car = "";
     while (carOptions.value.length) { carOptions.value.pop(); }
@@ -145,6 +161,15 @@ const stationSelected = async () => {
         carOptions.value.push(car);
     })
 };
+
+const acpoCohortCollection = await getDocs(collection(db, "acpoCohort"));
+
+acpoCohortCollection.forEach((cohort) => {
+    cohortOptions.push({
+        label: cohort.id,
+        value: cohort.id
+    });
+});
 
 const { showToast } = useNotification();
 
