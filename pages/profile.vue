@@ -22,15 +22,20 @@
                         <!-- Address Fields -->
                         <q-input filled v-model="profileData.address" label="Address" lazy-rules
                             :rules="[val => !!val || 'Address is required']" />
-                        <q-select filled v-model="profileData.country" :options="countryOptions" option-label="name"
-                            label="Country" lazy-rules :rules="[val => !!val || 'Country is required']"
-                            @update:model-value="countrySelected" />
-                        <q-select filled v-model="profileData.state" :options="stateOptions" label="Province\State"
-                            lazy-rules :rules="[val => !!val || 'Province\State is required']" />
-                        {{ stateOptions }}
 
-                        <q-input filled v-model="profileData.city" label="City" lazy-rules
-                            :rules="[val => !!val || 'City is required']" />
+                        <q-select filled v-model="profileData.country" :options="filteredCountryOptions" label="Country"
+                            option-label="name" lazy-rules :rules="[val => !!val || 'Country is required']"
+                            @update:model-value="countrySelected" @filter="filterCountry" use-input />
+
+                        <q-select filled v-model="profileData.state" :options="filteredStateOptions" option-label="name"
+                            label="Province\State" lazy-rules :rules="[val => !!val || 'Province\State is required']"
+                            @update:model-value="stateSelected" @filter="filterState" use-input />
+
+                        <q-select filled v-model="profileData.city" :options="filteredCityOptions" label="City" lazy-rules
+                            :rules="[val => !!val || 'City is required']" @filter="filterCity" use-input />
+
+
+
                     </q-card-section>
                 </q-card>
                 <q-card class="tw-w-2/5">
@@ -50,7 +55,7 @@
                         <q-select filled v-model="profileData.car" :options="carOptions" label="Car" lazy-rules
                             v-if="profileData.status === 'Full-time Regularly Scheduled'"
                             :rules="[val => !!val || 'Car is required']" />
-                        {{ carOptions }}
+
                     </q-card-section>
                     <q-separator />
                     <q-card-section>
@@ -75,32 +80,6 @@
 import { doc, setDoc, getDoc, getDocs, collection, onSnapshot, updateDoc, getFirestore } from "firebase/firestore";
 import { Country, State, City } from 'country-state-city';
 
-const countryOptions = Country.getAllCountries()
-const stateOptions = []
-
-const stationOptions = []
-const statusOptions = ['Casual', 'Full-time Irregularly Scheduled', 'Full-time Regularly Scheduled']
-const carOptions = ref([])
-const roleOptions = ['Mentee', 'Mentor', 'Admin']
-const cohortOptions = []
-
-// const countries = Country.getAllCountries()
-// const countryNames = countries.map(countries => countries);
-
-
-
-const countrySelected = async () => {
-    profileData.province = "";
-    const countryCode = Country.getCountryByCode(profileData.country.isoCode)
-
-    const statesByCountry = State.getStatesOfCountry(countryCode.isoCode)
-    statesByCountry.forEach((state) => {
-        stateOptions.push(state.name)
-    })
-
-};
-
-
 let profileData = reactive({
     firstName: "",
     lastName: "",
@@ -117,6 +96,20 @@ let profileData = reactive({
     car: "",
 })
 
+const countryOptions = Country.getAllCountries()
+const stateOptions = ref([])
+const cityOptions = ref([])
+
+const stationOptions = []
+const statusOptions = ['Casual', 'Full-time Irregularly Scheduled', 'Full-time Regularly Scheduled']
+const carOptions = ref([])
+const roleOptions = ['Mentee', 'Mentor', 'Admin']
+const cohortOptions = []
+
+// const countries = Country.getAllCountries()
+// const countryNames = countries.map(countries => countries);
+
+
 const firebaseUser = useFirebaseUser()
 const db = getFirestore();
 const docRef = doc(db, "users", firebaseUser.value.uid);
@@ -131,7 +124,7 @@ if (docSnap.exists()) {
         phoneNumber: docSnap.data().phoneNumber,
         address: docSnap.data().address,
         city: docSnap.data().city,
-        province: docSnap.data().province,
+        state: docSnap.data().state,
         country: docSnap.data().country,
         employeeNumber: docSnap.data().employeeNumber,
         station: docSnap.data().station,
@@ -142,6 +135,75 @@ if (docSnap.exists()) {
     })
 }
 
+const countrySelected = async () => {
+    profileData.state = ""
+    const countryCode = Country.getCountryByCode(profileData.country.isoCode)
+
+    stateOptions.value.length = 0
+    const statesByCountry = State.getStatesOfCountry(countryCode.isoCode)
+    statesByCountry.forEach((state) => {
+        stateOptions.value.push(state)
+    })
+};
+
+const stateSelected = async () => {
+    profileData.city = ""
+
+    cityOptions.value.length = 0
+    const citiesByState = City.getCitiesOfState(profileData.state.countryCode, profileData.state.isoCode)
+    citiesByState.forEach((city) => {
+        cityOptions.value.push(city.name)
+    })
+};
+
+const filteredCountryOptions = ref([])
+const filteredStateOptions = ref([])
+const filteredCityOptions = ref([])
+
+async function filterCountry(val, update) {
+    if (val === '') {
+        update(() => {
+            filteredCountryOptions.value = countryOptions
+        })
+    } else {
+        update(() => {
+            const needle = val.toLowerCase()
+            filteredCountryOptions.value = countryOptions.filter(option => {
+                return option.name.toLowerCase().includes(needle)
+            })
+        })
+    }
+}
+
+async function filterState(val, update) {
+    if (val === '') {
+        update(() => {
+            filteredStateOptions.value = stateOptions.value
+        })
+    } else {
+        update(() => {
+            const needle = val.toLowerCase()
+            filteredStateOptions.value = stateOptions.value.filter(option => {
+                return option.name.toLowerCase().includes(needle)
+            })
+        })
+    }
+}
+
+async function filterCity(val, update) {
+    if (val === '') {
+        update(() => {
+            filteredCityOptions.value = cityOptions.value
+        })
+    } else {
+        update(() => {
+            const needle = val.toLowerCase()
+            filteredCityOptions.value = cityOptions.value.filter(option => {
+                return option.toLowerCase().includes(needle)
+            })
+        })
+    }
+}
 
 const stationCollection = await getDocs(collection(db, "stations"));
 
@@ -182,7 +244,7 @@ const saveprofile = async () => {
             phoneNumber: profileData.phoneNumber,
             address: profileData.address,
             city: profileData.city,
-            province: profileData.province,
+            state: profileData.state,
             country: profileData.country,
             employeeNumber: profileData.employeeNumber,
             station: profileData.station,
@@ -193,8 +255,6 @@ const saveprofile = async () => {
         }, { merge: true });
         showToast('positive', 'check', 'Profile Saved');
     }
-
-    //doesn't do anything....
     catch (error) {
         console.error(error)
         showToast('negative', 'error', 'Error');
