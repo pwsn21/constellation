@@ -41,14 +41,14 @@
 import { useQuasar } from 'quasar'
 import { ref } from 'vue'
 const emit = defineEmits(["change"])
+const { showToast } = useNotification();
+
 
 const email = ref("");
 const password = ref("");
 const passwordConfirm = ref("")
 const error = ref("")
 
-
-const q = useQuasar()
 
 const onReset = () => {
   email.value = ""
@@ -62,16 +62,12 @@ const registerUser = async () => {
   await createUser(email.value, password.value)
     .then((result) => {
       if (result.code = "auth/email-already-in-use") {
-        q.notify({
-          color: 'red-5',
-          textColor: 'white',
-          icon: 'warning',
-          message: 'This BCEHS email is already registered',
-          position: 'top'
-        })
+        showToast('red-5', 'warning', 'This BCEHS email is already registered')
       }
     })
-};
+}
+
+
 </script>
 
 <style scoped></style>

@@ -41,13 +41,13 @@
 import { useQuasar } from 'quasar'
 import { ref } from 'vue'
 const emit = defineEmits(["change"])
+const { showToast } = useNotification();
 
 const firebaseUser = useFirebaseUser()
 const email = ref("");
 const password = ref("");
 
 
-const q = useQuasar()
 
 const onReset = () => {
   email.value = ""
@@ -59,15 +59,8 @@ const loginUser = async () => {
 
   await signInUser(email.value, password.value)
     .then((result) => {
-      console.log(result.code)
       if (result.code) {
-        q.notify({
-          color: 'red-5',
-          textColor: 'white',
-          icon: 'warning',
-          message: 'Invalid User or Password',
-          position: 'top'
-        })
+        showToast('red-5', 'warning', 'Invalid User or Password')
       }
     })
 };

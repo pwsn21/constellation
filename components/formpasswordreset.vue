@@ -36,9 +36,7 @@ import { ref } from 'vue'
 const emit = defineEmits(["change"])
 
 const email = ref("")
-
-
-const q = useQuasar()
+const { showToast } = useNotification();
 
 const onReset = () => {
   email.value = ""
@@ -48,15 +46,8 @@ const resetpassword = async () => {
 
   await resetPasswordEmail(email.value)
     .then((result) => {
-      // console.log(result.code)
       if (result.code = "auth/user-not-found") {
-        q.notify({
-          color: 'red-5',
-          textColor: 'white',
-          icon: 'warning',
-          message: 'That BCEHS email is not registered',
-          position: 'top'
-        })
+        showToast('red-5', 'warning', 'That BCEHS email is not registered')
       }
     })
 };
