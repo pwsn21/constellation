@@ -36,8 +36,6 @@
                             :rules="[val => !!val || 'City is required']" @filter="filterCity" use-input
                             input-debounce="250" />
 
-                        <!-- {{ options.filteredCountry }} -->
-
                     </q-card-section>
                 </q-card>
                 <q-card class="tw-w-2/5">
@@ -138,9 +136,8 @@ if (docSnap.exists()) {
 
 const countrySelected = async () => {
     profileData.state = ""
-    const countryCode = Country.getCountryByCode(profileData.country.isoCode)
     options.state.length = 0
-    const statesByCountry = State.getStatesOfCountry(countryCode.isoCode)
+    const statesByCountry = State.getStatesOfCountry(profileData.country.isoCode)
     statesByCountry.forEach((state) => {
         options.state.push(state)
     })
@@ -156,45 +153,45 @@ const stateSelected = async () => {
 };
 
 async function filterCountry(val, update) {
+    val = val.toLowerCase();
     if (val === '') {
         update(() => {
-            options.filteredCountry = options.country
-        })
+            options.filteredCountry = options.country;
+        });
     } else {
         update(() => {
-            const needle = val.toLowerCase()
             options.filteredCountry = options.country.filter(option => {
-                return option.name.toLowerCase().includes(needle)
-            })
-        })
+                return option.name.toLowerCase().includes(val);
+            });
+        });
     }
 }
 
 async function filterState(val, update) {
+    val = val.toLowerCase();
     if (val === '') {
         update(() => {
             options.filteredState = options.state
         })
     } else {
         update(() => {
-            const needle = val.toLowerCase()
             options.filteredState = options.state.filter(option => {
-                return option.name.toLowerCase().includes(needle)
+                return option.name.toLowerCase().includes(val)
             })
         })
     }
 }
 
 async function filterCity(val, update) {
+    val = val.toLowerCase();
     if (val === '') {
         update(() => {
             options.filteredCity = options.city
         })
     } else {
         update(() => {
-            const needle = val.toLowerCase()
             options.filteredCity = options.city.filter(option => {
-                return option.toLowerCase().includes(needle)
+                return option.toLowerCase().includes(val)
             })
         })
     }
