@@ -23,20 +23,20 @@
                         <q-input filled v-model="profileData.address" label="Address" lazy-rules
                             :rules="[val => !!val || 'Address is required']" />
 
-                        <q-select filled v-model="profileData.country" :options="options.filteredCountry" label="Country"
+                        <q-select filled v-model="profileData.country" :options="filteredCountryOptions" label="Country"
                             option-label="name" lazy-rules :rules="[val => !!val || 'Country is required']"
                             @update:model-value="countrySelected" @filter="filterCountry" use-input input-debounce="250"
                             clearable />
 
-                        <q-select filled v-model="profileData.state" :options="options.filteredState" option-label="name"
+                        <q-select filled v-model="profileData.state" :options="filteredStateOptions" option-label="name"
                             label="Province\State" lazy-rules :rules="[val => !!val || 'Province\State is required']"
                             @update:model-value="stateSelected" @filter="filterState" use-input input-debounce="250" />
 
-                        <q-select filled v-model="profileData.city" :options="options.filteredCity" label="City" lazy-rules
+                        <q-select filled v-model="profileData.city" :options="filteredCityOptions" label="City" lazy-rules
                             :rules="[val => !!val || 'City is required']" @filter="filterCity" use-input
                             input-debounce="250" />
 
-                        <!-- {{ options.filteredCountry }} -->
+
 
                     </q-card-section>
                 </q-card>
@@ -48,23 +48,23 @@
                             :rules="[val => (isValidEmployeeNumber(val).valid) || (isValidEmployeeNumber(val).message),]" />
 
 
-                        <q-select filled v-model="profileData.station" :options="options.station" label="Station" lazy-rules
+                        <q-select filled v-model="profileData.station" :options="stationOptions" label="Station" lazy-rules
                             :rules="[val => !!val || 'Station is required']" @update:model-value="stationSelected" />
 
-                        <q-select filled v-model="profileData.status" :options="options.status" label="Status" lazy-rules
+                        <q-select filled v-model="profileData.status" :options="statusOptions" label="Status" lazy-rules
                             :rules="[val => !!val || 'Status is required']" />
 
-                        <q-select filled v-model="profileData.car" :options="options.car" label="Car" lazy-rules
+                        <q-select filled v-model="profileData.car" :options="carOptions" label="Car" lazy-rules
                             v-if="profileData.status === 'Full-time Regularly Scheduled'"
                             :rules="[val => !!val || 'Car is required']" />
 
                     </q-card-section>
                     <q-separator />
                     <q-card-section>
-                        <q-select filled v-model="profileData.role" :options="options.role" label="Role" lazy-rules
+                        <q-select filled v-model="profileData.role" :options="roleOptions" label="Role" lazy-rules
                             :rules="[val => !!val || 'Role is required']" />
 
-                        <q-select filled v-model="profileData.cohort" :options="options.cohort" label="Cohort"
+                        <q-select filled v-model="profileData.cohort" :options="cohortOptions" label="Cohort"
                             v-if="profileData.role === 'Mentee'" lazy-rules
                             :rules="[val => !!val || 'Cohort is required']" />
                     </q-card-section>
@@ -98,24 +98,25 @@ let profileData = reactive({
     car: "",
 })
 
-const options = reactive({
-    country: Country.getAllCountries(),
-    state: [],
-    city: [],
-    filteredCountry: [],
-    filteredState: [],
-    filteredCity: [],
-    station: [],
-    status: ['Casual', 'Full-time Irregularly Scheduled', 'Full-time Regularly Scheduled'],
-    car: [],
-    cohort: [],
-    role: ['Mentee', 'Mentor', 'Admin']
-})
+const countryOptions = Country.getAllCountries()
+const stateOptions = ref([])
+const cityOptions = ref([])
+
+const stationOptions = []
+const statusOptions = ['Casual', 'Full-time Irregularly Scheduled', 'Full-time Regularly Scheduled']
+const carOptions = ref([])
+const roleOptions = ['Mentee', 'Mentor', 'Admin']
+const cohortOptions = []
+
+// const countries = Country.getAllCountries()
+// const countryNames = countries.map(countries => countries);
+
 
 const firebaseUser = useFirebaseUser()
 const db = getFirestore();
 const docRef = doc(db, "users", firebaseUser.value.uid);
 const docSnap = await getDoc(docRef);
+
 
 // Profile Check
 if (docSnap.exists()) {
@@ -139,31 +140,37 @@ if (docSnap.exists()) {
 const countrySelected = async () => {
     profileData.state = ""
     const countryCode = Country.getCountryByCode(profileData.country.isoCode)
-    options.state.length = 0
+
+    stateOptions.value.length = 0
     const statesByCountry = State.getStatesOfCountry(countryCode.isoCode)
     statesByCountry.forEach((state) => {
-        options.state.push(state)
+        stateOptions.value.push(state)
     })
 };
 
 const stateSelected = async () => {
     profileData.city = ""
-    options.city.length = 0
+
+    cityOptions.value.length = 0
     const citiesByState = City.getCitiesOfState(profileData.state.countryCode, profileData.state.isoCode)
     citiesByState.forEach((city) => {
-        options.city.push(city.name)
+        cityOptions.value.push(city.name)
     })
 };
+
+const filteredStateOptions = ref([])
+const filteredCityOptions = ref([])
+const filteredCountryOptions = ref([])
 
 async function filterCountry(val, update) {
     if (val === '') {
         update(() => {
-            options.filteredCountry = options.country
+            filteredCountryOptions.value = countryOptions
         })
     } else {
         update(() => {
             const needle = val.toLowerCase()
-            options.filteredCountry = options.country.filter(option => {
+            filteredCountryOptions.value = countryOptions.filter(option => {
                 return option.name.toLowerCase().includes(needle)
             })
         })
@@ -173,12 +180,12 @@ async function filterCountry(val, update) {
 async function filterState(val, update) {
     if (val === '') {
         update(() => {
-            options.filteredState = options.state
+            filteredStateOptions.value = stateOptions.value
         })
     } else {
         update(() => {
             const needle = val.toLowerCase()
-            options.filteredState = options.state.filter(option => {
+            filteredStateOptions.value = stateOptions.value.filter(option => {
                 return option.name.toLowerCase().includes(needle)
             })
         })
@@ -188,12 +195,12 @@ async function filterState(val, update) {
 async function filterCity(val, update) {
     if (val === '') {
         update(() => {
-            options.filteredCity = options.city
+            filteredCityOptions.value = cityOptions.value
         })
     } else {
         update(() => {
             const needle = val.toLowerCase()
-            options.filteredCity = options.city.filter(option => {
+            filteredCityOptions.value = cityOptions.value.filter(option => {
                 return option.toLowerCase().includes(needle)
             })
         })
@@ -203,7 +210,7 @@ async function filterCity(val, update) {
 const stationCollection = await getDocs(collection(db, "stations"));
 
 stationCollection.forEach((station) => {
-    options.station.push({
+    stationOptions.push({
         label: station.id + " - " + station.data().city,
         value: station.id
     });
@@ -211,18 +218,18 @@ stationCollection.forEach((station) => {
 
 const stationSelected = async () => {
     profileData.car = "";
-    while (options.car.length) { options.car.pop(); }
+    while (carOptions.value.length) { carOptions.value.pop(); }
     const docRef = doc(db, "stations", profileData.station.value);
     const docSnap = await getDoc(docRef);
     docSnap.data().cars.forEach((car) => {
-        options.car.push(car);
+        carOptions.value.push(car);
     })
 };
 
 const acpoCohortCollection = await getDocs(collection(db, "acpoCohort"));
 
 acpoCohortCollection.forEach((cohort) => {
-    options.cohort.push({
+    cohortOptions.push({
         label: cohort.id,
         value: cohort.id
     });
