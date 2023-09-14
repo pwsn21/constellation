@@ -36,7 +36,7 @@ import { ref } from 'vue'
 const emit = defineEmits(["change"])
 
 const email = ref("")
-const { showToast } = useNotification();
+const { showToast } = useNotification()
 
 const onReset = () => {
   email.value = ""

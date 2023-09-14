@@ -41,7 +41,7 @@
 
 import { ref } from 'vue'
 const emit = defineEmits(["change"])
-const { showToast } = useNotification();
+const { showToast } = useNotification()
 
 const firebaseUser = useFirebaseUser()
 const email = ref("");

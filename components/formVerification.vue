@@ -3,7 +3,7 @@
         <div class="tw-w-1/2 tw-p-10">
             <q-card class="my-card">
                 <q-card-section>
-                    <div>Please verify your email to log in</div>
+                    <div>Please verify your email to log in.</div>
                 </q-card-section>
 
                 <q-separator />

@@ -2,7 +2,6 @@
     <div>
 
         <ClientOnly>
-
             <div v-if="formType == 'Register'">
                 <formRegister @change="onChangeForm" />
             </div>

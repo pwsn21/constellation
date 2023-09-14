@@ -41,7 +41,7 @@
 import { useQuasar } from 'quasar'
 import { ref } from 'vue'
 const emit = defineEmits(["change"])
-const { showToast } = useNotification();
+const { showToast } = useNotification()
 
 
 const email = ref("")
