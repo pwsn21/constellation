@@ -7,16 +7,28 @@
                         <div class="text-h5 tw-pb-2">{{ acpOProfileData.firstName }} {{ acpOProfileData.lastName }} {{
                             acpOProfileData.cohort }}</div>
                         <q-input filled label="Milestone Two Meeting" v-model="acpOProfileData.milestoneMeetingTwo">
-                            <template #append>
+                            <template #prepend>
                                 <q-icon name="event" class="cursor-pointer">
                                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                        <q-date v-model="acpOProfileData.milestoneMeetingTwo" mask="ddd MMM DD YYYY" />
+                                        <q-date v-model="acpOProfileData.milestoneMeetingTwo" :mask="datetimemask">
+                                            <q-btn v-close-popup flat label="close" />
+                                        </q-date>
+                                    </q-popup-proxy>
+                                </q-icon>
+                            </template>
+                            <template #append>
+                                <q-icon name="access_time" class="cursor-pointer">
+                                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                        <q-time v-model="acpOProfileData.milestoneMeetingTwo" :mask="datetimemask">
+                                            <q-btn v-close-popup flat label="close" />
+                                        </q-time>
                                     </q-popup-proxy>
                                 </q-icon>
                             </template>
                         </q-input>
                         <q-select filled v-model="acpOProfileData.pped" label="Assigned Practice Educator"
                             :options="options.ppeds" />
+                        <!-- {{ acpOProfileData.pped }} -->
                     </q-card-section>
                     <q-card-section>
                     </q-card-section>
@@ -38,12 +50,18 @@ const db = getFirestore();
 const docRef = doc(db, "acpoTracker", 'O9ySQiiCCLRtOKv1MTKVb4FOEUF2_2023-1');
 const docSnap = await getDoc(docRef);
 
+const datetimemask = "ddd MMM DD YYYY HH:mm"
+
 let acpOProfileData = reactive({
     firstName: "",
     lastName: "",
     cohort: "",
     pped: "",
     milestoneMeetingTwo: "",
+})
+
+const options = reactive({
+    ppeds: [],
 })
 
 // ACP-Orientation Profile Check
@@ -57,9 +75,6 @@ if (docSnap.exists()) {
     })
 }
 
-const options = reactive({
-    ppeds: [],
-})
 
 const userCollection = collection(db, 'users');
 const queryPPEd = query(userCollection, where("role", "==", "Paramedic Practice Educator"));
@@ -68,7 +83,8 @@ const ppedDocs = await getDocs(queryPPEd);
 ppedDocs.forEach((pped) => {
     options.ppeds.push({
         value: pped.id,
-        label: pped.data().firstName + " " + pped.data().lastName
+        label: pped.data().firstName + " " + pped.data().lastName,
+        station: pped.data().station,
     });
 });
 

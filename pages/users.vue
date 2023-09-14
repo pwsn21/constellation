@@ -17,31 +17,23 @@ const userCollection = collection(db, 'users')
 const users = ref([])
 
 onSnapshot(userCollection, (querySnapshot) => {
-    const fbUser = []
-    querySnapshot.forEach((doc) => {
-        const user = {
-            name: doc.data().firstName + ' ' + doc.data().lastName,
-            station: doc.data().station.value,
-            role: doc.data().role,
-            id: doc.id,
-        }
-        fbUser.push(user)
-
-    });
-    users.value = fbUser
+    users.value = querySnapshot.docs.map((doc) => ({
+        name: doc.data().firstName + ' ' + doc.data().lastName,
+        station: doc.data().station,
+        role: doc.data().role,
+        id: doc.id,
+    }));
 });
 
 const columns = [
     { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
     { name: 'station', label: 'Station', field: 'station', sortable: true, },
     { name: 'role', label: 'Role', field: 'role', sortable: true, },
-    { name: 'id', label: 'id', field: 'id', align: 'right' },
+    { name: 'id', label: 'ID - For dev', field: 'id', align: 'right' },
 ];
 
 
 const rows = users
-
-console.log(users)
 
 </script>
 

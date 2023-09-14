@@ -44,8 +44,8 @@ const emit = defineEmits(["change"])
 const { showToast } = useNotification();
 
 
-const email = ref("");
-const password = ref("");
+const email = ref("")
+const password = ref("")
 const passwordConfirm = ref("")
 const error = ref("")
 

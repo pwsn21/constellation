@@ -14,30 +14,25 @@ import { doc, where, query, onSnapshot, collection, getFirestore } from "firebas
 
 const db = getFirestore();
 
-const userCollection = collection(db, 'users');
-const queryMentee = query(userCollection, where("role", "==", "Mentee"));
-const menteeUsers = ref();
+const acpoCollection = collection(db, 'acpoTracker')
+const mentees = ref([])
 
-onSnapshot(queryMentee, (querySnapshot) => {
-  const fbMenteeUser = [];
-  querySnapshot.forEach((doc) => {
-    const user = {
-      id: doc.id,
-      name: doc.data().firstName + ' ' + doc.data().lastName,
-      cohort: doc.data().cohort.label
-    };
-    fbMenteeUser.push(user);
-  });
-  menteeUsers.value = fbMenteeUser;
+onSnapshot(acpoCollection, (querySnapshot) => {
+  mentees.value = querySnapshot.docs.map((doc) => ({
+    name: doc.data().firstName + ' ' + doc.data().lastName,
+    cohort: doc.data().cohortID,
+    pped: doc.data().pped.label,
+    id: doc.id,
+  }));
 });
 
 const columns = [
-  { name: 'firstName', label: 'Name', field: 'name', align: 'left', sortable: true },
+  { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
   { name: 'cohort', label: 'Cohort', field: 'cohort', sortable: true, },
-  { name: 'milestone', label: 'Milestone', field: 'milestone', sortable: true, },
-  { name: 'id', label: 'id', field: 'id', align: 'right' },
+  { name: 'milestone', label: 'Milestone', field: 'milestone' },
+  { name: 'pped', label: 'Practice Educator', field: 'pped' },
+  { name: 'id', label: 'id for dev', field: 'id', align: 'right' },
 ];
-
-const rows = menteeUsers
+const rows = mentees
 
 </script>
