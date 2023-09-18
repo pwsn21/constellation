@@ -8,7 +8,7 @@
             <h2 class="tw-text-4xl tw-pb-10">Log In</h2>
           </div>
           <q-form @submit.prevent="loginUser" @reset="onReset" class="q-gutter-md">
-            <q-input filled v-model="email" type="email" label="Email" hint="Your BCEHS Email" lazy-rules :rules="[
+            <q-input filled v-model="email" type="email" label="Email" hint="Your BCEHS or PHSA Email" lazy-rules :rules="[
               val => (isValidEmail(val).valid) || (isValidEmail(val).message),
             ]" />
 

@@ -8,7 +8,7 @@
         </div>
         <p>Enter your BCEHS email that you used to register. An email will be sent with a link to reset your password.</p>
         <q-form @submit.prevent="resetpassword" @reset="onReset" class="q-gutter-md">
-          <q-input filled v-model="email" type="email" label="Email" hint="Your BCEHS Email" lazy-rules :rules="[
+          <q-input filled v-model="email" type="email" label="Email" hint="Your BCEHS or PHSA Email" lazy-rules :rules="[
             val => (isValidEmail(val).valid) || (isValidEmail(val).message),
           ]" />
 

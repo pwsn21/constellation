@@ -36,13 +36,29 @@
         <q-separator />
         <ul class="tw-text-3xl">
           <li class="tw-py-2">
+            Admin
+          </li>
+          <li class="tw-py-2">
             <NuxtLink to="/"><q-icon name="dashboard" class="tw-mx-2" />Dashboard</NuxtLink>
           </li>
           <li class="tw-py-2">
-            <NuxtLink to="/acpo"><q-icon name="assignment" class="tw-mx-2" />ACP-Orientation</NuxtLink>
+            <NuxtLink to="/acpo"><q-icon name="groups" class="tw-mx-2" />ACP-Orientation</NuxtLink>
+          </li>
+          <li class="tw-py-2">
+            <NuxtLink to="/acpoprofile"><q-icon name="face" class="tw-mx-2" />ACP-O Profile</NuxtLink>
           </li>
           <li class="tw-py-2">
             <NuxtLink to="/users"><q-icon name="people" class="tw-mx-2" />Users</NuxtLink>
+          </li>
+          <q-separator />
+          <li class="tw-py-2">
+            Mentee
+          </li>
+          <li class="tw-py-2">
+            <NuxtLink to="/"><q-icon name="dashboard" class="tw-mx-2" />Dashboard</NuxtLink>
+          </li>
+          <li class="tw-py-2">
+            <NuxtLink to="/acpoprofile"><q-icon name="assignment" class="tw-mx-2" />ACP-O Forms</NuxtLink>
           </li>
         </ul>
 

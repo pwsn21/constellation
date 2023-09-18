@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div class="tw-p-10">
+    <div class="flex justify-center">
+        <div class="q-pa-md full-width" style="max-width: 900px;">
             <h2 class="text-h5 text-primary">All Users</h2>
             <q-table :rows="rows" :columns="columns" row-key="id" table-header-class="bg-primary text-white" />
         </div>

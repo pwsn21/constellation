@@ -1,6 +1,6 @@
 export const isValidEmail = (email: string) => {
     if (!(email.length > 0)) return {valid: false, message:"Email is required"}
-    if (!(email.toLowerCase().endsWith("@bcehs.ca"))) return {valid: false, message:"Must be valid BCEHS email"}
+    if (!(email.endsWith("@bcehs.ca") || email.endsWith("@phsa.ca"))) return {valid: false, message:"Must be valid BCEHS or PHSA email"}
     return {valid:true, message:""}
 }
 
