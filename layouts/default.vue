@@ -8,7 +8,7 @@
             <div class="flex items-center justify-start">
               <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
               <q-toolbar-title class="lg:tw-hidden">
-                Constellation
+                Constellatio
               </q-toolbar-title>
             </div>
             <div>
@@ -27,13 +27,11 @@
 
       <q-drawer show-if-above v-model="leftDrawerOpen" side="left" elevated>
         <!-- drawer content -->
-        <div class="flex items-center">
+        <div class="flex items-center bg-primary text-white">
           <q-icon name="hub" size="32px" class="tw-mx-2" />
-
           <h2 class="tw-text-4xl tw-font-bold tw-py-5">Constellation</h2>
-
         </div>
-        <q-separator />
+
         <ul class="tw-text-3xl">
           <li class="tw-py-2">
             Admin

@@ -45,3 +45,4 @@ export function fromFirestoreTimestamp(timestamp) {
       return dateTimeString;
     }
   }
+

@@ -9,13 +9,14 @@
                         <div>Current Milestone: {{ acpOProfileData.currentMilestone }}</div>
                         <div>Current Support Level: {{ acpOProfileData.currentSupport }}</div>
                         <q-separator />
+
                         <q-select filled v-model="acpOProfileData.pped" label="Assigned Practice Educator"
                             :options="options.ppeds" />
                     </q-card-section>
                 </q-card>
-
                 <!-- Milestone Two -->
                 <q-card>
+
                     <q-card-section>
                         <div class="text-h6 q-pbt-sm">Milestone 2</div>
                     </q-card-section>
@@ -23,34 +24,122 @@
                     <q-card-section>
                         <q-select filled v-model="acpOProfileData.supportLevelMSTwo" label="Milestone 2 Support Level"
                             :options="options.supportLevelHigh" />
-                        <DateTimePicker :date="acpOProfileData.developmentPlanMeeting" @update:date="updateMeetingDP" />
-
+                        <q-input filled label="Development Plan Meeting" clearable
+                            v-model="acpOProfileData.developmentPlanMeeting">
+                            <template #prepend>
+                                <q-icon name="event" class="cursor-pointer">
+                                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                        <q-date today-btn v-model="acpOProfileData.developmentPlanMeeting"
+                                            :mask="datetimemask">
+                                            <q-btn v-close-popup flat label="close" />
+                                        </q-date>
+                                    </q-popup-proxy>
+                                </q-icon>
+                            </template>
+                            <template #append>
+                                <q-icon name="access_time" class="cursor-pointer">
+                                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                        <q-time v-model="acpOProfileData.developmentPlanMeeting" :mask="datetimemask"
+                                            format24h>
+                                            <q-btn v-close-popup flat label="close" />
+                                        </q-time>
+                                    </q-popup-proxy>
+                                </q-icon>
+                            </template>
+                        </q-input>
                         <q-toggle v-if="acpOProfileData.supportLevelMSTwo === 'High'" :false-value="2"
                             :label="`Mentee is in ${acpOProfileData.threePerson} person configuration`" :true-value="3"
                             color="blue" v-model="acpOProfileData.threePerson" />
-                        <DateTimePicker :date="acpOProfileData.milestoneMeetingTwo" @update:date="updateMeetingTwo" />
+                        <q-input filled label="Milestone Two Meeting" clearable
+                            v-model="acpOProfileData.milestoneMeetingTwo">
+                            <template #prepend>
+                                <q-icon name="event" class="cursor-pointer">
+                                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                        <q-date today-btn v-model="acpOProfileData.milestoneMeetingTwo"
+                                            :mask="datetimemask">
+                                            <q-btn v-close-popup flat label="close" />
+                                        </q-date>
+                                    </q-popup-proxy>
+                                </q-icon>
+                            </template>
+                            <template #append>
+                                <q-icon name="access_time" class="cursor-pointer">
+                                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                        <q-time v-model="acpOProfileData.milestoneMeetingTwo" :mask="datetimemask"
+                                            format24h>
+                                            <q-btn v-close-popup flat label="close" />
+                                        </q-time>
+                                    </q-popup-proxy>
+                                </q-icon>
+                            </template>
+                        </q-input>
                     </q-card-section>
                 </q-card>
 
                 <!-- Milestone Three -->
                 <q-card>
+
                     <q-card-section class="bg-primary text-white">
                         <div class="text-h6 q-pa-sm">Milestone 3</div>
                     </q-card-section>
                     <q-select filled v-model="acpOProfileData.supportLevelMSThree" label="Milestone 3 Support Level"
                         :options="options.supportLevel" />
-                    <DateTimePicker :date="acpOProfileData.milestoneMeetingThree" @update:date="updateMeetingThree" />
-                </q-card>
+                    <q-input filled label="Milestone Three Meeting" clearable
+                        v-model="acpOProfileData.milestoneMeetingThree">
+                        <template #prepend>
+                            <q-icon name="event" class="cursor-pointer">
+                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                    <q-date today-btn v-model="acpOProfileData.milestoneMeetingThree" :mask="datetimemask">
+                                        <q-btn v-close-popup flat label="close" />
+                                    </q-date>
+                                </q-popup-proxy>
+                            </q-icon>
+                        </template>
+                        <template #append>
+                            <q-icon name="access_time" class="cursor-pointer">
+                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                    <q-time v-model="acpOProfileData.milestoneMeetingThree" :mask="datetimemask" format24h>
+                                        <q-btn v-close-popup flat label="close" />
+                                    </q-time>
+                                </q-popup-proxy>
+                            </q-icon>
+                        </template>
+                    </q-input>
 
+                </q-card>
                 <!-- Milestone Four -->
                 <q-card>
+
                     <q-card-section class="bg-primary text-white">
                         <div class="text-h6 q-pa-sm">Milestone 4</div>
                     </q-card-section>
                     <q-select filled v-model="acpOProfileData.supportLevelMSFour" label="Milestone 4 Support Level"
                         :options="options.supportLevel" />
-                    <DateTimePicker :date="acpOProfileData.milestoneMeetingFour" @update:date="updateMeetingFour" />
+                    <q-input filled label="Milestone Four Meeting" clearable v-model="acpOProfileData.milestoneMeetingFour">
+                        <template #prepend>
+                            <q-icon name="event" class="cursor-pointer">
+                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                    <q-date today-btn v-model="acpOProfileData.milestoneMeetingFour" :mask="datetimemask">
+                                        <q-btn v-close-popup flat label="close" />
+                                    </q-date>
+                                </q-popup-proxy>
+                            </q-icon>
+                        </template>
+                        <template #append>
+                            <q-icon name="access_time" class="cursor-pointer">
+                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                    <q-time v-model="acpOProfileData.milestoneMeetingFour" :mask="datetimemask" format24h>
+                                        <q-btn v-close-popup flat label="close" />
+                                    </q-time>
+                                </q-popup-proxy>
+                            </q-icon>
+                        </template>
+                    </q-input>
+
                 </q-card>
+
+
+
                 <div>
                     <q-btn label="Save" type="submit" color="primary" />
                 </div>
@@ -66,11 +155,16 @@ import { doc, setDoc, getDoc, query, where, getDocs, collection, updateDoc, getF
 const firebaseUser = useFirebaseUser()
 const db = getFirestore();
 
+
 const docProfileRef = doc(db, "users", firebaseUser.value.uid);
 const docProfileSnap = await getDoc(docProfileRef);
 const up = docProfileSnap.data()
+let profileData = reactive({
+    cohort: "",
+})
+profileData = up
 
-const docRef = doc(db, "acpoTracker", firebaseUser.value.uid + "_" + up.cohort);
+const docRef = doc(db, "acpoTracker", firebaseUser.value.uid + "_" + profileData.cohort);
 const docSnap = await getDoc(docRef);
 
 const options = reactive({
@@ -114,22 +208,16 @@ function setCurrentSupport(acpOProfileData) {
     }
 }
 
-function threePersonChecker() {
-    if (acpOProfileData.currentSupport != "High") {
-        acpOProfileData.threePerson = 2;
-    }
-};
-
-const updateMeetingDP = (newDate) => { acpOProfileData.developmentPlanMeeting = newDate; };
-const updateMeetingTwo = (newDate) => { acpOProfileData.milestoneMeetingTwo = newDate; };
-const updateMeetingThree = (newDate) => { acpOProfileData.milestoneMeetingThree = newDate; };
-const updateMeetingFour = (newDate) => { acpOProfileData.milestoneMeetingFour = newDate; };
+// function supportLevelSelected() {
+//     if (acpOProfileData.currentSupport != "High") {
+//         acpOProfileData.threePerson = 2;
+//     }
+// };
 
 acpOProfileData.developmentPlanMeeting = fromFirestoreTimestamp(acpOProfileData.developmentPlanMeeting)
 acpOProfileData.milestoneMeetingTwo = fromFirestoreTimestamp(acpOProfileData.milestoneMeetingTwo)
 acpOProfileData.milestoneMeetingThree = fromFirestoreTimestamp(acpOProfileData.milestoneMeetingThree)
 acpOProfileData.milestoneMeetingFour = fromFirestoreTimestamp(acpOProfileData.milestoneMeetingFour)
-
 
 const userCollection = collection(db, 'users');
 const queryPPEd = query(userCollection, where("role", "==", "Paramedic Practice Educator"));
@@ -154,7 +242,6 @@ const saveAcpOProfile = async () => {
         const msMeetingThree = await toFirestoreTimestamp(acpOProfileData.milestoneMeetingThree)
         const msMeetingFour = await toFirestoreTimestamp(acpOProfileData.milestoneMeetingFour)
         setCurrentSupport(acpOProfileData)
-        threePersonChecker()
         await setDoc(doc(db, "acpoTracker", firebaseUser.value.uid + "_" + profileData.cohort),
             // acpOProfileData
             {
