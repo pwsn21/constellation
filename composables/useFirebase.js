@@ -13,7 +13,6 @@ import {
     getFirestore
 } from "firebase/firestore";
 
-
 export const createUser = async (email, password) => {
     const auth = getAuth();
         const credentials = await createUserWithEmailAndPassword(auth, email, password)

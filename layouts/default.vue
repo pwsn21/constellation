@@ -8,7 +8,7 @@
             <div class="flex items-center justify-start">
               <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
               <q-toolbar-title class="lg:tw-hidden">
-                Constellatio
+                Constellation
               </q-toolbar-title>
             </div>
             <div>

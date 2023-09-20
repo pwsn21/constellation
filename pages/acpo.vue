@@ -9,7 +9,7 @@
           table-header-class="bg-primary text-white" />
       </div>
       <div class="q-pa-md full-width" style="max-width: 900px;">
-        <q-table title=" Needs Development Plan" :rows="developmentPlanRows" :columns="developmentPlanColumns"
+        <q-table title="Needs Development Plan Meeting" :rows="developmentPlanRows" :columns="developmentPlanColumns"
           row-key="id" table-header-class="bg-red-9 text-white" />
       </div>
     </div>
@@ -19,6 +19,7 @@
 <script setup>
 import { doc, where, query, collection, getDocs, getFirestore } from "firebase/firestore";
 
+const firebaseUser = useFirebaseUser()
 const db = getFirestore()
 const acpoCollection = collection(db, 'acpoTracker')
 const mentees = ref([])
@@ -39,8 +40,9 @@ querySnapshot.forEach((doc) => {
 })
 
 const q = query(acpoCollection,
-  where("currentSupport", "==", "High"),
-  where("developmentPlanMeeting", "==", null)
+  where("needDPMeeting", "==", true),
+  // simple compound query
+  where("pped.value", "==", firebaseUser.value.uid)
 )
 const dPMeeting = await getDocs(q);
 dPMeeting.forEach((doc) => {

@@ -1,8 +1,7 @@
 <template>
     <div>
-        <q-input filled class="q-mb-md" hide-bottom-space :model-value="date"
+        <q-input filled clearable hide-bottom-space :label="label" :model-value="date"
             @update:model-value="(value) => emit('update:date', value)">
-
             <template #prepend>
                 <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -27,9 +26,13 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 defineProps({
     date: {
+        required: false,
+        type: String,
+    },
+    label: {
         required: false,
         type: String,
     },

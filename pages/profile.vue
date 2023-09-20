@@ -61,6 +61,15 @@
                                 <q-select filled v-model="profileData.car" :options="options.car" label="Car" lazy-rules
                                     v-if="profileData.status === 'Full-time Regularly Scheduled'"
                                     :rules="[val => !!val || 'Car is required']" />
+                                <q-select filled v-model="profileData.platoon" :options="options.platoon" label="Platoon"
+                                    lazy-rules
+                                    v-if="profileData.status === 'Full-time Regularly Scheduled' || profileData.status === 'Full-time Irregularly Scheduled'"
+                                    :rules="[val => !!val || 'Platoon is required']" />
+                                <q-select filled v-model="profileData.rotation" :options="options.rotation" label="Rotation"
+                                    lazy-rules
+                                    v-if="profileData.status === 'Full-time Regularly Scheduled' || profileData.status === 'Full-time Irregularly Scheduled'"
+                                    :rules="[val => !!val || 'Rotation is required']" />
+
 
                             </q-card-section>
                             <q-separator />
@@ -102,6 +111,8 @@ let profileData = reactive({
     role: "",
     cohort: "",
     car: "",
+    platoon: "",
+    rotation: "",
 })
 
 const options = reactive({
@@ -114,6 +125,8 @@ const options = reactive({
     station: [],
     status: ['Casual', 'Full-time Irregularly Scheduled', 'Full-time Regularly Scheduled'],
     car: [],
+    platoon: ['A', 'B', 'C', 'D'],
+    rotation: ['R1', 'R2', 'R3', 'R4'],
     cohort: [],
     role: ['Mentee', 'Mentor', 'Paramedic Practice Educator', 'Admin']
 })
@@ -254,7 +267,9 @@ const saveprofile = async () => {
             status: profileData.status,
             car: profileData.car,
             role: profileData.role,
-            cohort: profileData.cohort
+            cohort: profileData.cohort,
+            platoon: profileData.platoon,
+            rotation: profileData.rotation,
         }, { merge: true });
         showToast('positive', 'check', 'Profile Saved');
         if (profileData.role === 'Mentee') {
@@ -263,7 +278,7 @@ const saveprofile = async () => {
                 cohort: profileData.cohort,
                 firstName: profileData.firstName,
                 lastName: profileData.lastName,
-            }, { merge: false });
+            }, { merge: true });
             showToast('positive', 'check', 'Mentee Profile Updated');
         }
 

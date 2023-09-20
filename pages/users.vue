@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { doc, where, query, onSnapshot, collection, getFirestore } from "firebase/firestore";
+import { doc, where, query, onSnapshot, getDocs, collection, getFirestore } from "firebase/firestore";
 
 const firebaseUser = useFirebaseUser()
 const db = getFirestore();
@@ -16,14 +16,16 @@ const db = getFirestore();
 const userCollection = collection(db, 'users')
 const users = ref([])
 
-onSnapshot(userCollection, (querySnapshot) => {
-    users.value = querySnapshot.docs.map((doc) => ({
-        name: doc.data().firstName + ' ' + doc.data().lastName,
-        station: doc.data().station,
-        role: doc.data().role,
+const querySnapshot = await getDocs(userCollection);
+querySnapshot.forEach((doc) => {
+    const d = doc.data()
+    users.value.push({
         id: doc.id,
-    }));
-});
+        name: d.firstName + ' ' + d.lastName,
+        station: d.station,
+        role: d.role,
+    })
+})
 
 const columns = [
     { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
@@ -32,8 +34,7 @@ const columns = [
     { name: 'id', label: 'ID - For dev', field: 'id', align: 'right' },
 ];
 
-
-const rows = users
+const rows = users.value
 
 </script>
 

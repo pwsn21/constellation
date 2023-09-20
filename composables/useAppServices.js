@@ -46,3 +46,17 @@ export function fromFirestoreTimestamp(timestamp) {
     }
   }
 
+  export function fromFirestoreSchedule(timestamp) {
+    if (timestamp == null || timestamp == undefined) {
+      return null;
+    } else {
+      const jsDate = timestamp.toDate();
+      const year = jsDate.getFullYear();
+      const month = String(jsDate.getMonth() + 1).padStart(2, '0');
+      const day = String(jsDate.getDate()).padStart(2, '0');
+       
+      const dateString = `${year}/${month}/${day}`;
+  
+      return dateString;
+    }
+  }
