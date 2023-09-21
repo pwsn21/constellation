@@ -29,9 +29,11 @@
                             <DateTimePicker v-if="acpOProfileData.supportLevelMSTwo === 'High'"
                                 label="Development Plan Meeting Date" :date="acpOProfileData.developmentPlanMeeting"
                                 @update:date="updateMeetingDP" />
+
                             <DateTimePicker v-if="acpOProfileData.supportLevelMSTwo === 'High'"
                                 label="Closing Development Plan Meeting Date"
                                 :date="acpOProfileData.closeDevelopmentPlanMeeting" @update:date="updateMeetingCloseDP" />
+
                             <q-toggle v-if="acpOProfileData.supportLevelMSTwo === 'High'" :false-value="2"
                                 :label="`Mentee is in ${acpOProfileData.threePerson} person configuration`" :true-value="3"
                                 color="blue" v-model="acpOProfileData.threePerson" />
@@ -70,7 +72,8 @@
 
                 </div>
                 <div>
-                    <q-btn label="Save" type="submit" color="primary" />
+                    <q-btn class="q-mr-sm" label="Cancel" color="red-5" @click="$emit('change', 'acpoView')" />
+                    <q-btn class="q-mr-sm" label="Save" type="submit" color="primary" />
                 </div>
             </q-form>
         </q-page>
@@ -80,6 +83,8 @@
 
 <script setup>
 import { doc, setDoc, getDoc, query, where, getDocs, collection, updateDoc, getFirestore, Timestamp } from "firebase/firestore";
+
+const emit = defineEmits(["change"])
 
 const firebaseUser = useFirebaseUser()
 const db = getFirestore();
@@ -104,6 +109,7 @@ let acpOProfileData = reactive({
     cohort: data.cohort || null,
     pped: data.pped || null,
     developmentPlanMeeting: data.developmentPlanMeeting || null,
+    closeDevelopmentPlanMeeting: data.closeDevelopmentPlanMeeting || null,
     milestoneMeetingTwo: data.milestoneMeetingTwo || null,
     milestoneMeetingThree: data.milestoneMeetingThree || null,
     milestoneMeetingFour: data.milestoneMeetingFour || null,
@@ -148,9 +154,9 @@ function needDPMeetingChecker() {
         needDPMeeting.value = false
     }
 }
-console.log(needDPMeeting.value)
 
 acpOProfileData.developmentPlanMeeting = fromFirestoreTimestamp(acpOProfileData.developmentPlanMeeting)
+acpOProfileData.closeDevelopmentPlanMeeting = fromFirestoreTimestamp(acpOProfileData.closeDevelopmentPlanMeeting)
 acpOProfileData.milestoneMeetingTwo = fromFirestoreTimestamp(acpOProfileData.milestoneMeetingTwo)
 acpOProfileData.milestoneMeetingThree = fromFirestoreTimestamp(acpOProfileData.milestoneMeetingThree)
 acpOProfileData.milestoneMeetingFour = fromFirestoreTimestamp(acpOProfileData.milestoneMeetingFour)

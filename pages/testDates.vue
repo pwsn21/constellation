@@ -24,11 +24,18 @@
                 </div>
             </template>
             <template #after>
-                <q-tab-panels v-model="selectedDate" animated transition-prev="jump-up" transition-next="jump-up">
-                    <q-tab-panel v-for="tab in shiftData" :key="tab.value" :name="tab.value">
-                        <div class="text-h4 q-mb-md">{{ tab.date }}</div>
-                        <p>{{ tab.label }}</p>
-
+                <q-tab-panels v-model="selectedDate" animated transition="jump-down" transition-next="jump-down">
+                    <q-tab-panel v-for="tab in shiftData" :name="tab.value">
+                        <q-card class="q-mt-lg">
+                            <q-card-section class="bg-primary text-white">
+                                <div class="text-h5">
+                                    {{ tab.date }}
+                                </div>
+                            </q-card-section>
+                            <q-card-section>
+                                <p>{{ tab.label }}</p>
+                            </q-card-section>
+                        </q-card>
                     </q-tab-panel>
                 </q-tab-panels>
             </template>

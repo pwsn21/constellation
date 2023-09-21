@@ -30,9 +30,7 @@
             </div>
           </div>
         </q-form>
-
       </div>
-
     </div>
   </div>
 </template>

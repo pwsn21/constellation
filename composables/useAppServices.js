@@ -64,6 +64,27 @@ export function fromFirestoreTimestamp(timestamp) {
       return dateTimeString;
     }
   }
+  
+  export function fromFirestoreFullDateTime(timestamp) {
+    if (timestamp == null || timestamp == undefined) {
+      return null;
+    } else {
+      const jsDate = timestamp.toDate();
+  
+      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const dayOfWeek = daysOfWeek[jsDate.getDay()];
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];       
+      const monthName = months[jsDate.getMonth()];
+      const year = jsDate.getFullYear();
+      const day = String(jsDate.getDate()).padStart(2, '0');
+      const hours = String(jsDate.getHours()).padStart(2, '0');
+      const minutes = String(jsDate.getMinutes()).padStart(2, '0');
+ 
+      const dateTimeString = `${dayOfWeek} ${monthName} ${day}, ${year} at ${hours}:${minutes}`;
+  
+      return dateTimeString;
+    }
+  }
 
   export function fromFirestoreQDate(timestamp) {
     if (timestamp == null || timestamp == undefined) {

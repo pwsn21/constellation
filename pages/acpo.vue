@@ -6,7 +6,8 @@
       </div>
       <div class="q-pa-md full-width" style="max-width: 900px;">
         <q-table title="Mentees" :rows="menteeRows" :columns="menteeColumns" row-key="id"
-          table-header-class="bg-primary text-white" />
+          table-header-class="bg-primary text-white">
+        </q-table>
       </div>
       <div class="q-pa-md full-width" style="max-width: 900px;">
         <q-table title="Needs Development Plan Meeting" :rows="developmentPlanRows" :columns="developmentPlanColumns"
@@ -56,6 +57,7 @@ dPMeeting.forEach((doc) => {
   })
 })
 
+
 const menteeColumns = [
   { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
   { name: 'cohort', label: 'Cohort', field: 'cohort', sortable: true, },
@@ -63,6 +65,7 @@ const menteeColumns = [
   { name: 'currentSupport', label: 'Support Level', field: 'currentSupport' },
   { name: 'threePerson', label: 'No. on car', field: 'threePerson' },
   { name: 'pped', label: 'Practice Educator', field: 'pped', sortable: true },
+
   // { name: 'id', label: 'id for dev', field: 'id', align: 'right' },
 ];
 const menteeRows = mentees.value
@@ -74,7 +77,5 @@ const developmentPlanColumns = [
   { name: 'pped', label: 'Practice Educator', field: 'pped', sortable: true },
 ];
 const developmentPlanRows = needDPMeeting.value
-
-
 
 </script>
