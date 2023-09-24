@@ -14,6 +14,8 @@
           row-key="id" table-header-class="bg-red-9 text-white" />
       </div>
     </div>
+    <acpoView />
+    <acpoEdit />
   </div>
 </template>
 
@@ -31,12 +33,12 @@ querySnapshot.forEach((doc) => {
   const d = doc.data()
   mentees.value.push({
     id: doc.id,
-    name: d.firstName + ' ' + d.lastName,
-    cohort: d.cohort,
-    threePerson: d.threePerson,
-    currentSupport: d.currentSupport,
-    currentMilestone: d.currentMilestone,
-    pped: d.pped.label,
+    name: d.firstName + ' ' + d.lastName || null,
+    cohort: d.cohort || null,
+    threePerson: d.threePerson || null,
+    currentSupport: d.currentSupport || null,
+    currentMilestone: d.currentMilestone || null,
+    pped: d.pped?.label || null,
   })
 })
 
@@ -66,7 +68,7 @@ const menteeColumns = [
   { name: 'threePerson', label: 'No. on car', field: 'threePerson' },
   { name: 'pped', label: 'Practice Educator', field: 'pped', sortable: true },
 
-  // { name: 'id', label: 'id for dev', field: 'id', align: 'right' },
+  { name: 'id', label: 'id for dev', field: 'id', align: 'right' },
 ];
 const menteeRows = mentees.value
 

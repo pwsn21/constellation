@@ -1,5 +1,5 @@
 <template>
-    <div class="q-pa-md full-width">
+    <div class="q-pa-md row justify-center full-width">
 
         <q-page padding>
             <q-form @submit.prevent="saveprofile" class="q-gutter-md">
@@ -85,7 +85,7 @@
                     </div>
                 </div>
                 <div>
-                    <q-btn class="q-mr-sm" label="Cancel" color="red-5" @click="$emit('change', 'acpoView')" />
+                    <q-btn class="q-mr-sm" label="Cancel" color="red-5" @click="$emit('change', 'profileView')" />
                     <q-btn class="q-mr-sm" label="Save" type="submit" color="primary" />
                 </div>
             </q-form>
