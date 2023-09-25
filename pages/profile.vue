@@ -1,8 +1,7 @@
 <template>
     <div>
         <profileView v-if="profileMode == 'profileView'" @change="onChangeMode" />
-        <!-- <acpoEdit v-if="profileMode == 'acpoEdit'" @change="onChangeMode" /> -->
-        <userEdit v-if="profileMode == 'userEdit'" @change="onChangeMode" />
+        <profileEdit v-if="profileMode == 'profileEdit'" @change="onChangeMode" />
     </div>
 </template>
 
@@ -21,10 +20,8 @@ if (!docSnap.exists()) {
 }
 
 if (needsProfile == true) {
-    profileMode.value = 'userEdit'
+    profileMode.value = 'profileEdit'
 }
-
-console.log(profileMode.value)
 
 const onChangeMode = (mode) => {
     profileMode.value = mode

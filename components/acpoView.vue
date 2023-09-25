@@ -87,11 +87,12 @@ const docACPOProfileRef = doc(db, "acpoTracker", firebaseUser.value.uid + "_" + 
 const docACPOProfileSnap = await getDoc(docACPOProfileRef);
 const acpoProfile = docACPOProfileSnap.data();
 
-acpoProfile.developmentPlanMeeting = fromFirestoreFullDateTime(acpoProfile.developmentPlanMeeting)
-acpoProfile.closeDevelopmentPlanMeeting = fromFirestoreFullDateTime(acpoProfile.closeDevelopmentPlanMeeting)
-acpoProfile.milestoneMeetingTwo = fromFirestoreFullDateTime(acpoProfile.milestoneMeetingTwo)
-acpoProfile.milestoneMeetingThree = fromFirestoreFullDateTime(acpoProfile.milestoneMeetingThree)
-acpoProfile.milestoneMeetingFour = fromFirestoreFullDateTime(acpoProfile.milestoneMeetingFour)
+acpoProfile.developmentPlanMeeting = formatFirestoreTimestamp(acpoProfile.developmentPlanMeeting, 'longtDateTime')
+acpoProfile.closeDevelopmentPlanMeeting = formatFirestoreTimestamp(acpoProfile.closeDevelopmentPlanMeeting, 'longDateTime')
+acpoProfile.milestoneMeetingTwo = formatFirestoreTimestamp(acpoProfile.milestoneMeetingTwo, 'longDateTime')
+acpoProfile.milestoneMeetingThree = formatFirestoreTimestamp(acpoProfile.milestoneMeetingThree, 'longDateTime')
+acpoProfile.milestoneMeetingFour = formatFirestoreTimestamp(acpoProfile.milestoneMeetingFour, 'longDateTime')
+
 
 </script>
 <style scoped></style>

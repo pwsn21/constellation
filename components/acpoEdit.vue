@@ -5,13 +5,13 @@
                 <div class="row">
                     <q-card class="w-full" style="width: 375px;">
                         <q-card-section>
-                            <div class="text-h5 tw-pb-2">{{ acpOProfileData.firstName }} {{ acpOProfileData.lastName }} {{
-                                acpOProfileData.cohort }}
+                            <div class="text-h5 tw-pb-2">{{ acpoProfile.firstName }} {{ acpoProfile.lastName }} {{
+                                acpoProfile.cohort }}
                             </div>
-                            <div>Current Milestone: {{ acpOProfileData.currentMilestone }}</div>
-                            <div>Current Support Level: {{ acpOProfileData.currentSupport }}</div>
+                            <div>Current Milestone: {{ acpoProfile.currentMilestone }}</div>
+                            <div>Current Support Level: {{ acpoProfile.currentSupport }}</div>
                             <q-separator />
-                            <q-select filled v-model="acpOProfileData.pped" label="Assigned Practice Educator"
+                            <q-select filled v-model="acpoProfile.pped" label="Assigned Practice Educator"
                                 :options="options.ppeds" />
                         </q-card-section>
                     </q-card>
@@ -24,20 +24,20 @@
                         </q-card-section>
                         <q-separator inset />
                         <q-card-section>
-                            <q-select filled v-model="acpOProfileData.supportLevelMSTwo" label="Milestone 2 Support Level"
+                            <q-select filled v-model="acpoProfile.supportLevelMSTwo" label="Milestone 2 Support Level"
                                 :options="options.supportLevelHigh" />
-                            <DateTimePicker v-if="acpOProfileData.supportLevelMSTwo === 'High'"
-                                label="Development Plan Meeting Date" :date="acpOProfileData.developmentPlanMeeting"
+                            <DateTimePicker v-if="acpoProfile.supportLevelMSTwo === 'High'"
+                                label="Development Plan Meeting Date" :date="acpoProfile.developmentPlanMeeting"
                                 @update:date="updateMeetingDP" />
 
-                            <DateTimePicker v-if="acpOProfileData.supportLevelMSTwo === 'High'"
+                            <DateTimePicker v-if="acpoProfile.supportLevelMSTwo === 'High'"
                                 label="Closing Development Plan Meeting Date"
-                                :date="acpOProfileData.closeDevelopmentPlanMeeting" @update:date="updateMeetingCloseDP" />
+                                :date="acpoProfile.closeDevelopmentPlanMeeting" @update:date="updateMeetingCloseDP" />
 
-                            <q-toggle v-if="acpOProfileData.supportLevelMSTwo === 'High'" :false-value="2"
-                                :label="`Mentee is in ${acpOProfileData.threePerson} person configuration`" :true-value="3"
-                                color="blue" v-model="acpOProfileData.threePerson" />
-                            <DateTimePicker :date="acpOProfileData.milestoneMeetingTwo" @update:date="updateMeetingTwo"
+                            <q-toggle v-if="acpoProfile.supportLevelMSTwo === 'High'" :false-value="2"
+                                :label="`Mentee is in ${acpoProfile.threePerson} person configuration`" :true-value="3"
+                                color="blue" v-model="acpoProfile.threePerson" />
+                            <DateTimePicker :date="acpoProfile.milestoneMeetingTwo" @update:date="updateMeetingTwo"
                                 label="Milestone 2 Meeting Date" />
                         </q-card-section>
                     </q-card>
@@ -49,9 +49,9 @@
                         </q-card-section>
                         <q-separator inset />
                         <q-card-section>
-                            <q-select filled v-model="acpOProfileData.supportLevelMSThree" label="Milestone 3 Support Level"
+                            <q-select filled v-model="acpoProfile.supportLevelMSThree" label="Milestone 3 Support Level"
                                 :options="options.supportLevel" />
-                            <DateTimePicker :date="acpOProfileData.milestoneMeetingThree" @update:date="updateMeetingThree"
+                            <DateTimePicker :date="acpoProfile.milestoneMeetingThree" @update:date="updateMeetingThree"
                                 label="Milestone 3 Meeting Date" />
                         </q-card-section>
                     </q-card>
@@ -63,16 +63,16 @@
                         </q-card-section>
                         <q-separator inset />
                         <q-card-section>
-                            <q-select filled v-model="acpOProfileData.supportLevelMSFour" label="Milestone 4 Support Level"
+                            <q-select filled v-model="acpoProfile.supportLevelMSFour" label="Milestone 4 Support Level"
                                 :options="options.supportLevel" />
-                            <DateTimePicker :date="acpOProfileData.milestoneMeetingFour" @update:date="updateMeetingFour"
+                            <DateTimePicker :date="acpoProfile.milestoneMeetingFour" @update:date="updateMeetingFour"
                                 label="Milestone 4 Meeting Date" />
                         </q-card-section>
                     </q-card>
 
                 </div>
                 <div>
-                    <q-btn class="q-mr-sm" label="Cancel" color="red-5" @click="$emit('change', 'profileView')" />
+                    <q-btn class="q-mr-sm" label="Cancel" color="red-5" @click="$emit('change', 'acpoView')" />
                     <q-btn class="q-mr-sm" label="Save" type="submit" color="primary" />
                 </div>
             </q-form>
@@ -103,7 +103,7 @@ const options = reactive({
 })
 
 const data = docSnap.data();
-let acpOProfileData = reactive({
+let acpoProfile = reactive({
     firstName: data.firstName || null,
     lastName: data.lastName || null,
     cohort: data.cohort || null,
@@ -121,33 +121,33 @@ let acpOProfileData = reactive({
     threePerson: data.threePerson || 3,
 });
 
-function setCurrentSupport(acpOProfileData) {
-    if (acpOProfileData.supportLevelMSFour !== null) {
-        acpOProfileData.currentSupport = acpOProfileData.supportLevelMSFour
-        acpOProfileData.currentMilestone = 'Milestone 4'
-    } else if (acpOProfileData.supportLevelMSThree !== null) {
-        acpOProfileData.currentSupport = acpOProfileData.supportLevelMSThree;
-        acpOProfileData.currentMilestone = 'Milestone 3'
-        acpOProfileData.threePerson = 2
-    } else if (acpOProfileData.supportLevelMSTwo !== null) {
-        acpOProfileData.currentSupport = acpOProfileData.supportLevelMSTwo;
-        acpOProfileData.currentMilestone = 'Milestone 2'
+function setCurrentSupport(acpoProfile) {
+    if (acpoProfile.supportLevelMSFour !== null) {
+        acpoProfile.currentSupport = acpoProfile.supportLevelMSFour
+        acpoProfile.currentMilestone = 'Milestone 4'
+    } else if (acpoProfile.supportLevelMSThree !== null) {
+        acpoProfile.currentSupport = acpoProfile.supportLevelMSThree;
+        acpoProfile.currentMilestone = 'Milestone 3'
+        acpoProfile.threePerson = 2
+    } else if (acpoProfile.supportLevelMSTwo !== null) {
+        acpoProfile.currentSupport = acpoProfile.supportLevelMSTwo;
+        acpoProfile.currentMilestone = 'Milestone 2'
     } else {
-        acpOProfileData.currentSupport = 'Awaiting CORA';
-        acpOProfileData.currentMilestone = "Milestone 1"
+        acpoProfile.currentSupport = 'Awaiting CORA';
+        acpoProfile.currentMilestone = "Milestone 1"
     }
 }
 
 function threePersonChecker() {
-    if (acpOProfileData.currentSupport != "High") {
-        acpOProfileData.threePerson = 2;
+    if (acpoProfile.currentSupport != "High") {
+        acpoProfile.threePerson = 2;
     }
 };
 
 let needDPMeeting = ref(false)
 
 function needDPMeetingChecker() {
-    if (acpOProfileData.currentSupport === "High" && acpOProfileData.developmentPlanMeeting == null) {
+    if (acpoProfile.currentSupport === "High" && acpoProfile.developmentPlanMeeting == null) {
         needDPMeeting.value = true
     }
     else {
@@ -155,17 +155,17 @@ function needDPMeetingChecker() {
     }
 }
 
-acpOProfileData.developmentPlanMeeting = fromFirestoreTimestamp(acpOProfileData.developmentPlanMeeting)
-acpOProfileData.closeDevelopmentPlanMeeting = fromFirestoreTimestamp(acpOProfileData.closeDevelopmentPlanMeeting)
-acpOProfileData.milestoneMeetingTwo = fromFirestoreTimestamp(acpOProfileData.milestoneMeetingTwo)
-acpOProfileData.milestoneMeetingThree = fromFirestoreTimestamp(acpOProfileData.milestoneMeetingThree)
-acpOProfileData.milestoneMeetingFour = fromFirestoreTimestamp(acpOProfileData.milestoneMeetingFour)
+acpoProfile.developmentPlanMeeting = formatFirestoreTimestamp(acpoProfile.developmentPlanMeeting, 'shortDateTime')
+acpoProfile.closeDevelopmentPlanMeeting = formatFirestoreTimestamp(acpoProfile.closeDevelopmentPlanMeeting, 'shortDateTime')
+acpoProfile.milestoneMeetingTwo = formatFirestoreTimestamp(acpoProfile.milestoneMeetingTwo, 'shortDateTime')
+acpoProfile.milestoneMeetingThree = formatFirestoreTimestamp(acpoProfile.milestoneMeetingThree, 'shortDateTime')
+acpoProfile.milestoneMeetingFour = formatFirestoreTimestamp(acpoProfile.milestoneMeetingFour, 'shortDateTime')
 
-const updateMeetingDP = (newDate) => { acpOProfileData.developmentPlanMeeting = newDate; };
-const updateMeetingCloseDP = (newDate) => { acpOProfileData.closeDevelopmentPlanMeeting = newDate; };
-const updateMeetingTwo = (newDate) => { acpOProfileData.milestoneMeetingTwo = newDate; };
-const updateMeetingThree = (newDate) => { acpOProfileData.milestoneMeetingThree = newDate; };
-const updateMeetingFour = (newDate) => { acpOProfileData.milestoneMeetingFour = newDate; };
+const updateMeetingDP = (newDate) => { acpoProfile.developmentPlanMeeting = newDate; };
+const updateMeetingCloseDP = (newDate) => { acpoProfile.closeDevelopmentPlanMeeting = newDate; };
+const updateMeetingTwo = (newDate) => { acpoProfile.milestoneMeetingTwo = newDate; };
+const updateMeetingThree = (newDate) => { acpoProfile.milestoneMeetingThree = newDate; };
+const updateMeetingFour = (newDate) => { acpoProfile.milestoneMeetingFour = newDate; };
 
 const userCollection = collection(db, 'users');
 const queryPPEd = query(userCollection, where("role", "==", "Paramedic Practice Educator"));
@@ -185,30 +185,30 @@ const { showToast } = useNotification();
 
 const saveAcpOProfile = async () => {
     try {
-        const dPMeeting = await toFirestoreTimestamp(acpOProfileData.developmentPlanMeeting)
-        const cDPMeeting = await toFirestoreTimestamp(acpOProfileData.closeDevelopmentPlanMeeting)
-        const msMeetingTwo = await toFirestoreTimestamp(acpOProfileData.milestoneMeetingTwo)
-        const msMeetingThree = await toFirestoreTimestamp(acpOProfileData.milestoneMeetingThree)
-        const msMeetingFour = await toFirestoreTimestamp(acpOProfileData.milestoneMeetingFour)
-        setCurrentSupport(acpOProfileData)
+        const dPMeeting = await toFirestoreTimestamp(acpoProfile.developmentPlanMeeting)
+        const cDPMeeting = await toFirestoreTimestamp(acpoProfile.closeDevelopmentPlanMeeting)
+        const msMeetingTwo = await toFirestoreTimestamp(acpoProfile.milestoneMeetingTwo)
+        const msMeetingThree = await toFirestoreTimestamp(acpoProfile.milestoneMeetingThree)
+        const msMeetingFour = await toFirestoreTimestamp(acpoProfile.milestoneMeetingFour)
+        setCurrentSupport(acpoProfile)
         threePersonChecker()
         needDPMeetingChecker()
         await setDoc(doc(db, "acpoTracker", firebaseUser.value.uid + "_" + up.cohort),
-            // acpOProfileData
+            // acpoProfile
             {
-                pped: acpOProfileData.pped,
+                pped: acpoProfile.pped,
                 developmentPlanMeeting: dPMeeting,
                 needDPMeeting: needDPMeeting.value,
                 closeDevelopmentPlanMeeting: cDPMeeting,
                 milestoneMeetingTwo: msMeetingTwo,
                 milestoneMeetingThree: msMeetingThree,
                 milestoneMeetingFour: msMeetingFour,
-                currentMilestone: acpOProfileData.currentMilestone,
-                currentSupport: acpOProfileData.currentSupport,
-                supportLevelMSTwo: acpOProfileData.supportLevelMSTwo,
-                supportLevelMSThree: acpOProfileData.supportLevelMSThree,
-                supportLevelMSFour: acpOProfileData.supportLevelMSFour,
-                threePerson: acpOProfileData.threePerson,
+                currentMilestone: acpoProfile.currentMilestone,
+                currentSupport: acpoProfile.currentSupport,
+                supportLevelMSTwo: acpoProfile.supportLevelMSTwo,
+                supportLevelMSThree: acpoProfile.supportLevelMSThree,
+                supportLevelMSFour: acpoProfile.supportLevelMSFour,
+                threePerson: acpoProfile.threePerson,
             }
             , { merge: true });
         showToast('positive', 'check', 'Saved');

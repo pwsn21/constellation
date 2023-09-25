@@ -7,7 +7,7 @@
                         Employee Profile: {{ userProfile.firstName }} {{
                             userProfile.lastName }}
                     </div>
-                    <div><q-btn icon="edit" flat @click="$emit('change', 'userEdit')" /></div>
+                    <div><q-btn icon="edit" flat @click="$emit('change', 'profileEdit')" /></div>
                 </div>
             </q-card-section>
             <q-separator />
