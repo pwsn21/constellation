@@ -7,7 +7,7 @@
                         Employee Profile: {{ userProfile.firstName }} {{
                             userProfile.lastName }}
                     </div>
-                    <div><q-btn icon="edit" flat @click="$emit('change', 'profileEdit')" /></div>
+                    <div><q-btn icon="edit" flat @click="$emit('profileMode', 'profileEdit')" /></div>
                 </div>
             </q-card-section>
             <q-separator />
@@ -55,7 +55,7 @@
 <script setup>
 import { doc, getDoc, getFirestore, } from "firebase/firestore";
 
-const emit = defineEmits(["change"])
+const emit = defineEmits(["profileMode"])
 
 const firebaseUser = useFirebaseUser()
 const db = getFirestore();

@@ -27,19 +27,11 @@
 </template>
 
 <script setup>
-defineProps({
-    date: {
-        required: false,
-        type: String,
-    },
-    label: {
-        required: false,
-        type: String,
-    },
-});
+const props = defineProps(['date', 'label']);
+
 const emit = defineEmits(['update:date']);
 
-const datetimemask = "ddd MM-DD-YYYY HH:mm"
+const datetimemask = "ddd, MM/DD/YYYY, HH:mm"
 </script>
 
 <style scoped></style>

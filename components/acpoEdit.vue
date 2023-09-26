@@ -37,7 +37,7 @@
                             <q-toggle v-if="acpoProfile.supportLevelMSTwo === 'High'" :false-value="2"
                                 :label="`Mentee is in ${acpoProfile.threePerson} person configuration`" :true-value="3"
                                 color="blue" v-model="acpoProfile.threePerson" />
-                            <DateTimePicker :date="acpoProfile.milestoneMeetingTwo" @update:date="updateMeetingTwo"
+                            <dateTimePicker :date="acpoProfile.milestoneMeetingTwo" @update:date="updateMeetingTwo"
                                 label="Milestone 2 Meeting Date" />
                         </q-card-section>
                     </q-card>
@@ -72,7 +72,7 @@
 
                 </div>
                 <div>
-                    <q-btn class="q-mr-sm" label="Cancel" color="red-5" @click="$emit('change', 'acpoView')" />
+
                     <q-btn class="q-mr-sm" label="Save" type="submit" color="primary" />
                 </div>
             </q-form>
@@ -83,8 +83,6 @@
 
 <script setup>
 import { doc, setDoc, getDoc, query, where, getDocs, collection, updateDoc, getFirestore, Timestamp } from "firebase/firestore";
-
-const emit = defineEmits(["change"])
 
 const firebaseUser = useFirebaseUser()
 const db = getFirestore();
@@ -102,17 +100,27 @@ const options = reactive({
     supportLevel: ['Medium', 'Low'],
 })
 
+const dateTimeMask = {
+    weekday: 'short',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+}
+
 const data = docSnap.data();
 let acpoProfile = reactive({
     firstName: data.firstName || null,
     lastName: data.lastName || null,
     cohort: data.cohort || null,
     pped: data.pped || null,
-    developmentPlanMeeting: data.developmentPlanMeeting || null,
-    closeDevelopmentPlanMeeting: data.closeDevelopmentPlanMeeting || null,
-    milestoneMeetingTwo: data.milestoneMeetingTwo || null,
-    milestoneMeetingThree: data.milestoneMeetingThree || null,
-    milestoneMeetingFour: data.milestoneMeetingFour || null,
+    developmentPlanMeeting: data.developmentPlanMeeting ? data.developmentPlanMeeting.toDate().toLocaleString('en-US', dateTimeMask) : null,
+    closeDevelopmentPlanMeeting: data.closeDevelopmentPlanMeeting ? data.closeDevelopmentPlanMeeting.toDate().toLocaleString('en-US', dateTimeMask) : null,
+    milestoneMeetingTwo: data.milestoneMeetingTwo ? data.milestoneMeetingTwo.toDate().toLocaleString('en-US', dateTimeMask) : null,
+    milestoneMeetingThree: data.milestoneMeetingThree ? data.milestoneMeetingThree.toDate().toLocaleString('en-US', dateTimeMask) : null,
+    milestoneMeetingFour: data.milestoneMeetingFour ? data.milestoneMeetingFour.toDate().toLocaleString('en-US', dateTimeMask) : null,
     supportLevelMSTwo: data.supportLevelMSTwo || null,
     supportLevelMSThree: data.supportLevelMSThree || null,
     supportLevelMSFour: data.supportLevelMSFour || null,
@@ -155,12 +163,6 @@ function needDPMeetingChecker() {
     }
 }
 
-acpoProfile.developmentPlanMeeting = formatFirestoreTimestamp(acpoProfile.developmentPlanMeeting, 'shortDateTime')
-acpoProfile.closeDevelopmentPlanMeeting = formatFirestoreTimestamp(acpoProfile.closeDevelopmentPlanMeeting, 'shortDateTime')
-acpoProfile.milestoneMeetingTwo = formatFirestoreTimestamp(acpoProfile.milestoneMeetingTwo, 'shortDateTime')
-acpoProfile.milestoneMeetingThree = formatFirestoreTimestamp(acpoProfile.milestoneMeetingThree, 'shortDateTime')
-acpoProfile.milestoneMeetingFour = formatFirestoreTimestamp(acpoProfile.milestoneMeetingFour, 'shortDateTime')
-
 const updateMeetingDP = (newDate) => { acpoProfile.developmentPlanMeeting = newDate; };
 const updateMeetingCloseDP = (newDate) => { acpoProfile.closeDevelopmentPlanMeeting = newDate; };
 const updateMeetingTwo = (newDate) => { acpoProfile.milestoneMeetingTwo = newDate; };
@@ -185,11 +187,6 @@ const { showToast } = useNotification();
 
 const saveAcpOProfile = async () => {
     try {
-        const dPMeeting = await toFirestoreTimestamp(acpoProfile.developmentPlanMeeting)
-        const cDPMeeting = await toFirestoreTimestamp(acpoProfile.closeDevelopmentPlanMeeting)
-        const msMeetingTwo = await toFirestoreTimestamp(acpoProfile.milestoneMeetingTwo)
-        const msMeetingThree = await toFirestoreTimestamp(acpoProfile.milestoneMeetingThree)
-        const msMeetingFour = await toFirestoreTimestamp(acpoProfile.milestoneMeetingFour)
         setCurrentSupport(acpoProfile)
         threePersonChecker()
         needDPMeetingChecker()
@@ -197,12 +194,12 @@ const saveAcpOProfile = async () => {
             // acpoProfile
             {
                 pped: acpoProfile.pped,
-                developmentPlanMeeting: dPMeeting,
                 needDPMeeting: needDPMeeting.value,
-                closeDevelopmentPlanMeeting: cDPMeeting,
-                milestoneMeetingTwo: msMeetingTwo,
-                milestoneMeetingThree: msMeetingThree,
-                milestoneMeetingFour: msMeetingFour,
+                closeDevelopmentPlanMeeting: acpoProfile.closeDevelopmentPlanMeeting ? new Date(acpoProfile.closeDevelopmentPlanMeeting) : null,
+                developmentPlanMeeting: acpoProfile.developmentPlanMeeting ? new Date(acpoProfile.developmentPlanMeeting) : null,
+                milestoneMeetingTwo: acpoProfile.milestoneMeetingTwo ? new Date(acpoProfile.milestoneMeetingTwo) : null,
+                milestoneMeetingThree: acpoProfile.milestoneMeetingThree ? new Date(acpoProfile.milestoneMeetingThree) : null,
+                milestoneMeetingFour: acpoProfile.milestoneMeetingFour ? new Date(acpoProfile.milestoneMeetingFour) : null,
                 currentMilestone: acpoProfile.currentMilestone,
                 currentSupport: acpoProfile.currentSupport,
                 supportLevelMSTwo: acpoProfile.supportLevelMSTwo,

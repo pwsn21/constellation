@@ -13,7 +13,7 @@
         </div>
         <pre>
 
-            {{ selectedMenteeID }}
+           TABLE: {{ selectedMenteeID }}
         </pre>
     </div>
 </template>
@@ -21,11 +21,11 @@
 <script setup>
 import { doc, where, query, collection, getDocs, getFirestore } from "firebase/firestore";
 
-const firebaseUser = useFirebaseUser()
+const emit = defineEmits(["selectedMentee"])
+
 const db = getFirestore()
 const acpoCollection = collection(db, 'acpoTracker')
 const mentees = ref([])
-const needDPMeeting = ref([])
 
 const querySnapshot = await getDocs(acpoCollection);
 querySnapshot.forEach((doc) => {
@@ -44,8 +44,8 @@ querySnapshot.forEach((doc) => {
 const selectedMenteeID = ref()
 
 const menteeSelection = (event, row) => {
-    selectedMenteeID.value = row.id;
-
+    selectedMenteeID.value = row.id
+    emit("selectedMentee", row.id, "acpoView")
 };
 
 const menteeColumns = [

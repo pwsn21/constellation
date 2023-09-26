@@ -1,7 +1,7 @@
 <template>
     <div>
-        <profileView v-if="profileMode == 'profileView'" @change="onChangeMode" />
-        <profileEdit v-if="profileMode == 'profileEdit'" @change="onChangeMode" />
+        <profileView v-if="profileMode == 'profileView'" @profileMode="onProfileMode" />
+        <profileEdit v-if="profileMode == 'profileEdit'" @profileMode="onProfileMode" />
     </div>
 </template>
 
@@ -23,7 +23,7 @@ if (needsProfile == true) {
     profileMode.value = 'profileEdit'
 }
 
-const onChangeMode = (mode) => {
+const onProfileMode = (mode) => {
     profileMode.value = mode
 }
 

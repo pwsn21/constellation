@@ -85,7 +85,7 @@
                     </div>
                 </div>
                 <div>
-                    <q-btn class="q-mr-sm" label="Cancel" color="red-5" @click="$emit('change', 'profileView')" />
+                    <q-btn class="q-mr-sm" label="Cancel" color="red-5" @click="$emit('profileMode', 'profileView')" />
                     <q-btn class="q-mr-sm" label="Save" type="submit" color="primary" />
                 </div>
             </q-form>
@@ -98,7 +98,7 @@
 import { doc, setDoc, getDoc, getDocs, collection, getFirestore } from "firebase/firestore";
 import { Country, State, City } from 'country-state-city';
 
-const emit = defineEmits(["change"])
+const emit = defineEmits(["profileMode"])
 
 let profileData = reactive({
     firstName: "",
@@ -141,25 +141,7 @@ const docSnap = await getDoc(docRef);
 
 // Profile Check
 if (docSnap.exists()) {
-
-
     profileData = reactive(docSnap.data())
-
-    // profileData = reactive({
-    //     firstName: docSnap.data().firstName,
-    //     lastName: docSnap.data().lastName,
-    //     phoneNumber: docSnap.data().phoneNumber,
-    //     address: docSnap.data().address,
-    //     city: docSnap.data().city,
-    //     state: docSnap.data().state,
-    //     country: docSnap.data().country,
-    //     employeeNumber: docSnap.data().employeeNumber,
-    //     station: docSnap.data().station,
-    //     status: docSnap.data().status,
-    //     car: docSnap.data().car,
-    //     role: docSnap.data().role,
-    //     cohort: docSnap.data().cohort,
-    // })
 }
 
 const countrySelected = async () => {

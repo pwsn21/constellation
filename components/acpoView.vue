@@ -1,14 +1,15 @@
 <template>
     <div class="q-pa-md full-width">
+        {{ selectedMenteeID }}
         <q-card class="q-mt-md">
             <q-card-section>
                 <div class="row justify-between">
                     <div class="text-h4">
-                        ACP-Orientation Profile: {{ userProfile.firstName }} {{
-                            userProfile.lastName }} ({{ acpoProfile.cohort }})
+                        ACP-Orientation Profile: {{ acpoProfile.firstName }} {{
+                            acpoProfile.lastName }} ({{ acpoProfile.cohort }})
                     </div>
 
-                    <div><q-btn icon="edit" flat @click="$emit('change', 'acpoEdit')" /></div>
+                    <div><q-btn icon="edit" flat @click="" /></div>
 
                 </div>
             </q-card-section>
@@ -74,24 +75,29 @@
 <script setup>
 import { doc, getDoc, getFirestore, } from "firebase/firestore";
 
-const emit = defineEmits(["change"])
+const uid = ref('')
+
+let { selectedMenteeID } = defineProps(['selectedMenteeID']);
+console.log(selectedMenteeID)
+
+
 
 const firebaseUser = useFirebaseUser()
 const db = getFirestore();
 
-const docProfileRef = doc(db, "users", firebaseUser.value.uid);
-const docProfileSnap = await getDoc(docProfileRef);
-const userProfile = docProfileSnap.data()
+// const docProfileRef = doc(db, "users", firebaseUser.value.uid);
+// const docProfileSnap = await getDoc(docProfileRef);
+// const userProfile = docProfileSnap.data()
 
-const docACPOProfileRef = doc(db, "acpoTracker", firebaseUser.value.uid + "_" + userProfile.cohort);
+const docACPOProfileRef = doc(db, "acpoTracker", 'O9ySQiiCCLRtOKv1MTKVb4FOEUF2_2023-3');
 const docACPOProfileSnap = await getDoc(docACPOProfileRef);
 const acpoProfile = docACPOProfileSnap.data();
 
-acpoProfile.developmentPlanMeeting = formatFirestoreTimestamp(acpoProfile.developmentPlanMeeting, 'longtDateTime')
-acpoProfile.closeDevelopmentPlanMeeting = formatFirestoreTimestamp(acpoProfile.closeDevelopmentPlanMeeting, 'longDateTime')
-acpoProfile.milestoneMeetingTwo = formatFirestoreTimestamp(acpoProfile.milestoneMeetingTwo, 'longDateTime')
-acpoProfile.milestoneMeetingThree = formatFirestoreTimestamp(acpoProfile.milestoneMeetingThree, 'longDateTime')
-acpoProfile.milestoneMeetingFour = formatFirestoreTimestamp(acpoProfile.milestoneMeetingFour, 'longDateTime')
+// acpoProfile.developmentPlanMeeting = formatFirestoreTimestamp(acpoProfile.developmentPlanMeeting, 'longtDateTime')
+// acpoProfile.closeDevelopmentPlanMeeting = formatFirestoreTimestamp(acpoProfile.closeDevelopmentPlanMeeting, 'longDateTime')
+// acpoProfile.milestoneMeetingTwo = formatFirestoreTimestamp(acpoProfile.milestoneMeetingTwo, 'longDateTime')
+// acpoProfile.milestoneMeetingThree = formatFirestoreTimestamp(acpoProfile.milestoneMeetingThree, 'longDateTime')
+// acpoProfile.milestoneMeetingFour = formatFirestoreTimestamp(acpoProfile.milestoneMeetingFour, 'longDateTime')
 
 
 </script>
