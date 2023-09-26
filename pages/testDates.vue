@@ -61,13 +61,13 @@ const querySnapshot = await getDocs(collection(db, "schedules"));
 querySnapshot.forEach((doc) => {
     const d = doc.data()
     calendarDates.value.push(
-        d.shiftDate = fromFirestoreQDate(d.shiftDate)
+        d.shiftDate = formatFirestoreTimestamp(d.shiftDate, 'qDate')
     )
     shiftData.value.push({
         id: doc.id,
         value: d.shiftDate,
         label: d.shiftCar,
-        date: fromFirestoreFullDate(d.dDate)
+        date: formatFirestoreTimestamp(d.dDate, 'longDateTime')
     }
     )
 });
@@ -85,13 +85,11 @@ const { showToast } = useNotification();
 
 const saveDate = async () => {
     try {
-        const sD = await toFirestoreTimestamp(shiftDate.value)
-        const dDate = await toFirestoreTimestamp(shiftDate.value)
 
         await addDoc(collection(db, "schedules"), {
-            shiftDate: sD,
+            shiftDate: new Date(shiftDate.value) || null,
             shiftCar: car.value,
-            dDate: dDate
+            dDate: new Date(shiftDate.value) || null,
         });
         showToast('positive', 'check', 'Date Added');
     }

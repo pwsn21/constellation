@@ -1,6 +1,6 @@
 <template>
     <div class="q-pa-md full-width">
-        {{ selectedMenteeID }}
+
         <q-card class="q-mt-md">
             <q-card-section>
                 <div class="row justify-between">
@@ -8,9 +8,7 @@
                         ACP-Orientation Profile: {{ acpoProfile.firstName }} {{
                             acpoProfile.lastName }} ({{ acpoProfile.cohort }})
                     </div>
-
-                    <div><q-btn icon="edit" flat @click="" /></div>
-
+                    <div><q-btn icon="edit" flat @click="$emit('acpoMode', mID.selectedMenteeID, 'acpoEdit')" /></div>
                 </div>
             </q-card-section>
             <q-list dense>
@@ -74,31 +72,26 @@
 
 <script setup>
 import { doc, getDoc, getFirestore, } from "firebase/firestore";
-
-const uid = ref('')
-
-let { selectedMenteeID } = defineProps(['selectedMenteeID']);
-console.log(selectedMenteeID)
-
-
-
-const firebaseUser = useFirebaseUser()
 const db = getFirestore();
 
-// const docProfileRef = doc(db, "users", firebaseUser.value.uid);
-// const docProfileSnap = await getDoc(docProfileRef);
-// const userProfile = docProfileSnap.data()
+const emit = defineEmits(["acpoMode"])
+const mID = defineProps(['selectedMenteeID'])
 
-const docACPOProfileRef = doc(db, "acpoTracker", 'O9ySQiiCCLRtOKv1MTKVb4FOEUF2_2023-3');
-const docACPOProfileSnap = await getDoc(docACPOProfileRef);
-const acpoProfile = docACPOProfileSnap.data();
+let docACPOProfileRef = ref('')
+let docACPOProfileSnap = ref('')
+let acpoProfile = ref('')
 
-// acpoProfile.developmentPlanMeeting = formatFirestoreTimestamp(acpoProfile.developmentPlanMeeting, 'longtDateTime')
-// acpoProfile.closeDevelopmentPlanMeeting = formatFirestoreTimestamp(acpoProfile.closeDevelopmentPlanMeeting, 'longDateTime')
-// acpoProfile.milestoneMeetingTwo = formatFirestoreTimestamp(acpoProfile.milestoneMeetingTwo, 'longDateTime')
-// acpoProfile.milestoneMeetingThree = formatFirestoreTimestamp(acpoProfile.milestoneMeetingThree, 'longDateTime')
-// acpoProfile.milestoneMeetingFour = formatFirestoreTimestamp(acpoProfile.milestoneMeetingFour, 'longDateTime')
+watchEffect(async () => {
+    docACPOProfileRef = doc(db, "acpoTracker", mID.selectedMenteeID);
+    try {
+        docACPOProfileSnap = await getDoc(docACPOProfileRef);
+        acpoProfile.value = docACPOProfileSnap.data();
 
+    } catch (error) {
+        console.error(error)
+    }
+})
 
+// 'O9ySQiiCCLRtOKv1MTKVb4FOEUF2_2023-3'
 </script>
 <style scoped></style>

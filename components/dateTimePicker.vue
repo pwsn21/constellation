@@ -16,7 +16,7 @@
                 <q-icon name="access_time" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
                         <q-time :model-value="date" @update:model-value="(value) => emit('update:date', value)"
-                            :mask="datetimemask" format24h>
+                            :mask="datetimemask" now-btn format24h>
                             <q-btn v-close-popup flat label="close" />
                         </q-time>
                     </q-popup-proxy>

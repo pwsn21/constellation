@@ -11,10 +11,7 @@
 
             </div>
         </div>
-        <pre>
 
-           TABLE: {{ selectedMenteeID }}
-        </pre>
     </div>
 </template>
   
@@ -44,7 +41,7 @@ querySnapshot.forEach((doc) => {
 const selectedMenteeID = ref()
 
 const menteeSelection = (event, row) => {
-    selectedMenteeID.value = row.id
+    // selectedMenteeID.value = row.id
     emit("selectedMentee", row.id, "acpoView")
 };
 

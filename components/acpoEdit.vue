@@ -43,7 +43,8 @@
                     </q-card>
 
                     <!-- Milestone Three -->
-                    <q-card class="q-mt-sm q-mr-sm w-full" style="width: 375px;">
+                    <q-card v-if="acpoProfile.milestoneMeetingTwo !== null" class="q-mt-sm q-mr-sm w-full"
+                        style="width: 375px;">
                         <q-card-section>
                             <div class="text-h6 q-pbt-sm">Milestone 3</div>
                         </q-card-section>
@@ -57,7 +58,8 @@
                     </q-card>
 
                     <!-- Milestone Four -->
-                    <q-card class="q-mt-sm q-mr-sm w-full" style="width: 375px;">
+                    <q-card v-if="acpoProfile.milestoneMeetingThree !== null" class="q-mt-sm q-mr-sm w-full"
+                        style="width: 375px;">
                         <q-card-section>
                             <div class="text-h6 q-pbt-sm">Milestone 4</div>
                         </q-card-section>
@@ -91,7 +93,9 @@ const docProfileRef = doc(db, "users", firebaseUser.value.uid);
 const docProfileSnap = await getDoc(docProfileRef);
 const up = docProfileSnap.data()
 
-const docRef = doc(db, "acpoTracker", firebaseUser.value.uid + "_" + up.cohort);
+const mID = defineProps(['selectedMenteeID'])
+
+const docRef = doc(db, "acpoTracker", mID.selectedMenteeID);
 const docSnap = await getDoc(docRef);
 
 const options = reactive({
@@ -147,9 +151,10 @@ function setCurrentSupport(acpoProfile) {
 }
 
 function threePersonChecker() {
-    if (acpoProfile.currentSupport != "High") {
+    if (acpoProfile.currentSupport != "High" || acpoProfile.closeDevelopmentPlanMeeting != null) {
         acpoProfile.threePerson = 2;
     }
+
 };
 
 let needDPMeeting = ref(false)
@@ -190,7 +195,7 @@ const saveAcpOProfile = async () => {
         setCurrentSupport(acpoProfile)
         threePersonChecker()
         needDPMeetingChecker()
-        await setDoc(doc(db, "acpoTracker", firebaseUser.value.uid + "_" + up.cohort),
+        await setDoc(doc(db, "acpoTracker", mID.selectedMenteeID),
             // acpoProfile
             {
                 pped: acpoProfile.pped,
