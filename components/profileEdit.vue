@@ -1,6 +1,5 @@
 <template>
     <div class="q-pa-md row justify-center full-width">
-
         <q-page padding>
             <q-form @submit.prevent="saveprofile" class="q-gutter-md">
                 <div class="row">
@@ -12,8 +11,6 @@
                                     val => (isValidFirstName(val).valid) || (isValidFirstName(val).message),]" />
                                 <q-input filled dense v-model="profileData.lastName" label="Last Name" lazy-rules :rules="[
                                     val => (isValidLastName(val).valid) || (isValidLastName(val).message),]" />
-
-
                                 <q-input filled dense type="tel" mask="(###) ### - ####" hint="(###) ### - ####"
                                     v-model="profileData.phoneNumber" label="Phone Number" lazy-rules
                                     :rules="[val => (isValidPhone(val).valid) || (isValidPhone(val).message),]" />
@@ -50,7 +47,6 @@
                                     label="Employee Number" lazy-rules
                                     :rules="[val => (isValidEmployeeNumber(val).valid) || (isValidEmployeeNumber(val).message),]" />
 
-
                                 <q-select filled dense v-model="profileData.station" :options="options.station"
                                     label="Station" emit-value lazy-rules :rules="[val => !!val || 'Station is required']"
                                     @update:model-value="stationSelected" />
@@ -69,14 +65,11 @@
                                     label="Rotation" lazy-rules
                                     v-if="profileData.status === 'Full-time Regularly Scheduled' || profileData.status === 'Full-time Irregularly Scheduled'"
                                     :rules="[val => !!val || 'Rotation is required']" />
-
-
                             </q-card-section>
                             <q-separator />
                             <q-card-section>
                                 <q-select filled dense v-model="profileData.role" :options="options.role" label="Role"
                                     lazy-rules :rules="[val => !!val || 'Role is required']" />
-
                                 <q-select filled dense v-model="profileData.cohort" :options="options.cohort" label="Cohort"
                                     v-if="profileData.role === 'Mentee'" lazy-rules
                                     :rules="[val => !!val || 'Cohort is required']" />
@@ -239,23 +232,7 @@ const { showToast } = useNotification();
 // Save Profile Function
 const saveprofile = async () => {
     try {
-        await setDoc(doc(db, "users", firebaseUser.value.uid), {
-            firstName: profileData.firstName,
-            lastName: profileData.lastName,
-            phoneNumber: profileData.phoneNumber,
-            address: profileData.address,
-            city: profileData.city,
-            state: profileData.state,
-            country: profileData.country,
-            employeeNumber: profileData.employeeNumber,
-            station: profileData.station,
-            status: profileData.status,
-            car: profileData.car,
-            role: profileData.role,
-            cohort: profileData.cohort,
-            platoon: profileData.platoon,
-            rotation: profileData.rotation,
-        }, { merge: true });
+        await setDoc(doc(db, "users", firebaseUser.value.uid), profileData, { merge: true });
         showToast('positive', 'check', 'Profile Saved');
         if (profileData.role === 'Mentee') {
             await setDoc(doc(db, "acpoTracker", firebaseUser.value.uid + "_" + profileData.cohort), {

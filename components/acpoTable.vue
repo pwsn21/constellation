@@ -1,12 +1,15 @@
 <template>
-    <div class="flex justify-center">
+    <div class="full-width">
         <div>
             <div class="flex justify-center">
                 <h2 class="text-h4 center q-pa-md">ACP-Orientation</h2>
             </div>
-            <div class="q-pa-md full-width" style="max-width: 900px;">
-                <q-table title="Mentees" :rows="menteeRows" :columns="menteeColumns" row-key="id"
-                    table-header-class="bg-primary text-white" @row-click="menteeSelection">
+            <div class="q-my-sm" style=" max-width: 250px">
+                <q-input v-model="filterText" class="bg-grey-4" dense filled label="Filter..." clearable />
+            </div>
+            <div>
+                <q-table title="Mentees" :rows="filteredMentees" :columns="menteeColumns" row-key="id" title-class="text-h4"
+                    table-header-class="bg-red-9 text-white" @row-click="menteeSelection">
                 </q-table>
 
             </div>
@@ -16,7 +19,7 @@
 </template>
   
 <script setup>
-import { doc, where, query, collection, getDocs, getFirestore } from "firebase/firestore";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
 
 const emit = defineEmits(["selectedMentee"])
 
@@ -38,10 +41,7 @@ querySnapshot.forEach((doc) => {
     })
 })
 
-const selectedMenteeID = ref()
-
 const menteeSelection = (event, row) => {
-    // selectedMenteeID.value = row.id
     emit("selectedMentee", row.id, "acpoView")
 };
 
@@ -53,7 +53,20 @@ const menteeColumns = [
     { name: 'threePerson', label: 'No. on car', field: 'threePerson' },
     { name: 'pped', label: 'Practice Educator', field: 'pped', sortable: true },
 ];
-const menteeRows = mentees.value
+
+const filterText = ref('')
+const filteredMentees = computed(() => {
+    const searchText = filterText.value ? filterText.value.toLowerCase().trim() : ''
+    return mentees.value.filter((mentee) => {
+        return (
+            mentee.name.toLowerCase().includes(searchText) ||
+            mentee.cohort.toString().includes(searchText) ||
+            mentee.currentMilestone.toLowerCase().includes(searchText) ||
+            mentee.currentSupport.toLowerCase().includes(searchText) ||
+            mentee.pped.toLowerCase().includes(searchText)
+        );
+    });
+});
 
 </script>
   

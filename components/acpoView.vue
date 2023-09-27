@@ -1,20 +1,27 @@
 <template>
-    <div class="q-pa-md full-width">
+    <div class="full-width">
 
         <q-card class="q-mt-md">
             <q-card-section>
                 <div class="row justify-between">
                     <div class="text-h4">
-                        ACP-Orientation Profile: {{ acpoProfile.firstName }} {{
+                        Mentee Profile: {{ acpoProfile.firstName }} {{
                             acpoProfile.lastName }} ({{ acpoProfile.cohort }})
                     </div>
-                    <div><q-btn icon="edit" flat @click="$emit('acpoMode', mID.selectedMenteeID, 'acpoEdit')" /></div>
+                    <div>
+                        <q-btn icon="edit" round flat @click="$emit('acpoMode', mID.selectedMenteeID, 'acpoEdit')" />
+                        <q-btn icon="close" round flat @click="$emit('acpoMode', '', '')" />
+                    </div>
                 </div>
             </q-card-section>
-            <q-list dense>
-                <q-item>
-                    <div class="text-h6"> Currently in {{ acpoProfile.currentMilestone }} - {{ acpoProfile.currentSupport }}
+            <q-list class="bg-grey-3" dense>
+                <q-item class="row justify-between items-center">
+                    <div class="text-h6"> Currently in {{ acpoProfile.currentMilestone }} - {{
+                        acpoProfile.currentSupport }}
                         Support </div>
+                    <div v-if="acpoProfile.needDPMeeting === true" class="text-subtitle1 text-red-5">Needs Development Plan
+                        Meeting
+                    </div>
                 </q-item>
             </q-list>
             <q-separator />
@@ -26,12 +33,10 @@
                         Support Level: {{ acpoProfile.supportLevelMSTwo }}
                     </q-item>
                     <q-item>
-                        Development Plan Meeting: {{ acpoProfile.developmentPlanMeeting ? acpoProfile.developmentPlanMeeting
-                            : 'N/A' }}
+                        Development Plan Meeting: {{ acpoProfile.developmentPlanMeeting }}
                     </q-item>
                     <q-item>
-                        Close Development Plan Meeting: {{ acpoProfile.closeDevelopmentPlanMeeting ?
-                            acpoProfile.developmentPlanMeeting : 'N/A' }}
+                        Close Development Plan Meeting: {{ acpoProfile.closeDevelopmentPlanMeeting }}
                     </q-item>
                     <q-item>
                         Milestone Meeting: {{ acpoProfile.milestoneMeetingTwo }}
@@ -69,7 +74,6 @@
     </div>
 </template>
 
-
 <script setup>
 import { doc, getDoc, getFirestore, } from "firebase/firestore";
 const db = getFirestore();
@@ -77,21 +81,23 @@ const db = getFirestore();
 const emit = defineEmits(["acpoMode"])
 const mID = defineProps(['selectedMenteeID'])
 
-let docACPOProfileRef = ref('')
-let docACPOProfileSnap = ref('')
-let acpoProfile = ref('')
+const acpoProfile = ref('')
 
 watchEffect(async () => {
-    docACPOProfileRef = doc(db, "acpoTracker", mID.selectedMenteeID);
+    const docACPOProfileRef = doc(db, "acpoTracker", mID.selectedMenteeID);
     try {
-        docACPOProfileSnap = await getDoc(docACPOProfileRef);
+        const docACPOProfileSnap = await getDoc(docACPOProfileRef);
         acpoProfile.value = docACPOProfileSnap.data();
-
+        //Is there a better way to convert these to dates??
+        acpoProfile.value.developmentPlanMeeting = acpoProfile.value.developmentPlanMeeting ? acpoProfile.value.developmentPlanMeeting.toDate() : "N/A";
+        acpoProfile.value.closeDevelopmentPlanMeeting = acpoProfile.value.closeDevelopmentPlanMeeting ? acpoProfile.value.closeDevelopmentPlanMeeting.toDate() : "N/A";
+        acpoProfile.value.milestoneMeetingTwo = acpoProfile.value.milestoneMeetingTwo ? acpoProfile.value.milestoneMeetingTwo.toDate() : "TBD";
+        acpoProfile.value.milestoneMeetingThree = acpoProfile.value.milestoneMeetingThree ? acpoProfile.value.milestoneMeetingThree.toDate() : "TBD";
+        acpoProfile.value.milestoneMeetingFour = acpoProfile.value.milestoneMeetingFour ? acpoProfile.value.milestoneMeetingFour.toDate() : "TBD";
     } catch (error) {
         console.error(error)
     }
 })
 
-// 'O9ySQiiCCLRtOKv1MTKVb4FOEUF2_2023-3'
 </script>
 <style scoped></style>

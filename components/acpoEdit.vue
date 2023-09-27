@@ -1,26 +1,23 @@
 <template>
-    <div class="q-pa-md full-width">
-        <q-page class="q-pa-md full-width row justify-center " padding>
-            <q-form @submit.prevent="saveAcpOProfile" class="q-gutter-md">
-                <div class="row">
-                    <q-card class="w-full" style="width: 375px;">
+    <div class="full-width">
+        <q-page>
+            <q-form @submit.prevent="saveAcpOProfile">
+                <div class="row justify-center q-gutter-sm q-mt-sm">
+                    <q-card class="w-full" style="width: 405px;">
                         <q-card-section>
-                            <div class="text-h5 tw-pb-2">{{ acpoProfile.firstName }} {{ acpoProfile.lastName }} {{
-                                acpoProfile.cohort }}
+                            <div class="text-h5">{{ acpoProfile.firstName }} {{ acpoProfile.lastName }} ({{
+                                acpoProfile.cohort }})
                             </div>
-                            <div>Current Milestone: {{ acpoProfile.currentMilestone }}</div>
-                            <div>Current Support Level: {{ acpoProfile.currentSupport }}</div>
                             <q-separator />
                             <q-select filled v-model="acpoProfile.pped" label="Assigned Practice Educator"
                                 :options="options.ppeds" />
                         </q-card-section>
                     </q-card>
-                </div>
-                <div class="row">
+
                     <!-- Milestone Two -->
-                    <q-card class="q-mt-sm q-mr-sm w-full" style="width: 375px;">
+                    <q-card class="w-full" style="width: 405px;">
                         <q-card-section>
-                            <div class="text-h6 q-pbt-sm">Milestone 2</div>
+                            <div class="text-h6">Milestone 2</div>
                         </q-card-section>
                         <q-separator inset />
                         <q-card-section>
@@ -43,10 +40,9 @@
                     </q-card>
 
                     <!-- Milestone Three -->
-                    <q-card v-if="acpoProfile.milestoneMeetingTwo !== null" class="q-mt-sm q-mr-sm w-full"
-                        style="width: 375px;">
+                    <q-card class="w-full" style="width: 405px;">
                         <q-card-section>
-                            <div class="text-h6 q-pbt-sm">Milestone 3</div>
+                            <div class="text-h6">Milestone 3</div>
                         </q-card-section>
                         <q-separator inset />
                         <q-card-section>
@@ -58,10 +54,9 @@
                     </q-card>
 
                     <!-- Milestone Four -->
-                    <q-card v-if="acpoProfile.milestoneMeetingThree !== null" class="q-mt-sm q-mr-sm w-full"
-                        style="width: 375px;">
+                    <q-card class="w-full" style="width: 405px;">
                         <q-card-section>
-                            <div class="text-h6 q-pbt-sm">Milestone 4</div>
+                            <div class="text-h6">Milestone 4</div>
                         </q-card-section>
                         <q-separator inset />
                         <q-card-section>
@@ -71,12 +66,14 @@
                                 label="Milestone 4 Meeting Date" />
                         </q-card-section>
                     </q-card>
-
                 </div>
-                <div>
 
-                    <q-btn class="q-mr-sm" label="Save" type="submit" color="primary" />
+
+                <div class="q-mt-xs row reverse q-gutter-sm">
+                    <q-btn label="Save" type="submit" color="primary" />
+                    <q-btn label="Close" color="red-6" @click="$emit('acpoMode', mID.selectedMenteeID, 'acpoView')" />
                 </div>
+
             </q-form>
         </q-page>
     </div>
@@ -86,33 +83,13 @@
 <script setup>
 import { doc, setDoc, getDoc, query, where, getDocs, collection, updateDoc, getFirestore, Timestamp } from "firebase/firestore";
 
-const firebaseUser = useFirebaseUser()
-const db = getFirestore();
-
-const docProfileRef = doc(db, "users", firebaseUser.value.uid);
-const docProfileSnap = await getDoc(docProfileRef);
-const up = docProfileSnap.data()
-
 const mID = defineProps(['selectedMenteeID'])
 
+const emit = defineEmits(["acpoMode"])
+
+const db = getFirestore();
 const docRef = doc(db, "acpoTracker", mID.selectedMenteeID);
 const docSnap = await getDoc(docRef);
-
-const options = reactive({
-    ppeds: [],
-    supportLevelHigh: ['High', 'Medium', 'Low'],
-    supportLevel: ['Medium', 'Low'],
-})
-
-const dateTimeMask = {
-    weekday: 'short',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-}
 
 const data = docSnap.data();
 let acpoProfile = reactive({
@@ -120,17 +97,37 @@ let acpoProfile = reactive({
     lastName: data.lastName || null,
     cohort: data.cohort || null,
     pped: data.pped || null,
-    developmentPlanMeeting: data.developmentPlanMeeting ? data.developmentPlanMeeting.toDate().toLocaleString('en-US', dateTimeMask) : null,
-    closeDevelopmentPlanMeeting: data.closeDevelopmentPlanMeeting ? data.closeDevelopmentPlanMeeting.toDate().toLocaleString('en-US', dateTimeMask) : null,
-    milestoneMeetingTwo: data.milestoneMeetingTwo ? data.milestoneMeetingTwo.toDate().toLocaleString('en-US', dateTimeMask) : null,
-    milestoneMeetingThree: data.milestoneMeetingThree ? data.milestoneMeetingThree.toDate().toLocaleString('en-US', dateTimeMask) : null,
-    milestoneMeetingFour: data.milestoneMeetingFour ? data.milestoneMeetingFour.toDate().toLocaleString('en-US', dateTimeMask) : null,
+    //Is there a better way to do these to dates?
+    developmentPlanMeeting: data.developmentPlanMeeting ? data.developmentPlanMeeting.toDate() : null,
+    closeDevelopmentPlanMeeting: data.closeDevelopmentPlanMeeting ? data.closeDevelopmentPlanMeeting.toDate() : null,
+    milestoneMeetingTwo: data.milestoneMeetingTwo ? data.milestoneMeetingTwo.toDate() : null,
+    milestoneMeetingThree: data.milestoneMeetingThree ? data.milestoneMeetingThree.toDate() : null,
+    milestoneMeetingFour: data.milestoneMeetingFour ? data.milestoneMeetingFour.toDate() : null,
     supportLevelMSTwo: data.supportLevelMSTwo || null,
     supportLevelMSThree: data.supportLevelMSThree || null,
     supportLevelMSFour: data.supportLevelMSFour || null,
     currentMilestone: data.currentMilestone || null,
     currentSupport: data.currentSupport || null,
     threePerson: data.threePerson || 3,
+    needDPMeeting: data.needDPMeeting || false,
+});
+
+const options = reactive({
+    ppeds: [],
+    supportLevelHigh: ['High', 'Medium', 'Low'],
+    supportLevel: ['Medium', 'Low'],
+})
+// Options for PPEd
+const userCollection = collection(db, 'users');
+const queryPPEd = query(userCollection, where("role", "==", "Paramedic Practice Educator"));
+const ppedDocs = await getDocs(queryPPEd);
+
+ppedDocs.forEach((pped) => {
+    options.ppeds.push({
+        value: pped.id,
+        label: pped.data().firstName + " " + pped.data().lastName,
+        station: pped.data().station,
+    });
 });
 
 function setCurrentSupport(acpoProfile) {
@@ -157,14 +154,13 @@ function threePersonChecker() {
 
 };
 
-let needDPMeeting = ref(false)
-
 function needDPMeetingChecker() {
     if (acpoProfile.currentSupport === "High" && acpoProfile.developmentPlanMeeting == null) {
-        needDPMeeting.value = true
+        acpoProfile.needDPMeeting = true
     }
+
     else {
-        needDPMeeting.value = false
+        acpoProfile.needDPMeeting = false
     }
 }
 
@@ -173,18 +169,6 @@ const updateMeetingCloseDP = (newDate) => { acpoProfile.closeDevelopmentPlanMeet
 const updateMeetingTwo = (newDate) => { acpoProfile.milestoneMeetingTwo = newDate; };
 const updateMeetingThree = (newDate) => { acpoProfile.milestoneMeetingThree = newDate; };
 const updateMeetingFour = (newDate) => { acpoProfile.milestoneMeetingFour = newDate; };
-
-const userCollection = collection(db, 'users');
-const queryPPEd = query(userCollection, where("role", "==", "Paramedic Practice Educator"));
-const ppedDocs = await getDocs(queryPPEd);
-
-ppedDocs.forEach((pped) => {
-    options.ppeds.push({
-        value: pped.id,
-        label: pped.data().firstName + " " + pped.data().lastName,
-        station: pped.data().station,
-    });
-});
 
 const { showToast } = useNotification();
 
@@ -196,22 +180,7 @@ const saveAcpOProfile = async () => {
         threePersonChecker()
         needDPMeetingChecker()
         await setDoc(doc(db, "acpoTracker", mID.selectedMenteeID),
-            // acpoProfile
-            {
-                pped: acpoProfile.pped,
-                needDPMeeting: needDPMeeting.value,
-                closeDevelopmentPlanMeeting: acpoProfile.closeDevelopmentPlanMeeting ? new Date(acpoProfile.closeDevelopmentPlanMeeting) : null,
-                developmentPlanMeeting: acpoProfile.developmentPlanMeeting ? new Date(acpoProfile.developmentPlanMeeting) : null,
-                milestoneMeetingTwo: acpoProfile.milestoneMeetingTwo ? new Date(acpoProfile.milestoneMeetingTwo) : null,
-                milestoneMeetingThree: acpoProfile.milestoneMeetingThree ? new Date(acpoProfile.milestoneMeetingThree) : null,
-                milestoneMeetingFour: acpoProfile.milestoneMeetingFour ? new Date(acpoProfile.milestoneMeetingFour) : null,
-                currentMilestone: acpoProfile.currentMilestone,
-                currentSupport: acpoProfile.currentSupport,
-                supportLevelMSTwo: acpoProfile.supportLevelMSTwo,
-                supportLevelMSThree: acpoProfile.supportLevelMSThree,
-                supportLevelMSFour: acpoProfile.supportLevelMSFour,
-                threePerson: acpoProfile.threePerson,
-            }
+            acpoProfile
             , { merge: true });
         showToast('positive', 'check', 'Saved');
     }

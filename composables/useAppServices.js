@@ -16,7 +16,6 @@ export const useNotification = () => {
         showToast,
     }
 }
-
   export function formatFirestoreTimestamp(dateField, format) {
     if (dateField == null || dateField == undefined) {
       return null;

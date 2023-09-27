@@ -1,10 +1,12 @@
 <template>
-  <div class="flex justify-center">
-    <acpoTable @selected-mentee="onMenteeSelected" />
-    <acpoView v-if="acpoMode == 'acpoView' && selectedMenteeID !== ''" :selectedMenteeID="selectedMenteeID"
-      @acpoMode="onMenteeSelected" />
-    <acpoEdit v-if="acpoMode == 'acpoEdit' && selectedMenteeID !== ''" :selectedMenteeID="selectedMenteeID"
-      @acpoMode="onMenteeSelected" />
+  <div class="row justify-center">
+    <div class="q-pa-md full-width" style="max-width: 850px;">
+      <acpoTable @selected-mentee="onMenteeSelected" />
+      <acpoView v-if="acpoMode == 'acpoView' && selectedMenteeID !== ''" :selectedMenteeID="selectedMenteeID"
+        @acpoMode="onMenteeSelected" />
+      <acpoEdit v-if="acpoMode == 'acpoEdit' && selectedMenteeID !== ''" :selectedMenteeID="selectedMenteeID"
+        @acpoMode="onMenteeSelected" />
+    </div>
   </div>
 </template>
 

@@ -1,12 +1,10 @@
 <template>
     <div>
-        <q-input filled clearable hide-bottom-space :label="label" :model-value="date"
-            @update:model-value="(value) => emit('update:date', value)">
+        <q-input filled clearable hide-bottom-space :label="label" :model-value="date" @update:model-value="updateType">
             <template #prepend>
                 <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-date today-btn :model-value="date" @update:model-value="(value) => emit('update:date', value)"
-                            :mask="datetimemask">
+                        <q-date today-btn :model-value="date" @update:model-value="updateType" :mask="mask">
                             <q-btn v-close-popup flat label="close" />
                         </q-date>
                     </q-popup-proxy>
@@ -15,8 +13,7 @@
             <template #append>
                 <q-icon name="access_time" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-time :model-value="date" @update:model-value="(value) => emit('update:date', value)"
-                            :mask="datetimemask" now-btn format24h>
+                        <q-time :model-value="date" @update:model-value="updateType" :mask="mask" now-btn format24h>
                             <q-btn v-close-popup flat label="close" />
                         </q-time>
                     </q-popup-proxy>
@@ -31,7 +28,12 @@ const props = defineProps(['date', 'label']);
 
 const emit = defineEmits(['update:date']);
 
-const datetimemask = "ddd, MM/DD/YYYY, HH:mm"
+const mask = "ddd, MM/DD/YYYY, HH:mm"
+
+function updateType(date) {
+    const formattedDate = date ? new Date(date) : null;
+    emit('update:date', formattedDate);
+}
 </script>
 
 <style scoped></style>
