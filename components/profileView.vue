@@ -7,7 +7,7 @@
                         Employee Profile: {{ userProfile.firstName }} {{
                             userProfile.lastName }}
                     </div>
-                    <div><q-btn icon="edit" flat @click="$emit('profileMode', 'profileEdit')" /></div>
+                    <div><q-btn icon="edit" round flat @click="$emit('profileMode', 'profileEdit')" /></div>
                 </div>
             </q-card-section>
             <q-separator />
@@ -19,8 +19,8 @@
                         Phone: {{ userProfile.phoneNumber }}
                     </q-item>
                     <q-item>
-                        Address: {{ userProfile.address }}, {{ userProfile.city }}, {{ userProfile.state.name }}, {{
-                            userProfile.country.name }}
+                        Address: {{ userProfile.address }}, {{ userProfile.city }}, {{ userProfile.state.label }}, {{
+                            userProfile.country.label }}
                     </q-item>
                 </q-list>
 

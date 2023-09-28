@@ -1,9 +1,9 @@
 <template>
     <div class="full-width">
         <q-page>
-            <q-form @submit.prevent="saveProfile" class="q-gutter-sm">
+            <q-form @submit.prevent="saveprofile" class="q-gutter-sm">
                 <div class="row justify-center q-gutter-sm q-mt-sm">
-                    <q-card class="w-full" style="width: 400px;">
+                    <q-card class="w-full" style="width: 350px;">
                         <q-card-section>
                             <div class="text-h5">Personal</div>
                             <q-input filled dense v-model="profileData.firstName" label="First Name" lazy-rules :rules="[
@@ -21,14 +21,13 @@
                                 :rules="[val => !!val || 'Address is required']" />
 
                             <q-select filled dense v-model="profileData.country" :options="options.filteredCountry"
-                                label="Country" option-label="name" lazy-rules
-                                :rules="[val => !!val || 'Country is required']" @update:model-value="countrySelected"
-                                @filter="filterCountry" use-input input-debounce="250" />
+                                label="Country" lazy-rules :rules="[val => !!val || 'Country is required']"
+                                @update:model-value="countrySelected" @filter="filterCountry" use-input
+                                input-debounce="250" />
 
                             <q-select filled dense v-model="profileData.state" :options="options.filteredState"
-                                option-label="name" label="Province\State" lazy-rules
-                                :rules="[val => !!val || 'Province\State is required']" @update:model-value="stateSelected"
-                                @filter="filterState" use-input input-debounce="250" />
+                                label="Province\State" lazy-rules :rules="[val => !!val || 'Province\State is required']"
+                                @update:model-value="stateSelected" @filter="filterState" use-input input-debounce="250" />
 
                             <q-select filled dense v-model="profileData.city" :options="options.filteredCity" label="City"
                                 lazy-rules :rules="[val => !!val || 'City is required']" @filter="filterCity" use-input
@@ -37,7 +36,7 @@
                         </q-card-section>
                     </q-card>
 
-                    <q-card class="w-full" style="width: 400px;">
+                    <q-card class="w-full" style="width: 350px;">
                         <q-card-section>
                             <div class="text-h5">Employee Information</div>
                             <q-input filled dense mask="######" v-model="profileData.employeeNumber" label="Employee Number"
@@ -75,8 +74,8 @@
                 </div>
 
                 <div class="q-mt-xs row reverse q-gutter-sm">
-                    <q-btn label="Save" type="submit" color="primary" />
-                    <q-btn label="Cancel" color="red-5" @click="$emit('profileMode', 'profileView')" />
+                    <q-btn class="q-mr-sm" label="Save" type="submit" color="primary" />
+                    <q-btn class="q-mr-sm" label="Close" color="red-5" @click="$emit('profileMode', 'profileView')" />
                 </div>
             </q-form>
         </q-page>
@@ -109,7 +108,7 @@ let profileData = reactive({
 })
 
 const options = reactive({
-    country: Country.getAllCountries(),
+    country: [],
     state: [],
     city: [],
     filteredCountry: [],
@@ -129,24 +128,37 @@ const db = getFirestore();
 const docRef = doc(db, "users", firebaseUser.value.uid);
 const docSnap = await getDoc(docRef);
 
-// Profile Check
-if (docSnap.exists()) {
-    profileData = reactive(docSnap.data())
+// if (docSnap.exists()) {
+profileData = reactive(docSnap.data())
+// }
+
+//Country-State-City Picker
+const countryList = Country.getAllCountries()
+countryList.forEach((country) => {
+    options.country.push({
+        label: country.name,
+        value: country.isoCode,
+    })
 }
+)
 
 const countrySelected = async () => {
     profileData.state = ""
     options.state.length = 0
-    const statesByCountry = State.getStatesOfCountry(profileData.country.isoCode)
+    const statesByCountry = State.getStatesOfCountry(profileData.country.value)
     statesByCountry.forEach((state) => {
-        options.state.push(state)
+        options.state.push({
+            label: state.name,
+            value: state.isoCode,
+            countryCode: state.countryCode,
+        })
     })
 };
 
 const stateSelected = async () => {
     profileData.city = ""
     options.city.length = 0
-    const citiesByState = City.getCitiesOfState(profileData.state.countryCode, profileData.state.isoCode)
+    const citiesByState = City.getCitiesOfState(profileData.state.countryCode, profileData.state.value)
     citiesByState.forEach((city) => {
         options.city.push(city.name)
     })
@@ -161,7 +173,7 @@ async function filterCountry(val, update) {
     } else {
         update(() => {
             options.filteredCountry = options.country.filter(option => {
-                return option.name.toLowerCase().includes(val);
+                return option.label.toLowerCase().includes(val);
             });
         });
     }
@@ -176,7 +188,7 @@ async function filterState(val, update) {
     } else {
         update(() => {
             options.filteredState = options.state.filter(option => {
-                return option.name.toLowerCase().includes(val)
+                return option.label.toLowerCase().includes(val)
             })
         })
     }
@@ -197,8 +209,8 @@ async function filterCity(val, update) {
     }
 }
 
+//Options 
 const stationCollection = await getDocs(collection(db, "stations"));
-
 stationCollection.forEach((station) => {
     options.station.push({
         label: station.id + " - " + station.data().city,
@@ -217,7 +229,6 @@ const stationSelected = async () => {
 };
 
 const acpoCohortCollection = await getDocs(collection(db, "acpoCohort"));
-
 acpoCohortCollection.forEach((cohort) => {
     options.cohort.push(
         cohort.id
@@ -227,7 +238,7 @@ acpoCohortCollection.forEach((cohort) => {
 const { showToast } = useNotification();
 
 // Save Profile Function
-const saveProfile = async () => {
+const saveprofile = async () => {
     try {
         await setDoc(doc(db, "users", firebaseUser.value.uid), profileData, { merge: true });
         showToast('positive', 'check', 'Profile Saved');
@@ -240,7 +251,6 @@ const saveProfile = async () => {
             }, { merge: true });
             showToast('positive', 'check', 'Mentee Profile Updated');
         }
-
     }
     catch (error) {
         console.error(error)

@@ -1,18 +1,21 @@
 <template>
-    <div>
+    <div class="row justify-center">
+        <div class="q-pa-md full-width" style="max-width: 850px;">
+            <q-card>
+                <ClientOnly>
+                    <div v-if="formType == 'Register'">
+                        <formRegister @change="onChangeForm" />
+                    </div>
+                    <div v-else-if="formType == 'passwordreset'">
+                        <formPasswordReset @change="onChangeForm" />
+                    </div>
+                    <div v-else>
+                        <formLogin @change="onChangeForm" />
+                    </div>
+                </ClientOnly>
+            </q-card>
 
-        <ClientOnly>
-            <div v-if="formType == 'Register'">
-                <formRegister @change="onChangeForm" />
-            </div>
-            <div v-else-if="formType == 'passwordreset'">
-                <formPasswordReset @change="onChangeForm" />
-            </div>
-            <div v-else>
-                <formLogin @change="onChangeForm" />
-            </div>
-        </ClientOnly>
-
+        </div>
     </div>
 </template>
 <script setup>
