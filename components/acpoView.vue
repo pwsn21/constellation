@@ -1,12 +1,10 @@
 <template>
     <div class="full-width">
-
         <q-card class="q-mt-md">
             <q-card-section>
                 <div class="row justify-between">
                     <div class="text-h4">
-                        Mentee Profile: {{ acpoProfile.firstName }} {{
-                            acpoProfile.lastName }} ({{ acpoProfile.cohort }})
+                        {{ acpoProfile.firstName }} {{ acpoProfile.lastName }} ({{ acpoProfile.cohort }})
                     </div>
                     <div>
                         <q-btn icon="edit" round flat @click="$emit('acpoMode', mID.selectedMenteeID, 'acpoEdit')" />

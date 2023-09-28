@@ -83,8 +83,8 @@
 <script setup>
 import { doc, setDoc, getDoc, query, where, getDocs, collection, updateDoc, getFirestore, Timestamp } from "firebase/firestore";
 
+// Emits and Props
 const mID = defineProps(['selectedMenteeID'])
-
 const emit = defineEmits(["acpoMode"])
 
 const db = getFirestore();
@@ -130,6 +130,7 @@ ppedDocs.forEach((pped) => {
     });
 });
 
+//Support, 3 person config, and development meeting checker
 function setCurrentSupport(acpoProfile) {
     if (acpoProfile.supportLevelMSFour !== null) {
         acpoProfile.currentSupport = acpoProfile.supportLevelMSFour
@@ -172,8 +173,7 @@ const updateMeetingFour = (newDate) => { acpoProfile.milestoneMeetingFour = newD
 
 const { showToast } = useNotification();
 
-// Save Profile Function
-
+// Save Profile
 const saveAcpOProfile = async () => {
     try {
         setCurrentSupport(acpoProfile)

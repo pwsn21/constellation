@@ -2,7 +2,10 @@
     <div class="flex justify-center">
         <div class="q-pa-md full-width" style="max-width: 900px;">
             <h2 class="text-h5 text-primary">All Users</h2>
-            <q-table :rows="rows" :columns="columns" row-key="id" table-header-class="bg-primary text-white" />
+            <div class="q-my-sm" style=" max-width: 250px">
+                <q-input v-model="filterText" class="bg-grey-4" dense filled label="Search..." clearable />
+            </div>
+            <q-table :rows="filteredUsers" :columns="columns" row-key="id" table-header-class="bg-primary text-white" />
         </div>
     </div>
 </template>
@@ -34,7 +37,20 @@ const columns = [
     { name: 'id', label: 'ID - For dev', field: 'id', align: 'right' },
 ];
 
-const rows = users.value
+
+const filterText = ref('')
+
+const filteredUsers = computed(() => {
+    const searchText = filterText.value ? filterText.value.toLowerCase().trim() : ''
+    return users.value.filter((user) => {
+        return (
+            user.name.toLowerCase().includes(searchText) ||
+            user.station.toString().includes(searchText) ||
+            user.role.toLowerCase().includes(searchText)
+        );
+    });
+});
+
 
 </script>
 

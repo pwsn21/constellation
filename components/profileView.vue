@@ -1,6 +1,6 @@
 <template>
-    <div class="q-pa-lg full-width row justify-center">
-        <q-card class="q-mb-sm w-full" style="width: 850px;">
+    <div class="full-width">
+        <q-card>
             <q-card-section>
                 <div class="row justify-between">
                     <div class="text-h4">

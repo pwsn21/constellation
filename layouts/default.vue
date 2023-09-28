@@ -28,41 +28,34 @@
       <q-drawer show-if-above v-model="leftDrawerOpen" side="left" elevated>
         <!-- drawer content -->
         <div class="flex items-center bg-primary text-white">
-          <q-icon name="hub" size="32px" class="tw-mx-2" />
-          <h2 class="tw-text-4xl tw-font-bold tw-py-5">Constellation</h2>
+          <q-icon name="hub" size="32px" class="q-px-sm" />
+          <h2 class="text-h4 text-weight-bold q-py-sm">Constellation</h2>
         </div>
 
-        <ul class="tw-text-3xl">
-          <li class="tw-py-2">
+        <ul class="text-h4 text-weight-light">
+          <li class="q-py-sm">
             Admin
           </li>
-          <li class="tw-py-2">
-            <NuxtLink to="/"><q-icon name="dashboard" class="tw-mx-2" />Dashboard</NuxtLink>
+          <li class="q-py-sm">
+            <NuxtLink to="/"><q-icon name="dashboard" class="q-mx-sm" />Dashboard</NuxtLink>
           </li>
-          <li class="tw-py-2">
-            <NuxtLink to="/acpo"><q-icon name="groups" class="tw-mx-2" />ACP-Orientation</NuxtLink>
+          <li class="q-py-sm">
+            <NuxtLink to="/acpo"><q-icon name="groups" class="q-mx-sm" />ACP-Orientation</NuxtLink>
           </li>
 
-          <li class="tw-py-2">
-            <NuxtLink to="/users"><q-icon name="people" class="tw-mx-2" />Users</NuxtLink>
-          </li>
-          <q-separator />
-          <li class="tw-py-2">
-            Mentee
-          </li>
-          <li class="tw-py-2">
-            <NuxtLink to="/"><q-icon name="dashboard" class="tw-mx-2" />Dashboard</NuxtLink>
+          <li class="q-py-sm">
+            <NuxtLink to="/users"><q-icon name="people" class="q-mx-sm" />Users</NuxtLink>
           </li>
 
         </ul>
 
-        <ul class="tw-text-3xl">
+        <ul class="text-h4 text-weight-light">
           <q-separator />
-          <li class="tw-py-2">
-            <NuxtLink to="/profile"><q-icon name="account_circle" class="tw-mx-2" />Profile</NuxtLink>
+          <li class="q-py-sm">
+            <NuxtLink to="/profile"><q-icon name="account_circle" class="q-mx-sm" />Profile</NuxtLink>
           </li>
-          <li class="tw-py-2">
-            <NuxtLink to="/" @click="logout"><q-icon name="logout" class="tw-mx-2" />Log-out</NuxtLink>
+          <li class="q-py-sm">
+            <NuxtLink to="/" @click="logout"><q-icon name="logout" class="q-mx-sm" />Log-out</NuxtLink>
           </li>
           <li></li>
         </ul>
@@ -77,36 +70,14 @@
   </div>
 </template>
   
-  <!-- <script>
-  import { ref } from 'vue'
-  
-  export default {
-    setup () {
-      const leftDrawerOpen = ref(false)
-  
-      return {
-        leftDrawerOpen,
-        toggleLeftDrawer () {
-          leftDrawerOpen.value = !leftDrawerOpen.value
-        }
-      }
-    }
-  }
-  </script> -->
-
 <script setup>
-
-
-
-
-
 
 const logout = () => {
   signOutUser();
 }
+
 const leftDrawerOpen = ref(false)
 const toggleLeftDrawer = () => {
-
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 

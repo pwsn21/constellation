@@ -1,85 +1,82 @@
 <template>
-    <div class="q-pa-md row justify-center full-width">
-        <q-page padding>
-            <q-form @submit.prevent="saveprofile" class="q-gutter-md">
-                <div class="row">
-                    <div>
-                        <q-card class="q-mt-sm q-mr-sm w-full" style="width: 350px;">
-                            <q-card-section>
-                                <div class="text-h5 tw-pb-2">Personal</div>
-                                <q-input filled dense v-model="profileData.firstName" label="First Name" lazy-rules :rules="[
-                                    val => (isValidFirstName(val).valid) || (isValidFirstName(val).message),]" />
-                                <q-input filled dense v-model="profileData.lastName" label="Last Name" lazy-rules :rules="[
-                                    val => (isValidLastName(val).valid) || (isValidLastName(val).message),]" />
-                                <q-input filled dense type="tel" mask="(###) ### - ####" hint="(###) ### - ####"
-                                    v-model="profileData.phoneNumber" label="Phone Number" lazy-rules
-                                    :rules="[val => (isValidPhone(val).valid) || (isValidPhone(val).message),]" />
-                            </q-card-section>
-                            <q-separator />
-                            <q-card-section>
-                                <!-- Address Fields -->
-                                <q-input filled dense v-model="profileData.address" label="Address" lazy-rules
-                                    :rules="[val => !!val || 'Address is required']" />
+    <div class="full-width">
+        <q-page>
+            <q-form @submit.prevent="saveProfile" class="q-gutter-sm">
+                <div class="row justify-center q-gutter-sm q-mt-sm">
+                    <q-card class="w-full" style="width: 400px;">
+                        <q-card-section>
+                            <div class="text-h5">Personal</div>
+                            <q-input filled dense v-model="profileData.firstName" label="First Name" lazy-rules :rules="[
+                                val => (isValidFirstName(val).valid) || (isValidFirstName(val).message),]" />
+                            <q-input filled dense v-model="profileData.lastName" label="Last Name" lazy-rules :rules="[
+                                val => (isValidLastName(val).valid) || (isValidLastName(val).message),]" />
+                            <q-input filled dense type="tel" mask="(###) ### - ####" hint="(###) ### - ####"
+                                v-model="profileData.phoneNumber" label="Phone Number" lazy-rules
+                                :rules="[val => (isValidPhone(val).valid) || (isValidPhone(val).message),]" />
+                        </q-card-section>
+                        <q-separator />
+                        <q-card-section>
+                            <!-- Address Fields -->
+                            <q-input filled dense v-model="profileData.address" label="Address" lazy-rules
+                                :rules="[val => !!val || 'Address is required']" />
 
-                                <q-select filled dense v-model="profileData.country" :options="options.filteredCountry"
-                                    label="Country" option-label="name" lazy-rules
-                                    :rules="[val => !!val || 'Country is required']" @update:model-value="countrySelected"
-                                    @filter="filterCountry" use-input input-debounce="250" />
+                            <q-select filled dense v-model="profileData.country" :options="options.filteredCountry"
+                                label="Country" option-label="name" lazy-rules
+                                :rules="[val => !!val || 'Country is required']" @update:model-value="countrySelected"
+                                @filter="filterCountry" use-input input-debounce="250" />
 
-                                <q-select filled dense v-model="profileData.state" :options="options.filteredState"
-                                    option-label="name" label="Province\State" lazy-rules
-                                    :rules="[val => !!val || 'Province\State is required']"
-                                    @update:model-value="stateSelected" @filter="filterState" use-input
-                                    input-debounce="250" />
+                            <q-select filled dense v-model="profileData.state" :options="options.filteredState"
+                                option-label="name" label="Province\State" lazy-rules
+                                :rules="[val => !!val || 'Province\State is required']" @update:model-value="stateSelected"
+                                @filter="filterState" use-input input-debounce="250" />
 
-                                <q-select filled dense v-model="profileData.city" :options="options.filteredCity"
-                                    label="City" lazy-rules :rules="[val => !!val || 'City is required']"
-                                    @filter="filterCity" use-input input-debounce="250" />
+                            <q-select filled dense v-model="profileData.city" :options="options.filteredCity" label="City"
+                                lazy-rules :rules="[val => !!val || 'City is required']" @filter="filterCity" use-input
+                                input-debounce="250" />
 
-                            </q-card-section>
-                        </q-card>
-                    </div>
-                    <div>
-                        <q-card class="q-mt-sm q-mr-sm w-full" style="width: 350px;">
-                            <q-card-section>
-                                <div class="text-h5 tw-pb-2">Employee Information</div>
-                                <q-input filled dense mask="######" v-model="profileData.employeeNumber"
-                                    label="Employee Number" lazy-rules
-                                    :rules="[val => (isValidEmployeeNumber(val).valid) || (isValidEmployeeNumber(val).message),]" />
+                        </q-card-section>
+                    </q-card>
 
-                                <q-select filled dense v-model="profileData.station" :options="options.station"
-                                    label="Station" emit-value lazy-rules :rules="[val => !!val || 'Station is required']"
-                                    @update:model-value="stationSelected" />
+                    <q-card class="w-full" style="width: 400px;">
+                        <q-card-section>
+                            <div class="text-h5">Employee Information</div>
+                            <q-input filled dense mask="######" v-model="profileData.employeeNumber" label="Employee Number"
+                                lazy-rules
+                                :rules="[val => (isValidEmployeeNumber(val).valid) || (isValidEmployeeNumber(val).message),]" />
 
-                                <q-select filled dense v-model="profileData.status" :options="options.status" label="Status"
-                                    lazy-rules :rules="[val => !!val || 'Status is required']" />
+                            <q-select filled dense v-model="profileData.station" :options="options.station" label="Station"
+                                emit-value lazy-rules :rules="[val => !!val || 'Station is required']"
+                                @update:model-value="stationSelected" />
 
-                                <q-select filled dense v-model="profileData.car" :options="options.car" label="Car"
-                                    lazy-rules v-if="profileData.status === 'Full-time Regularly Scheduled'"
-                                    :rules="[val => !!val || 'Car is required']" />
-                                <q-select filled dense v-model="profileData.platoon" :options="options.platoon"
-                                    label="Platoon" lazy-rules
-                                    v-if="profileData.status === 'Full-time Regularly Scheduled' || profileData.status === 'Full-time Irregularly Scheduled'"
-                                    :rules="[val => !!val || 'Platoon is required']" />
-                                <q-select filled dense v-model="profileData.rotation" :options="options.rotation"
-                                    label="Rotation" lazy-rules
-                                    v-if="profileData.status === 'Full-time Regularly Scheduled' || profileData.status === 'Full-time Irregularly Scheduled'"
-                                    :rules="[val => !!val || 'Rotation is required']" />
-                            </q-card-section>
-                            <q-separator />
-                            <q-card-section>
-                                <q-select filled dense v-model="profileData.role" :options="options.role" label="Role"
-                                    lazy-rules :rules="[val => !!val || 'Role is required']" />
-                                <q-select filled dense v-model="profileData.cohort" :options="options.cohort" label="Cohort"
-                                    v-if="profileData.role === 'Mentee'" lazy-rules
-                                    :rules="[val => !!val || 'Cohort is required']" />
-                            </q-card-section>
-                        </q-card>
-                    </div>
+                            <q-select filled dense v-model="profileData.status" :options="options.status" label="Status"
+                                lazy-rules :rules="[val => !!val || 'Status is required']" />
+
+                            <q-select filled dense v-model="profileData.car" :options="options.car" label="Car" lazy-rules
+                                v-if="profileData.status === 'Full-time Regularly Scheduled'"
+                                :rules="[val => !!val || 'Car is required']" />
+                            <q-select filled dense v-model="profileData.platoon" :options="options.platoon" label="Platoon"
+                                lazy-rules
+                                v-if="profileData.status === 'Full-time Regularly Scheduled' || profileData.status === 'Full-time Irregularly Scheduled'"
+                                :rules="[val => !!val || 'Platoon is required']" />
+                            <q-select filled dense v-model="profileData.rotation" :options="options.rotation"
+                                label="Rotation" lazy-rules
+                                v-if="profileData.status === 'Full-time Regularly Scheduled' || profileData.status === 'Full-time Irregularly Scheduled'"
+                                :rules="[val => !!val || 'Rotation is required']" />
+                        </q-card-section>
+                        <q-separator />
+                        <q-card-section>
+                            <q-select filled dense v-model="profileData.role" :options="options.role" label="Role"
+                                lazy-rules :rules="[val => !!val || 'Role is required']" />
+                            <q-select filled dense v-model="profileData.cohort" :options="options.cohort" label="Cohort"
+                                v-if="profileData.role === 'Mentee'" lazy-rules
+                                :rules="[val => !!val || 'Cohort is required']" />
+                        </q-card-section>
+                    </q-card>
                 </div>
-                <div>
-                    <q-btn class="q-mr-sm" label="Cancel" color="red-5" @click="$emit('profileMode', 'profileView')" />
-                    <q-btn class="q-mr-sm" label="Save" type="submit" color="primary" />
+
+                <div class="q-mt-xs row reverse q-gutter-sm">
+                    <q-btn label="Save" type="submit" color="primary" />
+                    <q-btn label="Cancel" color="red-5" @click="$emit('profileMode', 'profileView')" />
                 </div>
             </q-form>
         </q-page>
@@ -230,7 +227,7 @@ acpoCohortCollection.forEach((cohort) => {
 const { showToast } = useNotification();
 
 // Save Profile Function
-const saveprofile = async () => {
+const saveProfile = async () => {
     try {
         await setDoc(doc(db, "users", firebaseUser.value.uid), profileData, { merge: true });
         showToast('positive', 'check', 'Profile Saved');

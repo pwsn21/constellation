@@ -4,11 +4,12 @@
             <div class="flex justify-center">
                 <h2 class="text-h4 center q-pa-md">ACP-Orientation</h2>
             </div>
+            <h2 class="text-h5 text-primary">Mentees</h2>
             <div class="q-my-sm" style=" max-width: 250px">
-                <q-input v-model="filterText" class="bg-grey-4" dense filled label="Filter..." clearable />
+                <q-input v-model="filterText" class="bg-grey-4" dense filled label="Search..." clearable />
             </div>
             <div>
-                <q-table title="Mentees" :rows="filteredMentees" :columns="menteeColumns" row-key="id" title-class="text-h4"
+                <q-table :rows="filteredMentees" :columns="menteeColumns" row-key="id" title-class="text-h4"
                     table-header-class="bg-red-9 text-white" @row-click="menteeSelection">
                 </q-table>
 
@@ -22,6 +23,9 @@
 import { collection, getDocs, getFirestore } from "firebase/firestore";
 
 const emit = defineEmits(["selectedMentee"])
+const menteeSelection = (event, row) => {
+    emit("selectedMentee", row.id, "acpoView")
+};
 
 const db = getFirestore()
 const acpoCollection = collection(db, 'acpoTracker')
@@ -40,10 +44,6 @@ querySnapshot.forEach((doc) => {
         pped: d.pped?.label || null,
     })
 })
-
-const menteeSelection = (event, row) => {
-    emit("selectedMentee", row.id, "acpoView")
-};
 
 const menteeColumns = [
     { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
