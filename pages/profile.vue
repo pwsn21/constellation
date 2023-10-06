@@ -1,8 +1,9 @@
 <template>
     <div class="row justify-center">
         <div class="q-pa-md full-width" style="max-width: 850px;">
-            <profileView v-if="profileMode == 'profileView'" @profileMode="onProfileMode" />
-            <profileEdit v-if="profileMode == 'profileEdit'" @profileMode="onProfileMode" />
+            <profileView v-if="profileMode == 'userView'" @adminUserMode="onProfileMode" />
+            <profileEdit v-if="profileMode == 'userEdit'" @adminUserMode="onProfileMode" />
+
         </div>
     </div>
 </template>
@@ -14,18 +15,13 @@ const db = getFirestore();
 const docRef = doc(db, "users", firebaseUser.value.uid);
 const docSnap = await getDoc(docRef);
 
-const profileMode = ref('profileView')
+const profileMode = ref('userView')
 
-let needsProfile = false
 if (!docSnap.exists()) {
-    needsProfile = true
+    profileMode.value = 'userEdit'
 }
 
-if (needsProfile == true) {
-    profileMode.value = 'profileEdit'
-}
-
-const onProfileMode = (mode) => {
+const onProfileMode = (id, mode) => {
     profileMode.value = mode
 }
 

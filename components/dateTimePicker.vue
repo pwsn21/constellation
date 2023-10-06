@@ -4,7 +4,7 @@
             <template #prepend>
                 <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-date today-btn :model-value="date" @update:model-value="updateType" :mask="mask">
+                        <q-date :model-value="date" @update:model-value="updateType" :mask="mask" today-btn>
                             <q-btn v-close-popup flat label="close" />
                         </q-date>
                     </q-popup-proxy>
@@ -13,7 +13,8 @@
             <template #append>
                 <q-icon name="access_time" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                        <q-time :model-value="date" @update:model-value="updateType" :mask="mask" now-btn format24h>
+                        <q-time :model-value="date" @update:model-value="updateType" :mask="mask" now-btn text-color="white"
+                            color="primary" format24h>
                             <q-btn v-close-popup flat label="close" />
                         </q-time>
                     </q-popup-proxy>
@@ -31,8 +32,8 @@ const emit = defineEmits(['update:date']);
 const mask = "ddd, MM/DD/YYYY, HH:mm"
 
 function updateType(date) {
-    const formattedDate = date ? new Date(date) : null;
-    emit('update:date', formattedDate);
+    // const formattedDate = date ? new Date(date) : null;
+    emit('update:date', date);
 }
 </script>
 

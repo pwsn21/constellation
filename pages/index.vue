@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div>
-      <h2 class="tw-text-5xl tw-text-center tw-p-10">{{ firebaseUser ? firebaseUser.email : "Loading..." }}'s Dashboard
+    <div class="q-py-lg flex justify-center">
+      <h2 class="text-h3 text-primary">{{ firstName }}'s Dashboard
       </h2>
     </div>
 
@@ -9,7 +9,26 @@
       <div>
 
         <div>
-          <q-card v-if="needsProfile" class="my-card">
+          <q-card v-if="pendingForms" class="my-card">
+            <q-card-section class="bg-primary text-white">
+              <div class="text-h5">Forms Pending</div>
+              <div class="text-subtitle2"></div>
+            </q-card-section>
+            <q-img src="https://picsum.photos/300/200" />
+            <q-card-section class="tw-bg-gray-200">
+              <p>There are forms waiting for your approval</p>
+
+            </q-card-section>
+
+            <q-separator />
+
+            <q-card-actions>
+              <q-btn to="/acpoMentor" flat label="Go to forms" />
+            </q-card-actions>
+          </q-card>
+        </div>
+        <div>
+          <q-card v-if="!profileData" class="my-card">
             <q-card-section class="bg-primary text-white">
               <div class="text-h5">Create Profile</div>
               <div class="text-subtitle2"></div>
@@ -27,7 +46,6 @@
             </q-card-actions>
           </q-card>
         </div>
-
         <div class="tw-mt-10">
           <q-card class="my-card">
             <q-card-section class="bg-primary text-white">
@@ -46,18 +64,11 @@
 </template>
 
 <script setup>
-
-import { doc, getDoc, getFirestore } from "firebase/firestore";
 const firebaseUser = useFirebaseUser()
-const db = getFirestore();
-const docRef = doc(db, "users", firebaseUser.value.uid);
-const docSnap = await getDoc(docRef);
+const profileData = await userData(firebaseUser.value.uid);
+let firstName = ref('')
+firstName.value = profileData ? profileData.firstName : firebaseUser.value.email
 
-let needsProfile = false
-
-if (!docSnap.exists()) {
-  needsProfile = true
-}
-
+const pendingForms = await mentorPendingApproval(firebaseUser.value.uid)
 </script>
   

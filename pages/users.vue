@@ -1,57 +1,66 @@
 <template>
-    <div class="flex justify-center">
-        <div class="q-pa-md full-width" style="max-width: 900px;">
-            <h2 class="text-h5 text-primary">All Users</h2>
-            <div class="q-my-sm" style=" max-width: 250px">
-                <q-input v-model="filterText" class="bg-grey-4" dense filled label="Search..." clearable />
-            </div>
-            <q-table :rows="filteredUsers" :columns="columns" row-key="id" table-header-class="bg-primary text-white" />
+    <div class="row justify-center">
+        <div class="q-pa-md full-width" style="max-width: 850px;">
+            <usersTable @selected-user="onUserSelected" />
+
+            <transition name="slide-fade">
+                <div v-if="selectedUserID !== ''" class="full-width">
+                    <q-tabs v-model="currentTab" align="left" inline-label stretch class="q-pa-xs">
+                        <q-tab name="profile" label="Profile" icon="person" />
+                        <q-tab name="schedule" label="Schedule" icon="calendar_month" />
+                        <q-space />
+                        <q-btn icon="close" round flat @click="closeDrawer" dense />
+                    </q-tabs>
+                    <q-tab-panels v-model="currentTab" transition-next="jump-down" animated transition-prev="jump-down"
+                        transition-duration="200">
+                        <q-tab-panel name="profile" class="q-px-xs">
+                            <profileView v-if="adminUserMode == 'userView'" :selectedUserID="selectedUserID"
+                                @adminUserMode="onUserSelected" transition />
+                            <profileEdit v-if="adminUserMode == 'userEdit'" :selectedUserID="selectedUserID"
+                                @adminUserMode="onUserSelected" transition />
+                        </q-tab-panel>
+                        <q-tab-panel name="schedule">
+                            Schedule
+                        </q-tab-panel>
+                    </q-tab-panels>
+                </div>
+            </transition>
         </div>
     </div>
 </template>
-
+  
 <script setup>
-import { doc, where, query, onSnapshot, getDocs, collection, getFirestore } from "firebase/firestore";
-
-const firebaseUser = useFirebaseUser()
-const db = getFirestore();
-
-const userCollection = collection(db, 'users')
-const users = ref([])
-
-const querySnapshot = await getDocs(userCollection);
-querySnapshot.forEach((doc) => {
-    const d = doc.data()
-    users.value.push({
-        id: doc.id,
-        name: d.firstName + ' ' + d.lastName,
-        station: d.station,
-        role: d.role,
-    })
-})
-
-const columns = [
-    { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
-    { name: 'station', label: 'Station', field: 'station', sortable: true, },
-    { name: 'role', label: 'Role', field: 'role', sortable: true, },
-    { name: 'id', label: 'ID - For dev', field: 'id', align: 'right' },
-];
+const currentTab = ref('profile')
+const adminUserMode = ref('userEdit')
+const selectedUserID = ref('')
 
 
-const filterText = ref('')
+const onUserSelected = (ID, mode) => {
+    selectedUserID.value = ID
+    adminUserMode.value = mode
+}
 
-const filteredUsers = computed(() => {
-    const searchText = filterText.value ? filterText.value.toLowerCase().trim() : ''
-    return users.value.filter((user) => {
-        return (
-            user.name.toLowerCase().includes(searchText) ||
-            user.station.toString().includes(searchText) ||
-            user.role.toLowerCase().includes(searchText)
-        );
-    });
-});
-
+const closeDrawer = () => {
+    selectedUserID.value = ''
+}
 
 </script>
+<style scoped>
+.slide-fade-enter-active {
+    transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
+}
 
-<style scoped></style>
+.slide-fade-leave-active {
+    transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from {
+    transform: translateY(-50px);
+    opacity: 0;
+}
+
+.slide-fade-leave-to {
+    transform: translateY(200px);
+    opacity: 0;
+}
+</style>

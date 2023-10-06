@@ -25,12 +25,7 @@
             <q-separator />
             <q-card-section>
                 <div class="text-subtitle1 text-weight-bold">Milestone 2 </div>
-                <q-linear-progress :value="progress.msTwoProgress" size="20px" color="red-9" track-color="red-9">
-                    <div class="text-caption text-weight-bold absolute-full flex flex-center">
-                        {{ count.msTwoShifts }}/{{ required.supportLevelMSTwo }}
-                    </div>
-                </q-linear-progress>
-
+                <q-separator inset />
                 <q-list dense>
                     <q-item>
                         Support Level: {{ acpoProfile.supportLevelMSTwo }}
@@ -48,11 +43,7 @@
             </q-card-section>
             <q-card-section>
                 <div class="text-subtitle1 text-weight-bold">Milestone 3 </div>
-                <q-linear-progress :value="progress.msThreeProgress" size="20px" color="red-9" track-color="red-9">
-                    <div class="text-caption text-weight-bold absolute-full flex flex-center">
-                        {{ count.msThreeShifts }}/{{ required.supportLevelMSThree }}
-                    </div>
-                </q-linear-progress>
+                <q-separator inset />
                 <q-list dense>
                     <q-item>
                         Support Level: {{ acpoProfile.supportLevelMSThree }}
@@ -64,11 +55,7 @@
             </q-card-section>
             <q-card-section>
                 <div class="text-subtitle1 text-weight-bold">Milestone 4 </div>
-                <q-linear-progress :value="progress.msFourProgress" size="20px" color="red-9" track-color="red-9">
-                    <div class="text-caption text-weight-bold absolute-full flex flex-center">
-                        {{ count.msFourShifts }}/{{ required.supportLevelMSFour }}
-                    </div>
-                </q-linear-progress>
+                <q-separator inset />
                 <q-list dense>
                     <q-item>
                         Support Level: {{ acpoProfile.supportLevelMSFour }}
@@ -86,42 +73,18 @@
 </template>
 
 <script setup>
-import { doc, getDoc, getFirestore, query, where, collection, getCountFromServer } from "firebase/firestore";
-
+import { doc, getDoc, getFirestore, } from "firebase/firestore";
 const db = getFirestore();
 
 const emit = defineEmits(["acpoMode"])
 const mID = defineProps(['selectedMenteeID'])
 
 const acpoProfile = ref('')
-const coll = collection(db, "scheduledShifts")
-
-const count = reactive({
-    msTwoShifts: 0,
-    msThreeShifts: 0,
-    msFourShifts: 0,
-})
-
-const required = reactive({
-    supportLevelMSTwo: 24,
-    supportLevelMSThree: 20,
-    supportLevelMSFour: 8,
-})
-
-const progress = reactive({
-    msTwoProgress: 0,
-    msThreeProgress: 0,
-    msFourProgress: 0,
-})
 
 watchEffect(async () => {
     const docACPOProfileRef = doc(db, "acpoTracker", mID.selectedMenteeID);
-
-    const q2 = query(coll, where("mID", "==", mID.selectedMenteeID), where("milestone", "==", "Milestone 2"))
-    const q3 = query(coll, where("mID", "==", mID.selectedMenteeID), where("milestone", "==", "Milestone 3"))
-    const q4 = query(coll, where("mID", "==", mID.selectedMenteeID), where("milestone", "==", "Milestone 4"))
     try {
-        const docACPOProfileSnap = await getDoc(docACPOProfileRef)
+        const docACPOProfileSnap = await getDoc(docACPOProfileRef);
         acpoProfile.value = docACPOProfileSnap.data();
         //Is there a better way to convert these to dates??
         acpoProfile.value.developmentPlanMeeting = acpoProfile.value.developmentPlanMeeting ? acpoProfile.value.developmentPlanMeeting.toDate() : "N/A";
@@ -129,17 +92,6 @@ watchEffect(async () => {
         acpoProfile.value.milestoneMeetingTwo = acpoProfile.value.milestoneMeetingTwo ? acpoProfile.value.milestoneMeetingTwo.toDate() : "TBD";
         acpoProfile.value.milestoneMeetingThree = acpoProfile.value.milestoneMeetingThree ? acpoProfile.value.milestoneMeetingThree.toDate() : "TBD";
         acpoProfile.value.milestoneMeetingFour = acpoProfile.value.milestoneMeetingFour ? acpoProfile.value.milestoneMeetingFour.toDate() : "TBD";
-
-        const noMSTwoShifts = await getCountFromServer(q2)
-        const noMSThreeShifts = await getCountFromServer(q3)
-        const noMSFourShifts = await getCountFromServer(q4)
-        count.msTwoShifts = noMSTwoShifts.data().count
-        count.msThreeShifts = noMSThreeShifts.data().count
-        count.msFourShifts = noMSFourShifts.data().count
-        progress.msTwoProgress = count.msTwoShifts / required.supportLevelMSTwo;
-        progress.msThreeProgress = count.msThreeShifts / required.supportLevelMSThree;
-        progress.msFourProgress = count.msFourShifts / required.supportLevelMSFour;
-
     } catch (error) {
         console.error(error)
     }

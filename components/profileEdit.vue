@@ -1,9 +1,9 @@
 <template>
     <div class="full-width">
         <q-page>
-            <q-form @submit.prevent="saveprofile" class="q-gutter-sm">
-                <div class="row justify-center q-gutter-sm q-mt-sm">
-                    <q-card class="w-full" style="width: 350px;">
+            <q-form @submit.prevent="saveprofile">
+                <div class="row justify-between q-gutter-sm q-mt-sm">
+                    <q-card class="w-full" style="width: 400px;">
                         <q-card-section>
                             <div class="text-h5">Personal</div>
                             <q-input filled dense v-model="profileData.firstName" label="First Name" lazy-rules :rules="[
@@ -36,7 +36,7 @@
                         </q-card-section>
                     </q-card>
 
-                    <q-card class="w-full" style="width: 350px;">
+                    <q-card class="w-full" style="width: 400px;">
                         <q-card-section>
                             <div class="text-h5">Employee Information</div>
                             <q-input filled dense mask="######" v-model="profileData.employeeNumber" label="Employee Number"
@@ -45,7 +45,7 @@
 
                             <q-select filled dense v-model="profileData.station" :options="options.station" label="Station"
                                 emit-value lazy-rules :rules="[val => !!val || 'Station is required']"
-                                @update:model-value="stationSelected" />
+                                @update:model-value="stationSelected" map-options />
 
                             <q-select filled dense v-model="profileData.status" :options="options.status" label="Status"
                                 lazy-rules :rules="[val => !!val || 'Status is required']" />
@@ -75,7 +75,8 @@
 
                 <div class="q-mt-xs row reverse q-gutter-sm">
                     <q-btn class="q-mr-sm" label="Save" type="submit" color="primary" />
-                    <q-btn class="q-mr-sm" label="Close" color="red-5" @click="$emit('profileMode', 'profileView')" />
+                    <q-btn class="q-mr-sm" label="Close" color="secondary"
+                        @click="$emit('adminUserMode', userID.selectedUserID, 'userView')" />
                 </div>
             </q-form>
         </q-page>
@@ -84,28 +85,35 @@
 
 
 <script setup>
-import { doc, setDoc, getDoc, getDocs, collection, getFirestore } from "firebase/firestore";
+import { doc, setDoc, getDoc, getDocs, collection, getFirestore, query, where } from "firebase/firestore";
 import { Country, State, City } from 'country-state-city';
 
-const emit = defineEmits(["profileMode"])
+const emit = defineEmits(["adminUserMode"])
+const userID = defineProps(['selectedUserID'])
 
-let profileData = reactive({
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    address: "",
-    city: "",
-    state: "",
-    country: "",
-    employeeNumber: "",
-    station: "",
-    status: "",
-    role: "",
-    cohort: "",
-    car: "",
-    platoon: "",
-    rotation: "",
-})
+const db = getFirestore()
+const firebaseUser = useFirebaseUser()
+const toEdit = ref('')
+toEdit.value = userID.selectedUserID ? userID.selectedUserID : firebaseUser.value.uid
+
+let profileData = await (userData(toEdit.value)) ? reactive(await (userData(toEdit.value))) :
+    reactive({
+        firstName: "",
+        lastName: "",
+        phoneNumber: "",
+        address: "",
+        city: "",
+        state: "",
+        country: "",
+        employeeNumber: "",
+        station: "",
+        status: "",
+        role: "",
+        cohort: "",
+        car: "",
+        platoon: "",
+        rotation: "",
+    })
 
 const options = reactive({
     country: [],
@@ -123,15 +131,6 @@ const options = reactive({
     role: ['Mentee', 'Mentor', 'Paramedic Practice Educator', 'Admin']
 })
 
-const firebaseUser = useFirebaseUser()
-const db = getFirestore();
-const docRef = doc(db, "users", firebaseUser.value.uid);
-const docSnap = await getDoc(docRef);
-
-// if (docSnap.exists()) {
-profileData = reactive(docSnap.data())
-// }
-
 //Country-State-City Picker
 const countryList = Country.getAllCountries()
 countryList.forEach((country) => {
@@ -139,8 +138,7 @@ countryList.forEach((country) => {
         label: country.name,
         value: country.isoCode,
     })
-}
-)
+})
 
 const countrySelected = async () => {
     profileData.state = ""
@@ -224,12 +222,15 @@ const stationSelected = async () => {
     const docRef = doc(db, "stations", profileData.station);
     const docSnap = await getDoc(docRef);
     docSnap.data().cars.forEach((car) => {
-        options.car.push(car);
+        options.car.push(car.label);
     })
 };
 
-const acpoCohortCollection = await getDocs(collection(db, "acpoCohort"));
-acpoCohortCollection.forEach((cohort) => {
+//Display only active cohorts as options
+const acpoCohortCollection = collection(db, "acpoCohort");
+const qActiveCohorts = query(acpoCohortCollection, where("status", "==", "active"));
+const cohortsActive = await getDocs(qActiveCohorts);
+cohortsActive.forEach((cohort) => {
     options.cohort.push(
         cohort.id
     );
@@ -240,11 +241,11 @@ const { showToast } = useNotification();
 // Save Profile Function
 const saveprofile = async () => {
     try {
-        await setDoc(doc(db, "users", firebaseUser.value.uid), profileData, { merge: true });
+        await setDoc(doc(db, "users", toEdit.value), profileData, { merge: true });
         showToast('positive', 'check', 'Profile Saved');
         if (profileData.role === 'Mentee') {
-            await setDoc(doc(db, "acpoTracker", firebaseUser.value.uid + "_" + profileData.cohort), {
-                userID: firebaseUser.value.uid,
+            await setDoc(doc(db, "acpoTracker", toEdit.value + "_" + profileData.cohort), {
+                userID: toEdit.value,
                 cohort: profileData.cohort,
                 firstName: profileData.firstName,
                 lastName: profileData.lastName,

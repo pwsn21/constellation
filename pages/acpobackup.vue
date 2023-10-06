@@ -2,10 +2,12 @@
   <div class="row justify-center">
     <div class="q-pa-md full-width" style="max-width: 850px;">
       <acpoTable @selected-mentee="onMenteeSelected" />
-      <acpoView v-if="acpoMode == 'acpoView' && selectedMenteeID !== ''" :selectedMenteeID="selectedMenteeID"
-        @acpoMode="onMenteeSelected" />
-      <acpoEdit v-if="acpoMode == 'acpoEdit' && selectedMenteeID !== ''" :selectedMenteeID="selectedMenteeID"
-        @acpoMode="onMenteeSelected" />
+      <div v-if="selectedMenteeID !== ''">
+
+        <acpoView v-if="acpoMode == 'acpoView'" :selectedMenteeID="selectedMenteeID" @acpoMode="onMenteeSelected" />
+
+        <acpoEdit v-if="acpoMode == 'acpoEdit'" :selectedMenteeID="selectedMenteeID" @acpoMode="onMenteeSelected" />
+      </div>
     </div>
   </div>
 </template>

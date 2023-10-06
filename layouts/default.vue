@@ -11,8 +11,10 @@
                 Constellation
               </q-toolbar-title>
             </div>
-            <div>
-              <NuxtLink to="/"><q-toolbar-title @click="logout">Log-out</q-toolbar-title></NuxtLink>
+            <div class="row">
+
+              <avatarDropdown class="q-mx-sm" clickable />
+
             </div>
           </div>
         </q-toolbar>
@@ -28,37 +30,31 @@
       <q-drawer show-if-above v-model="leftDrawerOpen" side="left" elevated>
         <!-- drawer content -->
         <div class="flex items-center bg-primary text-white">
-          <q-icon name="hub" size="32px" class="q-px-sm" />
-          <h2 class="text-h4 text-weight-bold q-py-sm">Constellation</h2>
+          <q-icon name="hub" size="32px" class="q-pa-sm" />
+          <h2 class="text-h4 text-weight-bold">Constellation</h2>
         </div>
 
-        <ul class="text-h4 text-weight-light">
-          <li class="q-py-sm">
-            Admin
-          </li>
+        <ul class="text-h4 text-weight-light q-mt-md">
+
           <li class="q-py-sm">
             <NuxtLink to="/"><q-icon name="dashboard" class="q-mx-sm" />Dashboard</NuxtLink>
           </li>
           <li class="q-py-sm">
-            <NuxtLink to="/acpo"><q-icon name="groups" class="q-mx-sm" />ACP-Orientation</NuxtLink>
+            <NuxtLink to="/acpoAdmin"><q-icon name="groups" class="q-mx-sm" />ACP-Orientation</NuxtLink>
+          </li>
+          <li class="q-py-sm">
+            <NuxtLink to="/acpoMentor"><q-icon name="groups" class="q-mx-sm" />ACP-O (Mentor)</NuxtLink>
           </li>
 
           <li class="q-py-sm">
             <NuxtLink to="/users"><q-icon name="people" class="q-mx-sm" />Users</NuxtLink>
           </li>
+          <li class="q-py-sm">
+            <NuxtLink to="/formAttendance"><q-icon name="cruelty_free" class="q-mx-sm" />Test</NuxtLink>
+          </li>
 
         </ul>
 
-        <ul class="text-h4 text-weight-light">
-          <q-separator />
-          <li class="q-py-sm">
-            <NuxtLink to="/profile"><q-icon name="account_circle" class="q-mx-sm" />Profile</NuxtLink>
-          </li>
-          <li class="q-py-sm">
-            <NuxtLink to="/" @click="logout"><q-icon name="logout" class="q-mx-sm" />Log-out</NuxtLink>
-          </li>
-          <li></li>
-        </ul>
       </q-drawer>
 
 

@@ -10,11 +10,15 @@
 
                             <q-input filled v-model="station.city" label="City" />
 
-                            <q-input filled v-model="carInput" label="Cars (comma-separated)" />
+                            <q-input filled v-model="carInput" label="Car" />
+                            <q-input filled v-model="day" label="Day" />
+                            <q-input filled v-model="night" label="Night" />
+
                             <q-btn label="Add Cars" @click="addCars" color="primary" />
                             <q-btn label="Clear" @click="reset" color="primary" />
 
                             {{ station.cars }}
+                            {{ carInput }}
                         </q-card-section>
                     </q-card>
                 </div>
@@ -34,6 +38,8 @@ const db = getFirestore();
 
 const stnNumber = ref('')
 const carInput = ref(''); // Add this line to define carInput
+const day = ref('06:30'); // Add this line to define carInput
+const night = ref('18:30'); // Add this line to define carInput
 const addCars = () => {
     if (carInput.value) {
         const newCars = carInput.value.split(',');
@@ -49,7 +55,14 @@ const reset = () => {
 
 const station = reactive({
     city: '',
-    cars: [],
+    cars: [{
+        label: carInput,
+        dayStartTime: day,
+        dayEndTime: night,
+        nightStartTime: night,
+        nightEndTime: day
+    },
+    ]
 })
 
 const { showToast } = useNotification();
@@ -58,8 +71,8 @@ const addStation = async () => {
     try {
         await setDoc(doc(db, "stations", stnNumber.value),
             station
-            , { merge: true })
-        station.cars = []
+            , { merge: false })
+
         showToast('positive', 'check', 'Station Added');
     }
     catch (error) {

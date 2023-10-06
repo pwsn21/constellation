@@ -5,7 +5,7 @@
             @update:model-value="stationSelected" />
         <q-select class="q-mt-xs" filled v-model="car" :options="options.car" label="Car" lazy-rules
             :rules="[val => !!val || 'Car is required']" :model-value="car"
-            @update:model-value="(value) => emit('update:car', value)" />
+            @update:model-value="value => emit('update:car', value)" />
     </div>
 </template>
 
@@ -15,6 +15,8 @@ import { doc, getDocs, getDoc, collection, getFirestore } from 'firebase/firesto
 const db = getFirestore();
 const station = ref([])
 const car = ref([])
+
+const emit = defineEmits(['update:car'])
 
 const options = reactive({
     station: [],
@@ -48,18 +50,14 @@ async function filterFunction(val, update) {
 }
 
 const stationSelected = async () => {
-    car.value = [];
+    car.value = []
     while (options.car.length) { options.car.pop(); }
-    const docRef = doc(db, "stations", station.value.value);
-    const docSnap = await getDoc(docRef);
-    console.log(docSnap.data().cars)
+    const docRef = doc(db, "stations", station.value.value)
+    const docSnap = await getDoc(docRef)
     docSnap.data().cars.forEach((car) => {
         options.car.push(car);
     })
-};
-
-const emit = defineEmits(['update:car']);
-
+}
 </script>
 
 <style scoped></style>

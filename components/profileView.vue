@@ -2,12 +2,15 @@
     <div class="full-width">
         <q-card>
             <q-card-section>
+
                 <div class="row justify-between">
                     <div class="text-h4">
                         Employee Profile: {{ userProfile.firstName }} {{
                             userProfile.lastName }}
                     </div>
-                    <div><q-btn icon="edit" round flat @click="$emit('profileMode', 'profileEdit')" /></div>
+                    <div>
+                        <q-btn icon="edit" round flat @click="$emit('adminUserMode', userID.selectedUserID, 'userEdit')" />
+                    </div>
                 </div>
             </q-card-section>
             <q-separator />
@@ -19,11 +22,12 @@
                         Phone: {{ userProfile.phoneNumber }}
                     </q-item>
                     <q-item>
-                        Address: {{ userProfile.address }}, {{ userProfile.city }}, {{ userProfile.state.label }}, {{
-                            userProfile.country.label }}
+                        Address: {{ userProfile.address }}, {{ userProfile.city }},
+                        <!-- error that can't read label if not put in a conditional even though it exists.... -->
+                        {{ userProfile.state ? userProfile.state.label : 'N/A' }},
+                        {{ userProfile.country ? userProfile.country.label : 'N/A' }}
                     </q-item>
                 </q-list>
-
             </q-card-section>
             <q-separator />
             <q-card-section>
@@ -53,17 +57,21 @@
 
 
 <script setup>
-import { doc, getDoc, getFirestore, } from "firebase/firestore";
-
-const emit = defineEmits(["profileMode"])
+const emit = defineEmits(["adminUserMode"])
+const userID = defineProps(['selectedUserID'])
 
 const firebaseUser = useFirebaseUser()
-const db = getFirestore();
+const toDisplay = ref('')
+const userProfile = ref('')
 
-const docProfileRef = doc(db, "users", firebaseUser.value.uid);
-const docProfileSnap = await getDoc(docProfileRef);
-const userProfile = docProfileSnap.data()
-
-
+watchEffect(async () => {
+    //Depends on if admin is viewing user profile or if user is viewing their own profile
+    toDisplay.value = userID.selectedUserID ? userID.selectedUserID : firebaseUser.value.uid
+    try {
+        userProfile.value = await (userData(toDisplay.value))
+    } catch (error) {
+        console.error(error)
+    }
+})
 </script>
 <style scoped></style>
