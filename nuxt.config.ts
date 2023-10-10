@@ -14,7 +14,7 @@ export default defineNuxtConfig({
   ],
   quasar: {
     extras: {
-      fontIcons: ['material-icons']
+      fontIcons: ['material-icons', 'material-symbols-outlined']
     },
     plugins: ['Notify'],
   },

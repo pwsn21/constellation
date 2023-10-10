@@ -1,7 +1,8 @@
 <template>
   <div>
     <div class="q-py-lg flex justify-center">
-      <h2 class="text-h3 text-primary">{{ firstName }}'s Dashboard
+      <h2 class="text-h3 text-primary">
+        {{ firstName }}'s Dashboard
       </h2>
     </div>
 
@@ -64,11 +65,11 @@
 </template>
 
 <script setup>
-const firebaseUser = useFirebaseUser()
+const firebaseUser = await useFirebaseUser()
 const profileData = await userData(firebaseUser.value.uid);
 let firstName = ref('')
 firstName.value = profileData ? profileData.firstName : firebaseUser.value.email
 
-const pendingForms = await mentorPendingApproval(firebaseUser.value.uid)
+const pendingForms = await mentorFormsPendingApproval(firebaseUser.value.uid)
 </script>
   

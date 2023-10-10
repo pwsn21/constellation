@@ -48,7 +48,8 @@
                                 @update:model-value="stationSelected" map-options />
 
                             <q-select filled dense v-model="profileData.status" :options="options.status" label="Status"
-                                lazy-rules :rules="[val => !!val || 'Status is required']" />
+                                lazy-rules :rules="[val => !!val || 'Status is required']"
+                                @update:model-value="statusSelected" />
 
                             <q-select filled dense v-model="profileData.car" :options="options.car" label="Car" lazy-rules
                                 v-if="profileData.status === 'Full-time Regularly Scheduled'"
@@ -65,7 +66,8 @@
                         <q-separator />
                         <q-card-section>
                             <q-select filled dense v-model="profileData.role" :options="options.role" label="Role"
-                                lazy-rules :rules="[val => !!val || 'Role is required']" />
+                                lazy-rules :rules="[val => !!val || 'Role is required']"
+                                @update:model-value="roleSelected" />
                             <q-select filled dense v-model="profileData.cohort" :options="options.cohort" label="Cohort"
                                 v-if="profileData.role === 'Mentee'" lazy-rules
                                 :rules="[val => !!val || 'Cohort is required']" />
@@ -125,8 +127,8 @@ const options = reactive({
     station: [],
     status: ['Casual', 'Full-time Irregularly Scheduled', 'Full-time Regularly Scheduled'],
     car: [],
-    platoon: ['A', 'B', 'C', 'D'],
-    rotation: ['R1', 'R2', 'R3', 'R4'],
+    platoon: ['A', 'B', 'C', 'D', 'Off Platoon'],
+    rotation: ['R1', 'R2', 'R3', 'R4', 'Off Platoon'],
     cohort: [],
     role: ['Mentee', 'Mentor', 'Paramedic Practice Educator', 'Admin']
 })
@@ -226,6 +228,16 @@ const stationSelected = async () => {
     })
 };
 
+const statusSelected = () => {
+    profileData.car = ""
+    profileData.platoon = ""
+    profileData.rotation = ""
+}
+
+const roleSelected = () => {
+    profileData.cohort = ""
+}
+
 //Display only active cohorts as options
 const acpoCohortCollection = collection(db, "acpoCohort");
 const qActiveCohorts = query(acpoCohortCollection, where("status", "==", "active"));
@@ -244,7 +256,7 @@ const saveprofile = async () => {
         await setDoc(doc(db, "users", toEdit.value), profileData, { merge: true });
         showToast('positive', 'check', 'Profile Saved');
         if (profileData.role === 'Mentee') {
-            await setDoc(doc(db, "acpoTracker", toEdit.value + "_" + profileData.cohort), {
+            await setDoc(doc(db, "acpoMentees", toEdit.value + "_" + profileData.cohort), {
                 userID: toEdit.value,
                 cohort: profileData.cohort,
                 firstName: profileData.firstName,

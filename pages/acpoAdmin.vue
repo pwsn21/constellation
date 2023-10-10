@@ -1,58 +1,68 @@
 <template>
   <div class="row justify-center">
     <div class="q-pa-md full-width" style="max-width: 850px;">
-      <acpoTable @selected-mentee="onMenteeSelected" />
-      <transition name="slide-fade">
-        <div v-if="selectedMenteeID !== ''" class="full-width">
+      <menteesTable @selected-mentee="onMenteeSelected" :openTable="openTable" />
 
-          <q-tabs v-model="currentTab" align="left" inline-label stretch class="q-pa-xs">
-            <q-tab name="acpoProfileTab" label="Profile" icon="person" />
-            <q-tab name="meetingMinutesTab" label="Meeting Minutes" icon="speaker_notes" />
-            <q-tab name="scheduleTab" label="Schedule" icon="calendar_month" />
-            <q-tab name="formsTab" label="Forms" icon="assignment" />
-            <q-space />
-            <q-btn icon="close" round flat @click="closeDrawer" dense />
-          </q-tabs>
+      <div v-if="selectedMenteeID !== ''" class="full-width">
 
-          <q-tab-panels v-model="currentTab" transition-next="jump-down" animated transition-prev="jump-down"
-            transition-duration="200">
-            <q-tab-panel name="acpoProfileTab" class="q-px-xs">
-              <acpoView v-if="acpoMode == 'acpoView'" :selectedMenteeID="selectedMenteeID" @acpoMode="onMenteeSelected"
-                transition />
-              <acpoEdit v-if="acpoMode == 'acpoEdit'" :selectedMenteeID="selectedMenteeID" @acpoMode="onMenteeSelected"
-                transition />
-            </q-tab-panel>
-            <q-tab-panel name="meetingMinutesTab">
-              Meeting Minutes
-            </q-tab-panel>
-            <q-tab-panel name="formsTab">
-              Forms
-            </q-tab-panel>
-            <q-tab-panel name="scheduleTab">
-              Schedule
-            </q-tab-panel>
-          </q-tab-panels>
+        <q-tabs v-model="currentTab" align="left" inline-label stretch class="q-mt-sm text-grey-6" narrow-indicator>
+          <q-tab name="menteeProfileTab" label="Profile" icon="person" content-class="text-red-10" />
+          <q-tab name="menteeFormsTab" label="Forms" icon="assignment" class="text-purple-10" />
+          <q-tab name="menteeScheduleTab" label="Schedule" icon="calendar_month" />
+          <q-tab name="menteeMeetingMinutesTab" label="Meeting Minutes" icon="speaker_notes" />
+          <q-space />
+          <q-btn icon="close" class="text-black" round flat @click="closeDrawer" dense />
+        </q-tabs>
 
-        </div>
-      </transition>
+        <q-tab-panels v-model="currentTab" transition-next="jump-down" animated transition-prev="jump-down"
+          transition-duration="200">
+
+          <q-tab-panel name="menteeProfileTab" class="q-px-xs">
+            <menteeProfileView v-if="acpoMode == 'acpoView'" :selectedMenteeID="selectedMenteeID"
+              @acpoMode="onMenteeSelected" transition />
+            <menteeProfileEdit v-if="acpoMode == 'acpoEdit'" :selectedMenteeID="selectedMenteeID"
+              @acpoMode="onMenteeSelected" transition />
+          </q-tab-panel>
+
+          <q-tab-panel name="menteeFormsTab">
+            <menteeFormsSubPanel :selectedMenteeID="selectedMenteeID" />
+          </q-tab-panel>
+
+          <q-tab-panel name="menteeMeetingMinutesTab">
+            Meeting Minutes
+          </q-tab-panel>
+
+          <q-tab-panel name="menteeScheduleTab">
+            Schedule
+          </q-tab-panel>
+        </q-tab-panels>
+
+      </div>
+
     </div>
   </div>
 </template>
 
 <script setup>
-const currentTab = ref('acpoProfileTab')
+const currentTab = ref('menteeProfileTab')
 const acpoMode = ref('acpoView')
 const selectedMenteeID = ref('')
+let openTable = ref()
 
-
-const onMenteeSelected = (ID, mode) => {
-
+const onMenteeSelected = (ID, mode, tab, table) => {
   selectedMenteeID.value = ID
   acpoMode.value = mode
+  currentTab.value = tab
+  openTable.value = table
 }
+
+
 const closeDrawer = () => {
   selectedMenteeID.value = ''
+  openTable.value = true
 }
+
+
 
 </script>
 <style scoped>
@@ -70,7 +80,7 @@ const closeDrawer = () => {
 }
 
 .slide-fade-leave-to {
-  transform: translateY(-50px);
+  transform: translateY(50px);
   opacity: 0;
 }
 </style>

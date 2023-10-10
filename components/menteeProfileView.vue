@@ -3,12 +3,13 @@
         <q-card class="q-mt-none">
             <q-card-section>
                 <div class="row justify-between">
-                    <div class="text-h4">
+                    <div class="text-h4 text-secondary">
                         {{ menteeProfile.firstName }} {{ menteeProfile.lastName }} ({{ menteeProfile.cohort }}) - {{
                             menteeProfile.acpoStatus }}
                     </div>
                     <div>
-                        <q-btn icon="edit" round flat @click="$emit('acpoMode', mID.selectedMenteeID, 'acpoEdit')" />
+                        <q-btn icon="edit" round flat
+                            @click="$emit('acpoMode', mID.selectedMenteeID, 'acpoEdit', 'menteeProfileTab')" />
                     </div>
                 </div>
             </q-card-section>
@@ -99,21 +100,18 @@ let msThreeData = ref('')
 let msFourData = ref('')
 
 watchEffect(async () => {
-    const queryShifts = qMenteeShifts(mID.selectedMenteeID)
+    const queryAttendance = qMenteeAttendance(mID.selectedMenteeID)
     try {
         menteeProfile.value = await (menteeData(mID.selectedMenteeID))
-
-        //Is there a better way to convert these to dates??
-
         menteeProfile.value.developmentPlanMeeting = await dateLongFormat(menteeProfile.value.developmentPlanMeeting)
         menteeProfile.value.closeDevelopmentPlanMeeting = await dateLongFormat(menteeProfile.value.closeDevelopmentPlanMeeting)
         menteeProfile.value.milestoneMeetingTwo = await dateLongFormat(menteeProfile.value.milestoneMeetingTwo)
         menteeProfile.value.milestoneMeetingThree = await dateLongFormat(menteeProfile.value.milestoneMeetingThree)
         menteeProfile.value.milestoneMeetingFour = await dateLongFormat(menteeProfile.value.milestoneMeetingFour)
 
-        msTwoData.value = await calcProgress(menteeProfile.value.supportLevelMSTwo, queryShifts.qMSTwoShifts)
-        msThreeData.value = await calcProgress(menteeProfile.value.supportLevelMSThree, queryShifts.qMSThreeShifts)
-        msFourData.value = await calcProgress(menteeProfile.value.supportLevelMSFour, queryShifts.qMSFourShifts)
+        msTwoData.value = await calcProgress(menteeProfile.value.supportLevelMSTwo, queryAttendance.qMSTwoShifts)
+        msThreeData.value = await calcProgress(menteeProfile.value.supportLevelMSThree, queryAttendance.qMSThreeShifts)
+        msFourData.value = await calcProgress(menteeProfile.value.supportLevelMSFour, queryAttendance.qMSFourShifts)
     } catch (error) {
         console.error(error)
     }

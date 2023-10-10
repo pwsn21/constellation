@@ -35,8 +35,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { useQuasar } from 'quasar'
+<script setup>
 import { ref } from 'vue'
 const emit = defineEmits(["change"])
 const { showToast } = useNotification()

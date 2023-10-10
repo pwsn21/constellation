@@ -14,9 +14,9 @@
                     <q-tab-panels v-model="currentTab" transition-next="jump-down" animated transition-prev="jump-down"
                         transition-duration="200">
                         <q-tab-panel name="profile" class="q-px-xs">
-                            <profileView v-if="adminUserMode == 'userView'" :selectedUserID="selectedUserID"
+                            <userProfileView v-if="adminUserMode == 'userView'" :selectedUserID="selectedUserID"
                                 @adminUserMode="onUserSelected" transition />
-                            <profileEdit v-if="adminUserMode == 'userEdit'" :selectedUserID="selectedUserID"
+                            <userProfileEdit v-if="adminUserMode == 'userEdit'" :selectedUserID="selectedUserID"
                                 @adminUserMode="onUserSelected" transition />
                         </q-tab-panel>
                         <q-tab-panel name="schedule">

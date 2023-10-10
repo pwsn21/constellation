@@ -15,35 +15,37 @@
                 </div>
             </q-form>
         </q-card>
-
     </div>
 </template>
 
 <script setup>
-import { addDoc, collection, getFirestore } from "firebase/firestore";
+import { addDoc, collection, getFirestore, serverTimestamp } from "firebase/firestore";
 const db = getFirestore()
 const firebaseUser = useFirebaseUser()
 
 const profileData = reactive(await (userData(firebaseUser.value.uid)))
-const menteeProfileData = reactive(await (menteeData(firebaseUser.value.uid + "_" + profileData.cohort)))
+const menteeProfileData = reactive(await (menteeData('1gvuIqcoVafmikRg10U95rp7pnz1_2023-3')))
 
 const shift = reactive({
-    date: null,
-    car: null,
-    mentor: null,
-    mentorApproval: 'pending',
+    date: undefined,
+    car: undefined,
+    mentorName: undefined,
+    mentorID: undefined,
+    approvalStatus: 'Pending',
     cohort: profileData.cohort,
-    milestone: null,
-    pped: menteeProfileData.pped,
+    milestone: undefined,
+    ppedName: menteeProfileData.pped.label,
+    ppedID: menteeProfileData.pped.value,
     formType: 'attendance',
     // mID: firebaseUser.value.uid + "_" + profileData.cohort,
-    mID: '0meA1S9c9yMoGYGjfoWUaJJrHQS2_2023-3',
-    // name: profileData.firstName + " " + profileData.lastName
-    name: 'Winnie Pooh'
+    mID: '1gvuIqcoVafmikRg10U95rp7pnz1_2023-3',
+    // name: profileData.firstName + " " + profileData.lastName,
+    name: 'Mentee Zulu',
+    submittedOn: undefined,
 })
 
 const updateCar = (selectedCars) => { shift.car = selectedCars.label }
-const updateMentor = (selectedMentor) => { shift.mentor = selectedMentor }
+const updateMentor = (selectedMentor) => { shift.mentorName = selectedMentor.label, shift.mentorID = selectedMentor.value }
 const updateShiftDate = (date) => { shift.date = date }
 
 const { showToast } = useNotification();
@@ -51,7 +53,8 @@ const { showToast } = useNotification();
 const addAttendance = async () => {
     try {
         shift.date = new Date(shift.date)
-        await addDoc(collection(db, "scheduledShifts"), shift)
+        shift.submittedOn = serverTimestamp()
+        await addDoc(collection(db, "acpoFormsAttendance"), shift)
         showToast('positive', 'check', 'Form Added');
         navigateTo('/')
     }

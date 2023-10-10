@@ -50,7 +50,7 @@
             <NuxtLink to="/users"><q-icon name="people" class="q-mx-sm" />Users</NuxtLink>
           </li>
           <li class="q-py-sm">
-            <NuxtLink to="/formAttendance"><q-icon name="cruelty_free" class="q-mx-sm" />Test</NuxtLink>
+            <NuxtLink to="/acpoFormAttendance"><q-icon name="cruelty_free" class="q-mx-sm" />Test</NuxtLink>
           </li>
 
         </ul>

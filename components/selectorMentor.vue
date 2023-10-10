@@ -1,7 +1,7 @@
 <template>
     <div>
         <q-select label='Mentor' v-model="mentor" :options="options.mentors" filled :model-value="mentor"
-            @update:model-value="value => emit('update:mentor', value)" emit-value map-options />
+            @update:model-value="value => emit('update:mentor', value)" map-options />
     </div>
 </template>
 

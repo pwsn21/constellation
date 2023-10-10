@@ -4,43 +4,52 @@
             <div class="flex justify-center">
                 <h2 class="text-h4 center q-pa-md">ACP-Orientation</h2>
             </div>
-
             <q-expansion-item label="Mentees" class="text-h5 text-primary" header-class="q-pa-none" header-style="bg-white"
-                expand-icon-toggle expand-icon-class="text-primary" default-opened dense flat>
-                <div v-if="showTable">
-                    <div class="q-my-sm" style=" max-width: 250px">
-                        <q-input v-model="filterText" class="bg-grey-4" color="primary" header-class="text-primary" dense
-                            filled label="Search..." clearable> <template v-slot:append>
-                                <q-icon name="search" />
-                            </template>
-                        </q-input>
-                    </div>
+                expand-icon-toggle expand-icon-class="text-primary" default-opened dense flat v-model="showTable">
 
-                    <div>
-                        <q-table :rows="filteredMentees" :columns="menteeColumns" row-key="id" title-class="text-h4"
-                            table-header-class="bg-primary text-white" @row-click="menteeSelection">
-                        </q-table>
-                    </div>
+                <div class="q-my-sm" style=" max-width: 250px">
+                    <q-input v-model="filterText" class="bg-grey-4" color="primary" header-class="text-primary" dense filled
+                        label="Search..." clearable> <template v-slot:append>
+                            <q-icon name="search" />
+                        </template>
+                    </q-input>
+                </div>
+
+                <div>
+                    <q-table :rows="filteredMentees" :columns="menteeColumns" row-key="id" title-class="text-h4"
+                        table-header-class="bg-primary text-white" @row-click="menteeSelection">
+                    </q-table>
                 </div>
             </q-expansion-item>
         </div>
-
     </div>
 </template>
   
 <script setup>
 import { collection, getDocs, getFirestore } from "firebase/firestore";
 
+let showTable = ref(true)
+
 const emit = defineEmits(["selectedMentee"])
 const menteeSelection = (event, row) => {
-    emit("selectedMentee", row.id, "acpoView")
+    emit("selectedMentee", row.id, "acpoView", "menteeProfileTab", false)
+    showTable.value = false
 };
 
-const showTable = ref(true)
+const table = defineProps(['openTable'])
 
 const db = getFirestore()
-const acpoCollection = collection(db, 'acpoTracker')
+const acpoCollection = collection(db, 'acpoMentees')
 const mentees = ref([])
+
+watchEffect(async () => {
+    showTable.value = table.openTable
+    try {
+    } catch (error) {
+        console.error(error)
+    }
+})
+
 
 const querySnapshot = await getDocs(acpoCollection);
 querySnapshot.forEach((doc) => {

@@ -1,9 +1,8 @@
 <template>
     <div class="row justify-center">
         <div class="q-pa-md full-width" style="max-width: 850px;">
-            <profileView v-if="profileMode == 'userView'" @adminUserMode="onProfileMode" />
-            <profileEdit v-if="profileMode == 'userEdit'" @adminUserMode="onProfileMode" />
-
+            <userProfileView v-if="profileMode == 'userView'" @adminUserMode="onProfileMode" />
+            <userProfileEdit v-if="profileMode == 'userEdit'" @adminUserMode="onProfileMode" />
         </div>
     </div>
 </template>
