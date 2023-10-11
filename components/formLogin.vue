@@ -23,7 +23,7 @@
               <div>
                 <q-btn label="Log-In" type="submit" color="primary" />
                 <q-btn label="Clear" type="reset" color="primary" flat class="q-ml-sm" />
-                <q-btn label="Create Test User" type="reset" color="accent" class="q-ml-sm" @click="createTestUser" />
+                <!-- <q-btn label="Create Test User" type="reset" color="accent" class="q-ml-sm" @click="createTestUser" /> -->
               </div>
               <div>
                 <q-btn label="Register" color="secondary" @click="$emit('change', 'Register')" />
@@ -66,15 +66,15 @@ const loginUser = async () => {
     })
 };
 
-const createTestUser = async () => {
+// const createTestUser = async () => {
 
-  await createUser('hjawjtdf@bcehs.ca', 'testuesrpass')
-    .then((result) => {
-      // if (result.code) {
-      //   showToast('red-5', 'warning', 'Invalid User or Password')
-      // }
-    })
-};
+//   await createUser('hjawsdfjtdf@bcehs.ca', 'testuesrpass')
+//     .then((result) => {
+//       if (result.code) {
+//         showToast('red-5', 'warning', 'Invalid User or Password')
+//       }
+//     })
+// };
 </script>
 
 <style scoped></style>

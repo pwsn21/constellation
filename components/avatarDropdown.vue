@@ -1,7 +1,6 @@
 <template>
     <div>
-        <q-btn v-if="!avatar" icon="person" round class="bg-secondary text-white" />
-        <q-btn v-if="avatar" :label="avatar" round class="bg-secondary text-white">
+        <q-btn :label="avatar" round class="bg-secondary text-white">
 
             <q-menu color="secondary" transition-show="jump-down" transition-hide="jump-up" dropdown-icon="person"
                 auto-close>
@@ -38,9 +37,7 @@ const firebaseUser = await useFirebaseUser()
 const profileData = await userData(firebaseUser.value.uid);
 let avatar = ref('')
 
-profileData.firstName ? avatar.value = profileData.firstName.charAt(0) + profileData.lastName.charAt(0) : avatar.value = null
-
-
+profileData.firstName ? avatar.value = profileData.firstName.charAt(0) + profileData.lastName.charAt(0) : avatar.value = 'user'
 
 const logout = () => {
     signOutUser();
