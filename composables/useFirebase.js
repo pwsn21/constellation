@@ -13,10 +13,17 @@ import {
     getFirestore
 } from "firebase/firestore";
 
+
+
 export const createUser = async (email, password) => {
     const auth = getAuth();
         const credentials = await createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
+            const db = getFirestore()
+            const docSnap = getDoc(doc(db, "users", auth.currentUser.uid))
+            if(!docSnap.exists){
+                setDoc(doc(db, "users", auth.currentUser.uid), {role: [""]})
+            }
             const result = sendEmailVerification(auth.currentUser)
             .then(() => {
                 console.log('Verified email sent successfully');

@@ -29,7 +29,7 @@
           </q-card>
         </div>
         <div>
-          <q-card v-if="!profileData" class="my-card">
+          <q-card v-if="!profileData.firstName" class="my-card">
             <q-card-section class="bg-primary text-white">
               <div class="text-h5">Create Profile</div>
               <div class="text-subtitle2"></div>
@@ -68,7 +68,7 @@
 const firebaseUser = await useFirebaseUser()
 const profileData = await userData(firebaseUser.value.uid);
 let firstName = ref('')
-firstName.value = profileData ? profileData.firstName : firebaseUser.value.email
+firstName.value = profileData.firstName ? profileData.firstName : firebaseUser.value.email
 
 const pendingForms = await mentorFormsPendingApproval(firebaseUser.value.uid)
 </script>

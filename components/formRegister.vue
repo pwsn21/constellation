@@ -58,7 +58,7 @@ const registerUser = async () => {
 
   await createUser(email.value, password.value)
     .then((result) => {
-      if (result.code = "auth/email-already-in-use") {
+      if (result.code == "auth/email-already-in-use") {
         showToast('red-5', 'warning', 'This BCEHS email is already registered')
       }
     })

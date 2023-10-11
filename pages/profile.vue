@@ -16,7 +16,7 @@ const docSnap = await getDoc(docRef);
 
 const profileMode = ref('userView')
 
-if (!docSnap.exists()) {
+if (!docSnap.firstName) {
     profileMode.value = 'userEdit'
 }
 

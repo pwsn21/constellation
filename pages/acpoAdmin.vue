@@ -56,13 +56,10 @@ const onMenteeSelected = (ID, mode, tab, table) => {
   openTable.value = table
 }
 
-
 const closeDrawer = () => {
   selectedMenteeID.value = ''
   openTable.value = true
 }
-
-
 
 </script>
 <style scoped>
