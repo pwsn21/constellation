@@ -28,14 +28,15 @@ export const userData = async (fbUID) => {
     }
 }
 
-export const dateLongFormat = async (timestamp) => {
-    if (timestamp){
-    const result = await date.formatDate(timestamp.toDate(), 'dddd MMMM DD YYYY - HH:mm')
+export const dateLongFormat = async (dateString) => {
+    if (dateString){
+    const result = await date.formatDate(new Date(dateString), 'dddd MMMM DD, YYYY - HH:mm')
     return result
     } else {
         return "N/A"
     }
 }
+
 export const datePickerFormat = async (timestamp) => {
     if (timestamp){
     const result = await date.formatDate(timestamp.toDate(), 'ddd, MM/DD/YYYY, HH:mm')

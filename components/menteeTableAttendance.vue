@@ -31,7 +31,7 @@ queryShifts.forEach((shift) => {
     shiftData.value.push({
         milestone: d.milestone,
         car: d.car,
-        date: d.date.toDate().toDateString(),
+        date: d.date,
         mentorName: d.mentorName,
         approvalStatus: d.approvalStatus,
         submittedOn: d.submittedOn.toDate().toDateString(),

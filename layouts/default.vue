@@ -18,13 +18,6 @@
             </div>
           </div>
         </q-toolbar>
-
-
-        <!-- <q-tabs align="left">
-          <q-route-tab to="/page1" label="Page One" />
-          <q-route-tab to="/page2" label="Page Two" />
-          <q-route-tab to="/page3" label="Page Three" />
-        </q-tabs> -->
       </q-header>
 
       <q-drawer show-if-above v-model="leftDrawerOpen" side="left" elevated>
@@ -51,6 +44,16 @@
           </li>
           <li class="q-py-sm">
             <NuxtLink to="/acpoFormAttendance"><q-icon name="cruelty_free" class="q-mx-sm" />Test</NuxtLink>
+          </li>
+          <li class="q-py-sm">
+            <NuxtLink to="/testShiftAdd"><q-icon name="cruelty_free" class="q-mx-sm" />Shift Add (test)</NuxtLink>
+          </li>
+          <li class="q-py-sm">
+            <NuxtLink to="/testShiftQuery"><q-icon name="cruelty_free" class="q-mx-sm" />Shift Query (test)</NuxtLink>
+          </li>
+          <li class="q-py-sm">
+            <NuxtLink to="/testPlatoonCalculator"><q-icon name="cruelty_free" class="q-mx-sm" />Platoon Calculator (test)
+            </NuxtLink>
           </li>
 
         </ul>

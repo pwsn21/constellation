@@ -32,8 +32,7 @@ const emit = defineEmits(['update:date']);
 const mask = "ddd, MM/DD/YYYY, HH:mm"
 
 function updateType(date) {
-    // const formattedDate = date ? new Date(date) : null;
-    emit('update:date', date);
+    emit('update:date', date)
 }
 </script>
 

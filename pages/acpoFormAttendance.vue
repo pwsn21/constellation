@@ -29,8 +29,8 @@ const menteeProfileData = reactive(await (menteeData('1gvuIqcoVafmikRg10U95rp7pn
 const shift = reactive({
     date: undefined,
     car: undefined,
-    mentorName: undefined,
-    mentorID: undefined,
+    mentorName: 'Patrick',
+    mentorID: 'CYHU9R0b9RWF93RpOm5lGpHLCm02',
     approvalStatus: 'Pending',
     cohort: profileData.cohort,
     milestone: undefined,
@@ -38,10 +38,10 @@ const shift = reactive({
     ppedID: menteeProfileData.pped.value,
     formType: 'attendance',
     // mID: firebaseUser.value.uid + "_" + profileData.cohort,
-    mID: '1gvuIqcoVafmikRg10U95rp7pnz1_2023-3',
+    menteeID: '1gvuIqcoVafmikRg10U95rp7pnz1_2023-3',
     // name: profileData.firstName + " " + profileData.lastName,
     name: 'Mentee Zulu',
-    submittedOn: undefined,
+    submittedOn: serverTimestamp(),
 })
 
 const updateCar = (selectedCars) => { shift.car = selectedCars.label }
@@ -52,8 +52,6 @@ const { showToast } = useNotification();
 
 const addAttendance = async () => {
     try {
-        shift.date = new Date(shift.date)
-        shift.submittedOn = serverTimestamp()
         await addDoc(collection(db, "acpoFormsAttendance"), shift)
         showToast('positive', 'check', 'Form Added');
         navigateTo('/')

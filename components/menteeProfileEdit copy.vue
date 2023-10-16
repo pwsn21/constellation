@@ -112,12 +112,13 @@ let menteeProfile = reactive({
     cohort: data.cohort || null,
     pped: data.pped || null,
     acpoStatus: data.acpoStatus || null,
-    hireDate: data.hireDate || null,
-    developmentPlanMeeting: data.developmentPlanMeeting || null,
-    closeDevelopmentPlanMeeting: data.closeDevelopmentPlanMeeting || null,
-    milestoneMeetingTwo: data.milestoneMeetingTwo || null,
-    milestoneMeetingThree: data.milestoneMeetingThree || null,
-    milestoneMeetingFour: data.milestoneMeetingFour || null,
+    //Is there a better way to do these to dates?
+    hireDate: await datePickerFormat(data.hireDate),
+    developmentPlanMeeting: await datePickerFormat(data.developmentPlanMeeting),
+    closeDevelopmentPlanMeeting: await datePickerFormat(data.closeDevelopmentPlanMeeting),
+    milestoneMeetingTwo: await datePickerFormat(data.milestoneMeetingTwo),
+    milestoneMeetingThree: await datePickerFormat(data.milestoneMeetingThree),
+    milestoneMeetingFour: await datePickerFormat(data.milestoneMeetingFour),
     supportLevelMSTwo: data.supportLevelMSTwo || null,
     supportLevelMSThree: data.supportLevelMSThree || null,
     supportLevelMSFour: data.supportLevelMSFour || null,
@@ -197,28 +198,26 @@ const saveAcpOProfile = async () => {
         setCurrentSupport(menteeProfile)
         threePersonChecker()
         needDPMeetingChecker()
-        await setDoc(doc(db, "acpoMentees", mID.selectedMenteeID), menteeProfile
-            // {
-            //     firstName: menteeProfile.firstName,
-            //     lastName: menteeProfile.lastName,
-            //     cohort: menteeProfile.cohort,
-            //     pped: menteeProfile.pped,
-            //     acpoStatus: menteeProfile.acpoStatus,
-            //     hireDate: menteeProfile.hireDate,
-            //     developmentPlanMeeting: menteeProfile.developmentPlanMeeting,
-            //     closeDevelopmentPlanMeeting: menteeProfile.closeDevelopmentPlanMeeting,
-            //     milestoneMeetingTwo: menteeProfile.milestoneMeetingTwo,
-            //     milestoneMeetingThree: menteeProfile.milestoneMeetingThree,
-            //     milestoneMeetingFour: menteeProfile.milestoneMeetingFour,
-            //     supportLevelMSTwo: menteeProfile.supportLevelMSTwo,
-            //     supportLevelMSThree: menteeProfile.supportLevelMSThree,
-            //     supportLevelMSFour: menteeProfile.supportLevelMSFour,
-            //     currentMilestone: menteeProfile.currentMilestone,
-            //     currentSupport: menteeProfile.currentSupport,
-            //     threePerson: menteeProfile.threePerson,
-            //     needDPMeeting: menteeProfile.needDPMeeting,
-            // }
-            , { merge: true });
+        await setDoc(doc(db, "acpoMentees", mID.selectedMenteeID), {
+            firstName: menteeProfile.firstName,
+            lastName: menteeProfile.lastName,
+            cohort: menteeProfile.cohort,
+            pped: menteeProfile.pped,
+            acpoStatus: menteeProfile.acpoStatus,
+            hireDate: menteeProfile.hireDate ? new Date(menteeProfile.hireDate) : null,
+            developmentPlanMeeting: menteeProfile.developmentPlanMeeting ? new Date(menteeProfile.developmentPlanMeeting) : null,
+            closeDevelopmentPlanMeeting: menteeProfile.closeDevelopmentPlanMeeting ? new Date(menteeProfile.closeDevelopmentPlanMeeting) : null,
+            milestoneMeetingTwo: menteeProfile.milestoneMeetingTwo ? new Date(menteeProfile.milestoneMeetingTwo) : null,
+            milestoneMeetingThree: menteeProfile.milestoneMeetingThree ? new Date(menteeProfile.milestoneMeetingThree) : null,
+            milestoneMeetingFour: menteeProfile.milestoneMeetingFour ? new Date(menteeProfile.milestoneMeetingFour) : null,
+            supportLevelMSTwo: menteeProfile.supportLevelMSTwo,
+            supportLevelMSThree: menteeProfile.supportLevelMSThree,
+            supportLevelMSFour: menteeProfile.supportLevelMSFour,
+            currentMilestone: menteeProfile.currentMilestone,
+            currentSupport: menteeProfile.currentSupport,
+            threePerson: menteeProfile.threePerson,
+            needDPMeeting: menteeProfile.needDPMeeting,
+        }, { merge: true });
         showToast('positive', 'check', 'Saved');
     }
     catch (error) {

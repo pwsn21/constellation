@@ -1,4 +1,4 @@
-import { doc, getDoc, getFirestore, getCountFromServer, collection, query, where } from "firebase/firestore"
+import { doc, getDoc,getDocs, getFirestore, getCountFromServer, collection, query, where,orderBy } from "firebase/firestore"
 
 export const menteeData = async (menteeID) => {
     const db = getFirestore()
@@ -14,7 +14,49 @@ export const qMenteeAttendance = (mID) => {
     const qMSThreeShifts = query(menteeShifts, where("milestone", "==", "Milestone 3"), where("approvalStatus", "==", "Approved"))
     const qMSFourShifts = query(menteeShifts, where("milestone", "==", "Milestone 4"), where("approvalStatus", "==", "Approved"))
     return {menteeShifts, qMSTwoShifts,qMSThreeShifts,qMSFourShifts}
-    }
+}
+
+
+export const activeMenteeOptions = async () => {
+    const options = reactive ({mentee: []})
+    const db = getFirestore()
+    const menteeCollection = collection(db, 'acpoMentees');
+    const qMentees = query(menteeCollection, where("acpoStatus", "==", "In Progress"));
+    const menteeDocs = await getDocs(qMentees);
+    menteeDocs.forEach((mentee) => {
+    options.mentee.push({
+        value: mentee.id,
+        label: mentee.data().firstName + " " + mentee.data().lastName,
+    });
+
+});
+return options.mentee
+}
+
+export const mentorOptions = async (station, platoon) => {
+    const options = reactive ({mentor: [], allMentors:[]})
+    const db = getFirestore()
+    const mentorCollection = collection(db, 'acpoMentors')
+    const qAllMentors = query(mentorCollection, orderBy('mentorName'));
+    const qMentors = query(mentorCollection, where("station", "==", station), where("platoon", "==", platoon));
+    const mentorDocs = await getDocs(qMentors);
+    mentorDocs.forEach((mentor) => {
+    options.mentor.push({
+        value: mentor.id,
+        label: mentor.data().mentorName,
+        });
+    });
+        const allMentorDocs = await getDocs(qAllMentors);
+        allMentorDocs.forEach((mentor) => {
+        options.allMentors.push({
+            value: mentor.id,
+            label: mentor.data().mentorName,
+            })
+        });
+return options
+}
+
+
 
 export const mentorFormsPendingApproval = async (mentorID) => {
     if (mentorID){
