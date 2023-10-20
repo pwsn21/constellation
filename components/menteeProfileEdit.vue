@@ -97,7 +97,7 @@
 
 
 <script setup>
-import { doc, setDoc, getDoc, query, where, getDocs, collection, getFirestore, } from "firebase/firestore";
+import { doc, setDoc, query, where, getDocs, getFirestore, } from "firebase/firestore";
 
 // Emits and Props
 const mID = defineProps(['selectedMenteeID'])
@@ -125,6 +125,7 @@ let menteeProfile = reactive({
     currentSupport: data.currentSupport || null,
     threePerson: data.threePerson || 3,
     needDPMeeting: data.needDPMeeting || false,
+    needMSMeeting: data.needMSMeeting || false,
 });
 
 const options = reactive({
@@ -134,9 +135,9 @@ const options = reactive({
     supportLevel: ['Medium', 'Low'],
 })
 // Options for PPEd
-const userCollection = collection(db, 'users');
-const queryPPEd = query(userCollection, where("role", "==", "Paramedic Practice Educator"));
-const ppedDocs = await getDocs(queryPPEd);
+const userCollection = getCollection('users')
+const queryPPEd = query(userCollection, where("role", "==", "Paramedic Practice Educator"))
+const ppedDocs = await getDocs(queryPPEd)
 
 ppedDocs.forEach((pped) => {
     options.ppeds.push({
@@ -171,14 +172,22 @@ function threePersonChecker() {
 
 };
 
-function needDPMeetingChecker() {
+function needMeetingChecker() {
     if (menteeProfile.currentSupport === "High" && menteeProfile.developmentPlanMeeting == null) {
         menteeProfile.needDPMeeting = true
+    } else if (
+        (menteeProfile.supportLevelMSTwo != null && menteeProfile.milestoneMeetingTwo == null) ||
+        (menteeProfile.supportLevelMSThree != null && menteeProfile.milestoneMeetingThree == null) ||
+        (menteeProfile.supportLevelMSFour != null && menteeProfile.milestoneMeetingFour == null)
+    ) {
+        console.log('need MS meeting')
+        menteeProfile.needMSMeeting = true
     }
-
     else {
+        menteeProfile.needMSMeeting = false
         menteeProfile.needDPMeeting = false
     }
+
 }
 
 const updateHireDate = (date) => { menteeProfile.hireDate = date; };
@@ -196,7 +205,7 @@ const saveAcpOProfile = async () => {
     try {
         setCurrentSupport(menteeProfile)
         threePersonChecker()
-        needDPMeetingChecker()
+        needMeetingChecker()
         await setDoc(doc(db, "acpoMentees", mID.selectedMenteeID), menteeProfile
             // {
             //     firstName: menteeProfile.firstName,

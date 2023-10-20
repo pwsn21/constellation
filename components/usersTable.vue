@@ -15,15 +15,14 @@
 </template>
 
 <script setup>
-import { getDocs, collection, getFirestore } from "firebase/firestore";
+import { getDocs } from "firebase/firestore";
 
 const emit = defineEmits(["selectedUser"])
 const userSelection = (event, row) => {
     emit("selectedUser", row.id, "userView")
 };
 
-const db = getFirestore();
-const userCollection = collection(db, 'users')
+const userCollection = getCollection('users')
 const users = ref([])
 
 const querySnapshot = await getDocs(userCollection);

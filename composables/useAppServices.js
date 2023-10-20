@@ -14,14 +14,12 @@ export const useNotification = () => {
     }
 }
 
-import { doc, getDoc, getFirestore } from "firebase/firestore"
+import { doc, getDoc, getDocs, getFirestore, collection } from "firebase/firestore"
 import { date } from 'quasar'
 
 export const userData = async (fbUID) => {
     if(fbUID){
-    const db = getFirestore()
-    const docRef = await doc(db, "users", fbUID)
-    const docSnap = getDoc(docRef)
+    const docSnap = getFSDoc("users", fbUID)
     return (await docSnap).data()
     }else{
         return false
@@ -50,3 +48,25 @@ export const firestoreTimestamp = async (fromPicker) => {
     const result = fromPicker ? new Date(fromPicker) : null
     return result
     }
+
+    
+export const getStations = async () => {
+    const options = reactive({station: [],car:[]})
+    const stationCollection = await getDocs(getCollection("stations"));
+    stationCollection.forEach((station) => {
+        options.station.push({
+            label: station.id + " - " + station.data().city,
+            value: station.id
+        })
+    })    
+    return options.station
+}
+
+export const getCars = async (station) => {
+    const options = reactive({car:[]})
+    const docSnap = await getFSDoc("stations", station)
+        docSnap.data().cars.forEach((car) => {
+        options.car.push(car);
+    })
+    return options.car
+}

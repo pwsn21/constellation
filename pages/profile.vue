@@ -8,15 +8,13 @@
 </template>
 
 <script setup>
-import { doc, getDoc, getFirestore } from "firebase/firestore";
+
 const firebaseUser = useFirebaseUser()
-const db = getFirestore();
-const docRef = doc(db, "users", firebaseUser.value.uid);
-const docSnap = await getDoc(docRef);
+const docSnap = await getFSDoc("users", firebaseUser.value.uid);
 
 const profileMode = ref('userView')
 
-if (!docSnap.firstName) {
+if (!docSnap.data().firstName) {
     profileMode.value = 'userEdit'
 }
 

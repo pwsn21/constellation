@@ -7,15 +7,13 @@
 
 <script setup>
 
-import { query, where, getDocs, collection, getFirestore, orderBy, } from "firebase/firestore";
+import { query, where, getDocs, orderBy, } from "firebase/firestore";
 const props = defineProps(['mentor']);
 const emit = defineEmits(['update:mentor'])
 
-const db = getFirestore()
-const userCollection = collection(db, 'users');
+const userCollection = getCollection('users');
 const queryMentors = query(userCollection, where('role', 'in', ['Paramedic Practice Educator', 'Mentor']), orderBy('firstName'))
 const mentorDocs = await getDocs(queryMentors);
-
 
 const mentor = ref('')
 const options = reactive({

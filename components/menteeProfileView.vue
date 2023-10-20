@@ -86,7 +86,7 @@
 
             <q-separator inset />
         </q-card>
-
+        {{ test }}
     </div>
 </template>
 
@@ -100,7 +100,6 @@ let msThreeData = ref('')
 let msFourData = ref('')
 
 watchEffect(async () => {
-    const queryAttendance = qMenteeAttendance(mID.selectedMenteeID)
     try {
         menteeProfile.value = await (menteeData(mID.selectedMenteeID))
         menteeProfile.value.developmentPlanMeeting = await dateLongFormat(menteeProfile.value.developmentPlanMeeting)
@@ -109,9 +108,10 @@ watchEffect(async () => {
         menteeProfile.value.milestoneMeetingThree = await dateLongFormat(menteeProfile.value.milestoneMeetingThree)
         menteeProfile.value.milestoneMeetingFour = await dateLongFormat(menteeProfile.value.milestoneMeetingFour)
 
-        msTwoData.value = await calcProgress(menteeProfile.value.supportLevelMSTwo, queryAttendance.qMSTwoShifts)
-        msThreeData.value = await calcProgress(menteeProfile.value.supportLevelMSThree, queryAttendance.qMSThreeShifts)
-        msFourData.value = await calcProgress(menteeProfile.value.supportLevelMSFour, queryAttendance.qMSFourShifts)
+        msTwoData.value = await calcProgress(menteeProfile.value.supportLevelMSTwo, qMenteeAttendance(mID.selectedMenteeID, 'Milestone 2'))
+        msThreeData.value = await calcProgress(menteeProfile.value.supportLevelMSThree, qMenteeAttendance(mID.selectedMenteeID, 'Milestone 3'))
+        msFourData.value = await calcProgress(menteeProfile.value.supportLevelMSFour, qMenteeAttendance(mID.selectedMenteeID, 'Milestone 4'))
+
     } catch (error) {
         console.error(error)
     }

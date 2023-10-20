@@ -23,8 +23,9 @@ import { getDocs } from 'firebase/firestore';
 const mID = defineProps(['selectedMenteeID'])
 const shiftData = ref([])
 
-const getShifts = qMenteeAttendance(mID.selectedMenteeID)
+const getShifts = qMenteeAttendance(mID.selectedMenteeID, null)
 const queryShifts = await getDocs(getShifts.menteeShifts)
+console.log(queryShifts)
 
 queryShifts.forEach((shift) => {
     const d = shift.data()

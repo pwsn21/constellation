@@ -49,9 +49,6 @@
             <NuxtLink to="/testShiftAdd"><q-icon name="cruelty_free" class="q-mx-sm" />Shift Add (test)</NuxtLink>
           </li>
           <li class="q-py-sm">
-            <NuxtLink to="/testShiftQuery"><q-icon name="cruelty_free" class="q-mx-sm" />Shift Query (test)</NuxtLink>
-          </li>
-          <li class="q-py-sm">
             <NuxtLink to="/testPlatoonCalculator"><q-icon name="cruelty_free" class="q-mx-sm" />Platoon Calculator (test)
             </NuxtLink>
           </li>

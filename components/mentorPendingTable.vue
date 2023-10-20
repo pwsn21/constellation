@@ -30,13 +30,13 @@
 </template>
 
 <script setup>
-import { collection, setDoc, doc, getFirestore, query, where, onSnapshot, orderBy } from "firebase/firestore";
+import { setDoc, doc, getFirestore, query, onSnapshot, orderBy } from "firebase/firestore";
 
 const firebaseUser = useFirebaseUser()
 const db = getFirestore()
 
-const pendingAttendance = collection(db, 'acpoFormsAttendance')
-const menteeForms = query(pendingAttendance, where("mentorID", "==", firebaseUser.value.uid), where("approvalStatus", "==", "Pending"), orderBy('submittedOn'))
+const pendingAttendance = getCollection('acpoFormsAttendance')
+const menteeForms = query(queryAnd(pendingAttendance, "mentorID", firebaseUser.value.uid, "approvalStatus", "Pending"), orderBy('submittedOn'))
 
 const forms = ref([])
 

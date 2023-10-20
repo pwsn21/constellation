@@ -1,9 +1,7 @@
 <template>
     <div class="full-width">
         <div>
-            <div class="flex justify-center">
-                <h2 class="text-h4 center q-pa-md">ACP-Orientation</h2>
-            </div>
+
             <q-expansion-item label="Mentees" class="text-h5 text-primary" header-class="q-pa-none" header-style="bg-white"
                 expand-icon-toggle expand-icon-class="text-primary" default-opened dense flat v-model="showTable">
 
@@ -17,7 +15,8 @@
 
                 <div>
                     <q-table :rows="filteredMentees" :columns="menteeColumns" row-key="id" title-class="text-h4"
-                        table-header-class="bg-primary text-white" @row-click="menteeSelection">
+                        table-header-class="bg-primary text-white" @row-click="menteeSelection"
+                        :pagination="{ sortBy: 'cohort', descending: false, rowsPerPage: 10 }">
                     </q-table>
                 </div>
             </q-expansion-item>
@@ -26,7 +25,7 @@
 </template>
   
 <script setup>
-import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { getDocs } from "firebase/firestore";
 
 let showTable = ref(true)
 
@@ -38,8 +37,8 @@ const menteeSelection = (event, row) => {
 
 const table = defineProps(['openTable'])
 
-const db = getFirestore()
-const acpoCollection = collection(db, 'acpoMentees')
+
+const acpoCollection = getCollection('acpoMentees')
 const mentees = ref([])
 
 watchEffect(async () => {

@@ -1,11 +1,11 @@
-import { doc, getDoc, getFirestore, getCountFromServer, collection, query, where, or, getDocs, orderBy, and } from "firebase/firestore"
+import { doc, query, where, or, getDocs, orderBy, and } from "firebase/firestore"
 import { date } from 'quasar'
 
 export const qMenteeShifts = async (menteeID) => {
     let shiftData = ref([])
     let shiftEvent = ref([])
-    const db = getFirestore()
-    const shiftsCollection = collection(db, "scheduledShifts");
+    
+    const shiftsCollection = getCollection("scheduledShifts")
     const q = query(shiftsCollection, or(where("menteeOneID", "==", menteeID), where("menteeTwoID", "==", menteeID)), orderBy('startDate'))
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach( async (shift) => {
@@ -13,6 +13,7 @@ export const qMenteeShifts = async (menteeID) => {
             shiftData.value.push({
                 id: shift.id,
                 car: s.car,
+                station: s.station,
                 platoon: s.platoon,
                 menteeOneName: s.menteeOneName,
                 menteeTwoName: s.menteeTwoName,
@@ -30,54 +31,43 @@ export const qMenteeShifts = async (menteeID) => {
     return {shiftData,shiftEvent}
 }
 
-export const qMenteeDupe = async (menteeID, shiftDate) => {
+export const qShiftDuplicate = async (car, field, userID, shiftDate) => {
     let shiftData = ref([])
-    
-    const db = getFirestore()
-    const shiftsCollection = collection(db, "scheduledShifts");
-    const q = query(shiftsCollection, and(or(where("menteeOneID", "==", menteeID), where("menteeTwoID", "==", menteeID)), where('startDate', '==', shiftDate)), orderBy('startDate'))
+        const shiftsCollection = getCollection("scheduledShifts")
+    if (!userID){
+        return shiftData
+    } else {
+    const q = query(shiftsCollection, 
+        and(
+            or(
+                where(field, "==", userID), 
+                where("menteeTwoID", "==", userID),
+                where("car", "==", car)
+                ), 
+            where('startDate', '==', shiftDate)), 
+        orderBy('startDate'))
         const querySnapshot = await getDocs(q);
-        querySnapshot.forEach( async (shift) => {
-            const s = shift.data()
-            shiftData.value.push({
-                id: shift.id,
-                car: s.car,
-                platoon: s.platoon,
-                menteeOneName: s.menteeOneName,
-                menteeTwoName: s.menteeTwoName,
-                menteeOneID: s.menteeOneID,
-                menteeTwoID: s.menteeTwoID,
-                mentorName: s.mentorName,
-                mentorID: s.mentorID,
-                startDate: s.startDate,
-                startTime: s.startTime,
-                endTime: s.endTime
+        querySnapshot.forEach((doc) => {
+            const s = doc.data();
+            s.id = doc.id;
+            shiftData.value.push(s);
             })
-            
-        })
+            }
     return shiftData
 }
-
 
 export const qMentorShifts = async (mentorID) => {
     let shiftData = ref([])
-    const db = getFirestore()
-    const shiftsCollection = collection(db, "scheduledShifts");
+        const shiftsCollection = getCollection("scheduledShifts");
     const q = query(shiftsCollection, where("mentorID", "==", mentorID))
         const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((shift) => {
-            const s = shift.data()
-            shiftData.value.push({
-                id: shift.id,
-                car: s.car,
-                menteeOneName : s.menteeOneName,
-                menteeTwoName : s.menteeTwoName,
-                shiftDateTime: s.shiftDateTime,
-            })
-        })
-    return shiftData
-}
-
+        querySnapshot.forEach((shift) => {          
+                const s = doc.data();
+                s.id = doc.id;
+                shiftData.value.push(s);
+                })
+        return shiftData
+    }        
 
 export const platoonFromShift =  (shift) => {
     const shiftDate = ref('')
