@@ -78,14 +78,5 @@ firstName.value = profileData.firstName ? profileData.firstName : firebaseUser.v
 
 const pendingForms = await mentorFormsPendingApproval(firebaseUser.value.uid)
 
-const adminCollection = getCollection('groups')
-const q = query(adminCollection, where("admin", "array-contains", firebaseUser.value.uid))
-const docSnap = await getDocs(q)
-if (docSnap.docs.length > 0) {
-  console.log(docSnap.docs.length)
-  isAdmin.value = true
-} else {
-  isAdmin.value = false
-}
 </script>
   

@@ -81,13 +81,9 @@ const pendingForms = await mentorFormsPendingApproval(firebaseUser.value.uid)
 
 const adminCollection = getCollection('groups')
 
-const docRef = doc(db, "groups", "conRoles")
-const docRolesSnap = await getDoc(docRef)
-console.log(docRolesSnap.data().admin[firebaseUser.value.uid])
-
 const q = query(adminCollection, where("admin", "array-contains", firebaseUser.value.uid))
 const docSnap = await getDocs(q)
-if (docSnap.docs.length > 0) {
+if (docSnap.size > 0) {
   isAdmin.value = true
 } else {
   isAdmin.value = false
