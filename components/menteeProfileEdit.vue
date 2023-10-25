@@ -5,8 +5,9 @@
                 <div class="row justify-center q-gutter-sm q-mt-sm">
                     <q-card class="w-full" style="width: 400px;">
                         <q-card-section>
-                            <div class="text-h5">{{ menteeProfile.firstName }} {{ menteeProfile.lastName }} ({{
-                                menteeProfile.cohort }})
+                            <div class="text-h5 text-secondary">{{ menteeProfile.firstName }} {{ menteeProfile.lastName }}
+                                ({{
+                                    menteeProfile.cohort }})
                             </div>
                             <q-separator />
                         </q-card-section>
@@ -24,7 +25,7 @@
                     <q-card class="w-full" style="width: 400px;">
                         <q-list bordered>
                             <q-expansion-item group="milestones" label="Milestone 2" default-opened
-                                header-class="text-h5 text-primary">
+                                :header-class="expansionHeader">
                                 <!-- Milestone Two -->
                                 <q-card>
 
@@ -43,14 +44,14 @@
 
                                         <q-toggle v-if="menteeProfile.supportLevelMSTwo === 'High'" :false-value="2"
                                             :label="`Mentee is in ${menteeProfile.threePerson} person configuration`"
-                                            :true-value="3" color="primary" v-model="menteeProfile.threePerson" />
+                                            :true-value="3" color="secondary" v-model="menteeProfile.threePerson" />
                                         <dateTimePicker :date="menteeProfile.milestoneMeetingTwo"
                                             @update:date="updateMeetingTwo" label="Milestone 2 Meeting Date" />
                                     </q-card-section>
                                 </q-card>
                             </q-expansion-item>
                             <q-separator />
-                            <q-expansion-item group="milestones" label="Milestone 3" header-class="text-h5 text-primary">
+                            <q-expansion-item group="milestones" label="Milestone 3" :header-class="expansionHeader">
                                 <!-- Milestone Three -->
                                 <q-card>
 
@@ -64,7 +65,7 @@
                                 </q-card>
                             </q-expansion-item>
                             <q-separator />
-                            <q-expansion-item group="milestones" label="Milestone 4" header-class="text-h5 text-primary">
+                            <q-expansion-item group="milestones" label="Milestone 4" :header-class="expansionHeader">
 
                                 <!-- Milestone Four -->
                                 <q-card>
@@ -99,11 +100,12 @@
 <script setup>
 import { doc, setDoc, query, where, getDocs, getFirestore, } from "firebase/firestore";
 
-// Emits and Props
+
 const mID = defineProps(['selectedMenteeID'])
 const emit = defineEmits(["acpoMode"])
-
 const db = getFirestore();
+
+const expansionHeader = "text-h5 text-secondary"
 
 const data = await (menteeData(mID.selectedMenteeID))
 let menteeProfile = reactive({
@@ -175,17 +177,18 @@ function threePersonChecker() {
 function needMeetingChecker() {
     if (menteeProfile.currentSupport === "High" && menteeProfile.developmentPlanMeeting == null) {
         menteeProfile.needDPMeeting = true
-    } else if (
+    } else {
+        menteeProfile.needDPMeeting = false
+    }
+    if (
         (menteeProfile.supportLevelMSTwo != null && menteeProfile.milestoneMeetingTwo == null) ||
         (menteeProfile.supportLevelMSThree != null && menteeProfile.milestoneMeetingThree == null) ||
         (menteeProfile.supportLevelMSFour != null && menteeProfile.milestoneMeetingFour == null)
     ) {
-        console.log('need MS meeting')
         menteeProfile.needMSMeeting = true
     }
     else {
         menteeProfile.needMSMeeting = false
-        menteeProfile.needDPMeeting = false
     }
 
 }
@@ -206,29 +209,8 @@ const saveAcpOProfile = async () => {
         setCurrentSupport(menteeProfile)
         threePersonChecker()
         needMeetingChecker()
-        await setDoc(doc(db, "acpoMentees", mID.selectedMenteeID), menteeProfile
-            // {
-            //     firstName: menteeProfile.firstName,
-            //     lastName: menteeProfile.lastName,
-            //     cohort: menteeProfile.cohort,
-            //     pped: menteeProfile.pped,
-            //     acpoStatus: menteeProfile.acpoStatus,
-            //     hireDate: menteeProfile.hireDate,
-            //     developmentPlanMeeting: menteeProfile.developmentPlanMeeting,
-            //     closeDevelopmentPlanMeeting: menteeProfile.closeDevelopmentPlanMeeting,
-            //     milestoneMeetingTwo: menteeProfile.milestoneMeetingTwo,
-            //     milestoneMeetingThree: menteeProfile.milestoneMeetingThree,
-            //     milestoneMeetingFour: menteeProfile.milestoneMeetingFour,
-            //     supportLevelMSTwo: menteeProfile.supportLevelMSTwo,
-            //     supportLevelMSThree: menteeProfile.supportLevelMSThree,
-            //     supportLevelMSFour: menteeProfile.supportLevelMSFour,
-            //     currentMilestone: menteeProfile.currentMilestone,
-            //     currentSupport: menteeProfile.currentSupport,
-            //     threePerson: menteeProfile.threePerson,
-            //     needDPMeeting: menteeProfile.needDPMeeting,
-            // }
-            , { merge: true });
-        showToast('positive', 'check', 'Saved');
+        await setFSDoc("acpoMentees", mID.selectedMenteeID, menteeProfile, true)
+        showToast('positive', 'check', 'Saved')
     }
     catch (error) {
         console.error(error)

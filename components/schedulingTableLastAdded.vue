@@ -1,8 +1,14 @@
 <template>
     <div>
-
-        <q-table table-header-class="bg-primary text-white" :rows="shifts" row-key="id" :columns="columns"
-            :pagination="{ sortBy: 'date', descending: true, rowsPerPage: 14 }" @row-click="menteeShift">
+        <div class="q-mb-xs" style=" max-width: 250px">
+            <q-input v-model="filter" class="bg-grey-4" color="primary" header-class="text-primary" dense filled
+                label="Search..." clearable> <template v-slot:append>
+                    <q-icon name="search" />
+                </template>
+            </q-input>
+        </div>
+        <q-table table-header-class="bg-primary text-white" :rows="shifts" row-key="id" :columns="columns" dense
+            :filter="filter" :pagination="{ sortBy: 'date', descending: true, rowsPerPage: 15 }" @row-click="menteeShift">
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
                     <q-btn dense round flat color="red" @click="deleteShift(props.row)" icon="delete"></q-btn>
@@ -14,7 +20,7 @@
 
 <script setup>
 
-import { collection, query, onSnapshot, getFirestore, deleteDoc, doc } from "firebase/firestore";
+import { collection, query, onSnapshot, getFirestore, deleteDoc, doc, limit, orderBy } from "firebase/firestore";
 const db = getFirestore()
 const shifts = ref([])
 
@@ -23,7 +29,7 @@ const menteeShift = (event, row) => {
     emit("selectedShift", row.id)
 };
 
-const q = query(collection(db, "scheduledShifts"));
+const q = query(collection(db, "scheduledShifts"), orderBy("creationDate", "desc"), limit(30))
 const unsubscribe = onSnapshot(q, (querySnapshot) => {
     shifts.value = [];
     querySnapshot.forEach((doc) => {
@@ -42,6 +48,8 @@ const columns = [
     { name: 'mentor', label: 'Mentor', field: 'mentorName', align: 'right', sortable: true, },
     { name: 'actions', label: 'Actions', field: '', align: 'center' }
 ];
+
+const filter = ref('')
 
 const deleteShift = async (shift) => {
     await deleteDoc(doc(db, "scheduledShifts", shift.id));

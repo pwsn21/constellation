@@ -25,8 +25,11 @@
   <!-- </div> -->
 </template>
 <script setup>
+
+
 const firebaseUser = useFirebaseUser()
 const isAuthStateUpdated = useIsAuthStateUpdated();
+
 
 </script>
 

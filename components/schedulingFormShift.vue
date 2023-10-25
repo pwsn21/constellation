@@ -21,7 +21,8 @@
 
                         <div class="flex justify-between q-gutter-xs no-wrap">
                             <div>
-                                <q-date v-model="shift.startDate" @update:model-value="dateSelected" flat bordered />
+                                <q-date v-model="shift.startDate" @update:model-value="dateSelected" flat bordered
+                                    :default-year-month="defaultMonth" />
                             </div>
                             <div class="column justify-end q-gutter-xs">
                                 <q-input filled label="Start Date" v-model="shift.startDate">
@@ -196,11 +197,13 @@
 </template>
 
 <script setup>
-import { setDoc, doc, deleteDoc, addDoc, getFirestore } from "firebase/firestore"
+import { setDoc, doc, deleteDoc, addDoc, getFirestore, serverTimestamp } from "firebase/firestore"
 import { date } from 'quasar'
 const { addToDate } = date
 
 const db = getFirestore()
+
+const defaultMonth = date.formatDate(date.addToDate(Date.now(), { months: 1 }), 'YYYY/MM')
 
 let shiftID = defineProps(['shiftID'])
 let title = ref('Add Shift')
@@ -219,6 +222,7 @@ let shift = ref({
     menteeTwoID: null,
     mentorName: undefined,
     mentorID: undefined,
+    creationDate: serverTimestamp()
 })
 
 watchEffect(async () => {

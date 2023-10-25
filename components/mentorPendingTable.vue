@@ -30,10 +30,9 @@
 </template>
 
 <script setup>
-import { setDoc, doc, getFirestore, query, onSnapshot, orderBy } from "firebase/firestore";
+import { query, onSnapshot, orderBy } from "firebase/firestore";
 
 const firebaseUser = useFirebaseUser()
-const db = getFirestore()
 
 const pendingAttendance = getCollection('acpoFormsAttendance')
 const menteeForms = query(queryAnd(pendingAttendance, "mentorID", firebaseUser.value.uid, "approvalStatus", "Pending"), orderBy('submittedOn'))
@@ -68,20 +67,12 @@ const menteeColumns = [
 ];
 
 const approveForm = async (props) => {
-    await setDoc(doc(db, "acpoFormsAttendance", props.id), {
-        approvalStatus: 'Approved',
-    },
-        { merge: true }
-    )
-};
+    await setFSDoc("acpoFormsAttendance", props.id, { approvalStatus: 'Approved' }, { merge: true })
+}
 
 const denyForm = async (props) => {
-    await setDoc(doc(db, "acpoFormsAttendance", props.id), {
-        approvalStatus: 'Denied',
-    },
-        { merge: true }
-    )
-};
+    await setFSDoc("acpoFormsAttendance", props.id, { approvalStatus: 'Denied' }, { merge: true })
+}
 
 </script>
 

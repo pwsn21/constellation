@@ -68,11 +68,10 @@
 </template>
 
 <script setup>
-import { query, where, getDocs, getFirestore, doc, getDoc } from 'firebase/firestore'
+import { query, where, getDocs } from 'firebase/firestore'
 const firebaseUser = await useFirebaseUser()
 const isAdmin = await useIsAdminUser()
-const profileData = await userData(firebaseUser.value.uid)
-const db = getFirestore()
+const profileData = await userData(firebaseUser.value.uid);
 
 let firstName = ref('')
 firstName.value = profileData.firstName ? profileData.firstName : firebaseUser.value.email
@@ -80,18 +79,13 @@ firstName.value = profileData.firstName ? profileData.firstName : firebaseUser.v
 const pendingForms = await mentorFormsPendingApproval(firebaseUser.value.uid)
 
 const adminCollection = getCollection('groups')
-
-const docRef = doc(db, "groups", "conRoles")
-const docRolesSnap = await getDoc(docRef)
-console.log(docRolesSnap.data().admin[firebaseUser.value.uid])
-
 const q = query(adminCollection, where("admin", "array-contains", firebaseUser.value.uid))
 const docSnap = await getDocs(q)
 if (docSnap.docs.length > 0) {
+  console.log(docSnap.docs.length)
   isAdmin.value = true
 } else {
   isAdmin.value = false
 }
-
 </script>
   

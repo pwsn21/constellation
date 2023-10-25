@@ -5,15 +5,18 @@ export const menteeData = async (menteeID) => {
     return (await docAcpoSnap).data()
     }
 
-export const qMenteeAttendance = (mID, currentMilestone) => {
-    const menteeShifts = query(getCollection("acpoFormsAttendance"), where("menteeID", "==", mID))
-    const qMSShifts = queryAnd(menteeShifts, "milestone", currentMilestone,"approvalStatus", "Approved")
+export const qMenteeAttendance = (menteeID, currentMilestone) => {
+    const menteeShifts = query(getCollection("acpoFormsAttendance"), where("menteeID", "==", menteeID))
+    if (!currentMilestone){
+        return menteeShifts
+    }else {
+        const qMSShifts = queryAnd(menteeShifts, "milestone", currentMilestone,"approvalStatus", "Approved")
     return qMSShifts
+}
 }
 
 export const optionsMenteeStatus = async (status) => {
     const options = reactive ({mentee: []})
-    const db = getFirestore()
     const menteeCollection = getCollection('acpoMentees')
     const qMentees = query(menteeCollection, where("acpoStatus", "==", status))
     const menteeDocs = await getDocs(qMentees);
@@ -31,22 +34,34 @@ export const mentorOptions = async (station, platoon) => {
     const mentorCollection = getCollection('acpoMentors')
     const qAllMentors = query(mentorCollection, orderBy('mentorName'));
     const qMentors = queryAnd(mentorCollection,"station",station,"platoon",platoon)
-    const mentorDocs = await getDocs(qMentors);
+    const mentorIdsSet = new Set();
+
+    const mentorDocs = await getDocs(qMentors)
     mentorDocs.forEach((mentor) => {
-    options.mentor.push({
-        value: mentor.id,
-        label: mentor.data().mentorName,
-        });
-    });
-        const allMentorDocs = await getDocs(qAllMentors);
-        allMentorDocs.forEach((mentor) => {
-        options.allMentors.push({
-            value: mentor.id,
-            label: mentor.data().mentorName,
+        const mentorId = mentor.id
+        if (!mentorIdsSet.has(mentorId)) {
+            mentorIdsSet.add(mentorId)
+            options.mentor.push({
+                value: mentorId,
+                label: mentor.data().mentorName,
             })
-        });
-return options
+        }
+    })
+
+    const allMentorDocs = await getDocs(qAllMentors)
+    allMentorDocs.forEach((mentor) => {
+        const mentorId = mentor.id
+        if (!mentorIdsSet.has(mentorId)) {
+            mentorIdsSet.add(mentorId);
+            options.allMentors.push({
+                value: mentorId,
+                label: mentor.data().mentorName,
+            })
+        }
+    })
+    return options
 }
+
 
 export const mentorFormsPendingApproval = async (mentorID) => {
     if (mentorID){

@@ -64,7 +64,7 @@
                                 :rules="[val => !!val || 'Rotation is required']" />
                         </q-card-section>
                         <q-separator />
-                        <q-card-section>
+                        <q-card-section v-if="isRole = 'admin'">
                             <q-select filled dense v-model="profileData.role" :options="options.role" label="Role"
                                 lazy-rules :rules="[val => !!val || 'Role is required']"
                                 @update:model-value="roleSelected" />
@@ -87,14 +87,17 @@
 
 
 <script setup>
-import { doc, setDoc, getDoc, getDocs, collection, getFirestore, query, where } from "firebase/firestore";
+import { doc, setDoc, getDoc, getDocs, collection, getFirestore, query, where, updateDoc, arrayUnion } from "firebase/firestore";
 import { Country, State, City } from 'country-state-city';
+
 
 const emit = defineEmits(["adminUserMode"])
 const userID = defineProps(['selectedUserID'])
 
 const db = getFirestore()
 const firebaseUser = useFirebaseUser()
+const isAdmin = useIsAdminUser()
+const isRole = await useIsRole()
 const toEdit = ref('')
 toEdit.value = userID.selectedUserID ? userID.selectedUserID : firebaseUser.value.uid
 
@@ -130,7 +133,24 @@ const options = reactive({
     platoon: ['A', 'B', 'C', 'D', 'Off Platoon'],
     rotation: ['R1', 'R2', 'R3', 'R4', 'Off Platoon'],
     cohort: [],
-    role: ['Mentee', 'Mentor', 'Paramedic Practice Educator', 'Admin']
+    role: [
+        {
+            label: 'Mentee',
+            value: 'mentee',
+        },
+        {
+            label: 'Mentor',
+            value: 'mentor',
+        },
+        {
+            label: 'Paramedic Practice Educator',
+            value: 'pped',
+        },
+        {
+            label: 'Admin',
+            value: 'admin',
+        },
+    ]
 })
 
 //Country-State-City Picker
@@ -253,21 +273,23 @@ const { showToast } = useNotification();
 // Save Profile Function
 const saveprofile = async () => {
     try {
-        await setDoc(doc(db, "users", toEdit.value), profileData, { merge: true });
-        showToast('positive', 'check', 'Profile Saved');
+        await setFSDoc("users", toEdit.value, profileData, true)
+        await updateDoc(doc(db, 'groups', 'conRoles'), { [profileData.role]: arrayUnion(toEdit.value) })
+
+        showToast('positive', 'check', 'Profile Saved')
         if (profileData.role === 'Mentee') {
             await setDoc(doc(db, "acpoMentees", toEdit.value + "_" + profileData.cohort), {
                 userID: toEdit.value,
                 cohort: profileData.cohort,
                 firstName: profileData.firstName,
                 lastName: profileData.lastName,
-            }, { merge: true });
-            showToast('positive', 'check', 'Mentee Profile Updated');
+            }, { merge: true })
+            showToast('positive', 'check', 'Mentee Profile Updated')
         }
     }
     catch (error) {
         console.error(error)
-        showToast('negative', 'error', 'Error');
+        showToast('negative', 'error', 'Error')
     }
 };
 

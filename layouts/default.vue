@@ -43,10 +43,10 @@
             <NuxtLink to="/users"><q-icon name="people" class="q-mx-sm" />Users</NuxtLink>
           </li>
           <li class="q-py-sm">
-            <NuxtLink to="/acpoFormAttendance"><q-icon name="cruelty_free" class="q-mx-sm" />Test</NuxtLink>
+            <NuxtLink to="/scheduling"><q-icon name="cruelty_free" class="q-mx-sm" />Scheduling</NuxtLink>
           </li>
           <li class="q-py-sm">
-            <NuxtLink to="/testShiftAdd"><q-icon name="cruelty_free" class="q-mx-sm" />Shift Add (test)</NuxtLink>
+            <NuxtLink to="/acpoFormAttendance"><q-icon name="cruelty_free" class="q-mx-sm" />Test</NuxtLink>
           </li>
           <li class="q-py-sm">
             <NuxtLink to="/testPlatoonCalculator"><q-icon name="cruelty_free" class="q-mx-sm" />Platoon Calculator (test)

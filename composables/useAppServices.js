@@ -14,7 +14,7 @@ export const useNotification = () => {
     }
 }
 
-import { doc, getDoc, getDocs, getFirestore, collection } from "firebase/firestore"
+import { getDocs } from "firebase/firestore"
 import { date } from 'quasar'
 
 export const userData = async (fbUID) => {

@@ -1,4 +1,4 @@
-import { doc, getDoc,getDocs, getFirestore, getCountFromServer, collection, query, where, orderBy, or, and } from "firebase/firestore"
+import { doc, getDoc,getDocs, getFirestore, getCountFromServer, setDoc, collection, query, where, orderBy, or, and } from "firebase/firestore"
 
 export const getCollection =  (fsCollection) => {
     const db = getFirestore()
@@ -30,4 +30,9 @@ export const getFSDoc = async (fsCollection,fsDoc) => {
     const docRef = doc(db, fsCollection, fsDoc)
     const docSnap = await getDoc(docRef)
     return docSnap
+}
+
+export const setFSDoc = async (fsCollection, docID, value, merge) => {
+    const db = getFirestore()
+    await setDoc(doc(db, fsCollection, docID), value,{merge:merge})
 }
