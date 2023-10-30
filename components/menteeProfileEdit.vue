@@ -48,6 +48,12 @@
                                         <dateTimePicker :date="menteeProfile.milestoneMeetingTwo"
                                             @update:date="updateMeetingTwo" label="Milestone 2 Meeting Date" />
                                     </q-card-section>
+                                    <q-card-section>
+                                        <div>
+                                            <q-input label="Required Shift Modifier" filled type="number"
+                                                v-model.number="menteeProfile.msTwoRequiredShiftModifier" />
+                                        </div>
+                                    </q-card-section>
                                 </q-card>
                             </q-expansion-item>
                             <q-separator />
@@ -61,6 +67,12 @@
                                             label="Milestone 3 Support Level" :options="options.supportLevel" />
                                         <DateTimePicker :date="menteeProfile.milestoneMeetingThree"
                                             @update:date="updateMeetingThree" label="Milestone 3 Meeting Date" />
+                                    </q-card-section>
+                                    <q-card-section>
+                                        <div>
+                                            <q-input label="Required Shift Modifier" filled type="number"
+                                                v-model.number="menteeProfile.msThreeRequiredShiftModifier" />
+                                        </div>
                                     </q-card-section>
                                 </q-card>
                             </q-expansion-item>
@@ -77,6 +89,12 @@
 
                                         <DateTimePicker :date="menteeProfile.milestoneMeetingFour"
                                             @update:date="updateMeetingFour" label="Milestone 4 Meeting Date" />
+                                    </q-card-section>
+                                    <q-card-section>
+                                        <div>
+                                            <q-input label="Required Shift Modifier" filled type="number"
+                                                v-model.number="menteeProfile.msFourRequiredShiftModifier" />
+                                        </div>
                                     </q-card-section>
                                 </q-card>
                             </q-expansion-item>
@@ -128,6 +146,10 @@ let menteeProfile = reactive({
     threePerson: data.threePerson || 3,
     needDPMeeting: data.needDPMeeting || false,
     needMSMeeting: data.needMSMeeting || false,
+    msTwoRequiredShiftModifier: data.msTwoRequiredShiftModifier || 0,
+    msThreeRequiredShiftModifier: data.msThreeRequiredShiftModifier || 0,
+    msFourRequiredShiftModifier: data.msFourRequiredShiftModifier || 0,
+
 });
 
 const options = reactive({
@@ -193,12 +215,12 @@ function needMeetingChecker() {
 
 }
 
-const updateHireDate = (date) => { menteeProfile.hireDate = date; };
-const updateMeetingDP = (date) => { menteeProfile.developmentPlanMeeting = date; };
-const updateMeetingCloseDP = (date) => { menteeProfile.closeDevelopmentPlanMeeting = date; };
-const updateMeetingTwo = (date) => { menteeProfile.milestoneMeetingTwo = date; };
-const updateMeetingThree = (date) => { menteeProfile.milestoneMeetingThree = date; };
-const updateMeetingFour = (date) => { menteeProfile.milestoneMeetingFour = date; };
+const updateHireDate = (date) => { menteeProfile.hireDate = date }
+const updateMeetingDP = (date) => { menteeProfile.developmentPlanMeeting = date }
+const updateMeetingCloseDP = (date) => { menteeProfile.closeDevelopmentPlanMeeting = date }
+const updateMeetingTwo = (date) => { menteeProfile.milestoneMeetingTwo = date }
+const updateMeetingThree = (date) => { menteeProfile.milestoneMeetingThree = date }
+const updateMeetingFour = (date) => { menteeProfile.milestoneMeetingFour = date }
 
 const { showToast } = useNotification();
 

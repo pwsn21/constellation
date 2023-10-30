@@ -4,27 +4,29 @@
             <div class="flex justify-center">
                 <h2 class="text-h4 center q-pa-md">Pending Forms</h2>
             </div>
-            <q-expansion-item label="Pending Attendance Forms" class="text-h5 text-primary" header-class="q-pa-none"
-                header-style="bg-white" expand-icon-toggle expand-icon-class="text-primary" default-opened dense flat>
-                <div class="q-my-sm" style=" max-width: 250px">
-                </div>
-                <div>
-                    <q-table :rows="forms" :columns="menteeColumns" row-key="id" title-class="text-h4"
-                        table-header-class="bg-primary text-white" no-data-label="No Pending Attendance Forms">
-                        <template v-slot:body-cell-actions="props">
-                            <q-td :props="props">
-                                <q-btn dense round flat color="green" @click="approveForm(props.row)" icon="check"></q-btn>
-                                <q-btn dense round flat color="red" @click="denyForm(props.row)" icon="close"></q-btn>
-                            </q-td>
-                        </template>
-                        <template v-slot:no-data="{ message }">
-                            <div class="full-width row flex-center text-primary">
-                                <q-icon size="30px" name="mood" /> {{ message }}
-                            </div>
-                        </template>
-                    </q-table>
-                </div>
-            </q-expansion-item>
+            <div>
+                <q-expansion-item label="Pending Attendance Forms" class="text-h5 text-primary" header-class="q-pa-none"
+                    header-style="bg-white" expand-icon-toggle expand-icon-class="text-primary" default-opened dense flat>
+                    <div>
+                        <q-table :rows="forms" :columns="menteeColumns" row-key="id" title-class="text-h4"
+                            table-header-class="bg-primary text-white" no-data-label="No Pending Attendance Forms"
+                            :pagination="{ sortBy: 'submittedOn', descending: true, rowsPerPage: 20 }">
+                            <template v-slot:body-cell-actions="props">
+                                <q-td :props="props">
+                                    <q-btn dense round flat color="green" @click="approveForm(props.row)"
+                                        icon="check"></q-btn>
+                                    <q-btn dense round flat color="red" @click="denyForm(props.row)" icon="block"></q-btn>
+                                </q-td>
+                            </template>
+                            <template v-slot:no-data="{ message }">
+                                <div class="full-width row flex-center text-primary">
+                                    <q-icon size="30px" name="mood" /> {{ message }}
+                                </div>
+                            </template>
+                        </q-table>
+                    </div>
+                </q-expansion-item>
+            </div>
         </div>
     </div>
 </template>
@@ -58,12 +60,12 @@ const unsubscribe = onSnapshot(menteeForms, (querySnapshot) => {
 
 const menteeColumns = [
     { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
-    { name: 'date', label: 'Date', field: 'date', align: 'left', sortable: true },
     { name: 'car', label: 'Car', field: 'car', align: 'left', sortable: true },
+    { name: 'date', label: 'Shift Date', field: 'date', align: 'left', sortable: true },
     // { name: 'milestone', label: 'Milestone', field: 'milestone' },
-    { name: 'pped', label: 'Practice Educator', field: 'pped', sortable: true },
-    { name: 'submittedOn', label: 'Submitted On', field: 'submittedOn', align: 'left' },
-    { name: 'actions', label: 'Actions', field: '', align: 'center' }
+    // { name: 'pped', label: 'Practice Educator', field: 'pped', sortable: true },
+    { name: 'actions', label: 'Actions', field: '', align: 'center' },
+    // { name: 'submittedOn', label: 'Submitted On', field: 'submittedOn', align: 'left' }
 ];
 
 const approveForm = async (props) => {

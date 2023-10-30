@@ -60,6 +60,12 @@
           </q-card>
           <div v-if="isAdmin" class="text-h3">
             Is Admin!
+            <div v-if="profileData.role.includes('admin')">
+              -- IS ADMIN the other way
+            </div>
+            <div v-if="profileData.role.includes('mentee')">
+              -- IS Mentee
+            </div>
           </div>
         </div>
       </div>

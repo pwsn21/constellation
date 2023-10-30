@@ -66,10 +66,10 @@
                         <q-separator />
                         <q-card-section v-if="isRole = 'admin'">
                             <q-select filled dense v-model="profileData.role" :options="options.role" label="Role"
-                                lazy-rules :rules="[val => !!val || 'Role is required']"
-                                @update:model-value="roleSelected" />
+                                lazy-rules :rules="[val => !!val || 'Role is required']" @update:model-value="roleSelected"
+                                emit-value />
                             <q-select filled dense v-model="profileData.cohort" :options="options.cohort" label="Cohort"
-                                v-if="profileData.role === 'Mentee'" lazy-rules
+                                v-if="profileData.role.value === 'mentee'" lazy-rules
                                 :rules="[val => !!val || 'Cohort is required']" />
                         </q-card-section>
                     </q-card>
@@ -243,8 +243,8 @@ const stationSelected = async () => {
     while (options.car.length) { options.car.pop(); }
     const docRef = doc(db, "stations", profileData.station);
     const docSnap = await getDoc(docRef);
-    docSnap.data().cars.forEach((car) => {
-        options.car.push(car.label);
+    docSnap.data().carLabel.forEach((car) => {
+        options.car.push(car);
     })
 };
 
@@ -277,12 +277,15 @@ const saveprofile = async () => {
         await updateDoc(doc(db, 'groups', 'conRoles'), { [profileData.role]: arrayUnion(toEdit.value) })
 
         showToast('positive', 'check', 'Profile Saved')
-        if (profileData.role === 'Mentee') {
+        if (profileData.role.value === 'mentee') {
+            console.log('mentee')
             await setDoc(doc(db, "acpoMentees", toEdit.value + "_" + profileData.cohort), {
                 userID: toEdit.value,
                 cohort: profileData.cohort,
                 firstName: profileData.firstName,
                 lastName: profileData.lastName,
+                employeeNumber: profileData.employeeNumber,
+                phoneNumber: profileData.phoneNumber
             }, { merge: true })
             showToast('positive', 'check', 'Mentee Profile Updated')
         }

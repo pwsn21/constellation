@@ -2,7 +2,7 @@
     <div>
         Admin: {{ isAdmin }}
         Role: {{ isRole }}
-        <div v-if="isRole === 'admin' || isRole === 'pped'">Admin or PPE</div>
+        <div v-if="isRole.includes('admin') || isRole.includes('pped')">Admin or PPE</div>
     </div>
 </template>
 
@@ -11,21 +11,19 @@ import { query, where, getDocs } from 'firebase/firestore'
 const firebaseUser = useFirebaseUser()
 const isRole = useIsRole()
 const isAdmin = useIsAdminUser()
-
-// leftover from deciding to make roles a string or an array
-// const assignRole = await setFSDoc('users', firebaseUser.value.uid, { role: [] }, true)
-
+const profileRole = ref([])
 
 const docRolesSnap = await getFSDoc("groups", "conRoles")
 
+const assignRole = await setFSDoc('users', firebaseUser.value.uid, { role: [] }, true)
 Object.keys(docRolesSnap.data()).forEach(async role => {
     const roles = docRolesSnap.data()[role]
     if (roles.includes(firebaseUser.value.uid)) {
-        // leftover from deciding to make roles a string or an array
-        // profileRole.value.push(role)
-        await setFSDoc('users', firebaseUser.value.uid, { role: role }, true)
-        isRole.value = role
+        profileRole.value.push(role)
+        console.log(profileRole.value)
+        await setFSDoc('users', firebaseUser.value.uid, { role: profileRole.value }, true)
     }
+    isRole.value = profileRole.value
 }
 )
 

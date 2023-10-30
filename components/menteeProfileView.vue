@@ -30,7 +30,9 @@
 
                 <q-linear-progress :value="msTwoData.progress" size="20px" color="secondary" track-color="secondary">
                     <div class="text-caption text-white text-weight-bold absolute-full flex flex-center">
-                        {{ msTwoData.count }}/{{ msTwoData.required }}
+                        {{ msTwoData.count }}/{{ msTwoData.required }} {{ msTwoData.modifiers === 0 ? '' : `+
+                        ${msTwoData.modifiers}` }}
+
                     </div>
                 </q-linear-progress>
 
@@ -53,7 +55,8 @@
                 <div class="text-subtitle1 text-weight-bold">Milestone 3 </div>
                 <q-linear-progress :value="msThreeData.progress" size="20px" color="secondary" track-color="secondary">
                     <div class="text-caption text-white text-weight-bold absolute-full flex flex-center">
-                        {{ msThreeData.count }}/{{ msThreeData.required }}
+                        {{ msThreeData.count }}/{{ msThreeData.required }} {{ msThreeData.modifiers === 0 ? '' : `+
+                        ${msThreeData.modifiers}` }}
                     </div>
                 </q-linear-progress>
 
@@ -70,7 +73,8 @@
                 <div class="text-subtitle1 text-weight-bold">Milestone 4 </div>
                 <q-linear-progress :value="msFourData.progress" size="20px" color="secondary" track-color="secondary">
                     <div class="text-caption text-white text-weight-bold absolute-full flex flex-center">
-                        {{ msFourData.count }}/{{ msFourData.required }}
+                        {{ msFourData.count }}/{{ msFourData.required }} {{ msFourData.modifiers === 0 ? '' : `+
+                        ${msFourData.modifiers}` }}
                     </div>
                 </q-linear-progress>
 
@@ -108,10 +112,9 @@ watchEffect(async () => {
         menteeProfile.value.milestoneMeetingThree = await dateLongFormat(menteeProfile.value.milestoneMeetingThree)
         menteeProfile.value.milestoneMeetingFour = await dateLongFormat(menteeProfile.value.milestoneMeetingFour)
 
-        msTwoData.value = await calcProgress(menteeProfile.value.supportLevelMSTwo, qMenteeAttendance(mID.selectedMenteeID, 'Milestone 2'))
-        msThreeData.value = await calcProgress(menteeProfile.value.supportLevelMSThree, qMenteeAttendance(mID.selectedMenteeID, 'Milestone 3'))
-        msFourData.value = await calcProgress(menteeProfile.value.supportLevelMSFour, qMenteeAttendance(mID.selectedMenteeID, 'Milestone 4'))
-
+        msTwoData.value = await calcProgress(menteeProfile.value.supportLevelMSTwo, qMenteeAttendance(mID.selectedMenteeID, 'Milestone 2'), menteeProfile.value.msTwoRequiredShiftModifier)
+        msThreeData.value = await calcProgress(menteeProfile.value.supportLevelMSThree, qMenteeAttendance(mID.selectedMenteeID, 'Milestone 3'), menteeProfile.value.msThreeRequiredShiftModifier)
+        msFourData.value = await calcProgress(menteeProfile.value.supportLevelMSFour, qMenteeAttendance(mID.selectedMenteeID, 'Milestone 4'), menteeProfile.value.msFourRequiredShiftModifier)
     } catch (error) {
         console.error(error)
     }

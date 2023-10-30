@@ -40,9 +40,8 @@ const table = defineProps(['openTable'])
 
 
 const acpoCollection = getCollection('acpoMentees')
-const mentees = ref([])
 const filter = ref('')
-
+const mentees = ref([])
 
 watchEffect(async () => {
     showTable.value = table.openTable
@@ -52,25 +51,9 @@ watchEffect(async () => {
     }
 })
 
-
-// const querySnapshot = await getDocs(acpoCollection);
-// querySnapshot.forEach((doc) => {
-//     const d = doc.data()
-//     mentees.value.push({
-//         id: doc.id,
-//         name: d.firstName + ' ' + d.lastName || null,
-//         acpoStatus: d.acpoStatus || null,
-//         cohort: d.cohort || null,
-//         threePerson: d.threePerson || null,
-//         currentSupport: d.currentSupport || null,
-//         currentMilestone: d.currentMilestone || null,
-//         pped: d.pped?.label || null,
-//     })
-// })
-
 const q = query(collection(db, "acpoMentees"));
 const unsubscribe = onSnapshot(q, (querySnapshot) => {
-
+    mentees.value = []
     querySnapshot.forEach((doc) => {
         const d = doc.data()
         mentees.value.push({

@@ -5,12 +5,12 @@
             <q-menu color="secondary" transition-show="jump-down" transition-hide="jump-up" dropdown-icon="person"
                 auto-close>
                 <q-list>
-                    <q-item clickable>
+                    <!-- <q-item clickable>
                         <q-item-section>
                             <q-item-label>
                                 <q-icon name="dark_mode" size="22px" class="q-mr-sm" />Dark (later)</q-item-label>
                         </q-item-section>
-                    </q-item>
+                    </q-item> -->
                     <NuxtLink to="/profile">
                         <q-item clickable>
                             <q-item-section>

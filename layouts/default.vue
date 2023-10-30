@@ -38,18 +38,25 @@
           <li class="q-py-sm">
             <NuxtLink to="/acpoMentor"><q-icon name="groups" class="q-mx-sm" />ACP-O (Mentor)</NuxtLink>
           </li>
+          <li class="q-py-sm">
+            <NuxtLink to="/acpoMentee"><q-icon name="person" class="q-mx-sm" />ACP-O (Mentee)</NuxtLink>
+          </li>
 
           <li class="q-py-sm">
             <NuxtLink to="/users"><q-icon name="people" class="q-mx-sm" />Users</NuxtLink>
           </li>
           <li class="q-py-sm">
-            <NuxtLink to="/scheduling"><q-icon name="cruelty_free" class="q-mx-sm" />Scheduling</NuxtLink>
+            <NuxtLink to="/scheduling"><q-icon name="calendar_today" class="q-mx-sm" />Scheduling</NuxtLink>
           </li>
           <li class="q-py-sm">
-            <NuxtLink to="/acpoFormAttendance"><q-icon name="cruelty_free" class="q-mx-sm" />Test</NuxtLink>
+            <NuxtLink to="/stations"><q-icon name="emoji_transportation" class="q-mx-sm" />Stations</NuxtLink>
           </li>
           <li class="q-py-sm">
             <NuxtLink to="/testPlatoonCalculator"><q-icon name="cruelty_free" class="q-mx-sm" />Platoon Calculator (test)
+            </NuxtLink>
+          </li>
+          <li class="q-py-sm">
+            <NuxtLink to="/UserAdmin"><q-icon name="manage_accounts" class="q-mx-sm" />User Admin
             </NuxtLink>
           </li>
 

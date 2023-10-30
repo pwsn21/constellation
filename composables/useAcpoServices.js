@@ -1,4 +1,4 @@
-import {getDocs, getFirestore, getCountFromServer, query, where, orderBy,} from "firebase/firestore"
+import {getDocs, getFirestore, getCountFromServer, query, where, orderBy, or, and} from "firebase/firestore"
 
 export const menteeData = async (menteeID) => {
     const docAcpoSnap = await getFSDoc("acpoMentees", menteeID);
@@ -24,6 +24,7 @@ export const optionsMenteeStatus = async (status) => {
     options.mentee.push({
         value: mentee.id,
         label: mentee.data().firstName + " " + mentee.data().lastName,
+        employeeNumber: mentee.data().employeeNumber
     });
 });
 return options.mentee
@@ -31,9 +32,10 @@ return options.mentee
 
 export const mentorOptions = async (station, platoon) => {
     const options = reactive ({mentor: [], allMentors:[]})
-    const mentorCollection = getCollection('acpoMentors')
-    const qAllMentors = query(mentorCollection, orderBy('mentorName'));
-    const qMentors = queryAnd(mentorCollection,"station",station,"platoon",platoon)
+    const mentorCollection = getCollection('users')
+    const qAllMentors = query(mentorCollection, or(where('role','array-contains','mentor'), where('role','array-contains','pped')), orderBy('firstName'));
+    // const qMentors = queryAnd(mentorCollection,"station",station,"platoon",platoon)
+    const qMentors = query(mentorCollection, and(where('station','==',station),where('platoon','==',platoon),where('role','array-contains','mentor')), orderBy('firstName'));
     const mentorIdsSet = new Set();
 
     const mentorDocs = await getDocs(qMentors)
@@ -41,21 +43,24 @@ export const mentorOptions = async (station, platoon) => {
         const mentorId = mentor.id
         if (!mentorIdsSet.has(mentorId)) {
             mentorIdsSet.add(mentorId)
+            const m = mentor.data()
             options.mentor.push({
                 value: mentorId,
-                label: mentor.data().mentorName,
+                label: `${m.firstName} ${m.lastName}`,
+                phoneNumber: m.phoneNumber
             })
         }
     })
-
+    
     const allMentorDocs = await getDocs(qAllMentors)
     allMentorDocs.forEach((mentor) => {
         const mentorId = mentor.id
         if (!mentorIdsSet.has(mentorId)) {
             mentorIdsSet.add(mentorId);
+            const m = mentor.data()
             options.allMentors.push({
                 value: mentorId,
-                label: mentor.data().mentorName,
+                label: `${m.firstName} ${m.lastName}`,
             })
         }
     })
@@ -77,10 +82,12 @@ export const mentorFormsPendingApproval = async (mentorID) => {
     }
 }
 
-export const calcProgress = async (supportLevel, query) => {
+export const calcProgress = async (supportLevel, query, requiredmodifier) => {
     const required = ref('')
     const count = ref('')
     const progress = ref('')
+    const modifiers = ref(requiredmodifier)
+        
     //finds number of required shifts based on mentee support level
         if (supportLevel) {
             const msSupportSnap = await getFSDoc("supportLevels", supportLevel);
@@ -92,9 +99,9 @@ export const calcProgress = async (supportLevel, query) => {
     const noMSShifts = await getCountFromServer(query)
     count.value = noMSShifts.data() ? noMSShifts.data().count : 0
     //calculate progress - zero if calculates infinity
-    progress.value = count.value / required.value || 0
+    progress.value = count.value / (required.value + modifiers.value) || 0
 
-    return {required, count, progress}
+    return {required, count, modifiers, progress}
 }
 
 export const msMeetingTable = async () => {  

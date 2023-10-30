@@ -17,7 +17,8 @@
       <AcpoTableMentees @selected-mentee="onMenteeSelected" :openTable="openTable" />
 
       <div v-if="selectedMenteeID !== ''" class="full-width">
-        <q-tabs v-model="currentTab" align="left" inline-label stretch class="q-mt-sm text-grey-6" narrow-indicator>
+        <q-tabs v-model="currentTab" align="left" inline-label stretch class="q-mt-sm text-grey-6" narrow-indicator
+          mobile-arrows>
           <q-tab name="menteeProfileTab" label="Profile" icon="person" content-class="text-red-10" />
           <q-tab name="menteeFormsTab" label="Forms" icon="assignment" class="text-purple-10" />
           <q-tab name="menteeScheduleTab" label="Schedule" icon="calendar_month" class="text-green-10" />

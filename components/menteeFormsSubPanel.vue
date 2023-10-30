@@ -1,6 +1,7 @@
 <template>
     <div>
-        <q-tabs v-model="currentMenteeTab" align="justify" inline-label class="q-pa-none text-purple-10" narrow-indicator>
+        <q-tabs v-model="currentMenteeTab" align="justify" inline-label class="q-pa-none text-purple-10" narrow-indicator
+            mobile-arrows>
             <q-tab name="dashboard" label="Forms" icon="assignment" />
             <q-tab name="attendance" label="Attendance" icon="sym_o_local_shipping" />
             <q-tab name="dOPS" label="dOPS" icon="sym_o_ecg" />

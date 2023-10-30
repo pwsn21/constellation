@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="q-pa-xs" style="max-width: 850px;">
-      <MentorPendingTable />
+      <MenteeFormAttendance />
     </div>
   </div>
 </template>

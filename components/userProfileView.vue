@@ -5,8 +5,7 @@
 
                 <div class="row justify-between">
                     <div class="text-h4">
-                        Employee Profile: {{ userProfile.firstName }} {{
-                            userProfile.lastName }}
+                        {{ userProfile.firstName }} {{ userProfile.lastName }}
                     </div>
                     <div>
                         <q-btn icon="edit" round flat @click="$emit('adminUserMode', userID.selectedUserID, 'userEdit')" />
@@ -22,9 +21,13 @@
                         Phone: {{ userProfile.phoneNumber }}
                     </q-item>
                     <q-item>
-                        Address: {{ userProfile.address }}, {{ userProfile.city }},
+                        Address:
+                    </q-item>
+                    <q-item>{{ userProfile.address }} </q-item>
+                    <q-item>{{ userProfile.city }},
                         <!-- error that can't read label if not put in a conditional even though it exists.... -->
                         {{ userProfile.state ? userProfile.state.label : 'N/A' }},
+
                         {{ userProfile.country ? userProfile.country.label : 'N/A' }}
                     </q-item>
                 </q-list>

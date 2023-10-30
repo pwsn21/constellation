@@ -7,14 +7,13 @@
             <div class="row justify-between" style="height:300px">
                 <q-tab-panels v-model="date" animated transition-prev="fade" transition-next="fade">
                     <q-tab-panel v-for="shift in data" :key="shift.id" :name="shift.shiftEvent">
-                        <q-card style="width:400px">
+                        <q-card style="width:293px">
                             <q-card-section class="bg-green-10 text-white">
-                                <div class="text-h5">{{ shift.dateDisplay }}</div>
-                                <div class="text-subtitle2">{{ shift.startTime }} - {{ shift.endTime }}</div>
+                                <div class="text-h5">{{ shift.car }} on {{ shift.platoon }} Platoon</div>
+                                <div class="text-subtitle1">{{ shift.startTime }} - {{ shift.endTime }}</div>
                             </q-card-section>
                             <q-card-section>
                                 <QList dense>
-                                    <QItem>Car: {{ shift.car }} on {{ shift.platoon }}</QItem>
                                     <QItem>Mentor: {{ shift.mentorName }}</QItem>
                                 </QList>
                             </q-card-section>

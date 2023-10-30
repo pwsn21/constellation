@@ -36,7 +36,7 @@
                                         </q-icon>
                                     </template>
                                 </q-input>
-                                <q-input filled label="Start Time" v-model="shift.startTime">
+                                <q-input filled label="Start Time" v-model="shift.startTime" mask="##:##">
                                     <template #append>
                                         <q-icon name="access_time" class="cursor-pointer">
                                             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -60,7 +60,7 @@
                                         </q-icon>
                                     </template>
                                 </q-input>
-                                <q-input filled label="End Time" v-model="shift.endTime">
+                                <q-input filled label="End Time" v-model="shift.endTime" mask="##:##">
                                     <template #append>
                                         <q-icon name="access_time" class="cursor-pointer">
                                             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -93,8 +93,10 @@
                     <div class="q-mt-xs row reverse q-gutter-sm">
                         <q-btn v-if="!shift.id" class="q-mr-sm" label="Add Shift" type="submit" color="primary" />
                         <q-btn v-if="shift.id" class="q-mr-sm" label="Update Shift" type="submit" color="primary" />
+                        <q-btn v-if="shift.id" class="q-mr-sm" label="Delete Shift" color="secondary"
+                            @click="deleteShift" />
                         <q-space />
-                        <q-btn label="Reset" @click="onReset" color="secondary" class="q-ml-sm" />
+                        <q-btn label="Reset" @click="onReset" color="primary" class="q-ml-sm" flat />
                     </div>
                 </q-form>
             </q-card-section>
@@ -210,6 +212,7 @@ let title = ref('Add Shift')
 
 let shift = ref({
     startDate: undefined,
+    startTimestamp: undefined,
     endDate: undefined,
     startTime: undefined,
     endTime: undefined,
@@ -258,26 +261,32 @@ const menteeOneSelected = (selectedMentee) => {
     if (selectedMentee) {
         shift.value.menteeOneName = selectedMentee.label,
             shift.value.menteeOneID = selectedMentee.value
+        shift.value.menteeOneEmployeeNumber = selectedMentee.employeeNumber
     } else {
         shift.value.menteeOneName = undefined,
             shift.value.menteeOneID = undefined
+        shift.value.menteeOneEmployeeNumber = undefined
     }
     if (shift.value.menteeOneID == shift.value.menteeTwoID) {
         shift.value.menteeTwoName = null
         shift.value.menteeTwoID = null
+        shift.value.menteeTwoEmployeeNumber = null
     }
 }
 const menteeTwoSelected = (selectedMentee) => {
     if (selectedMentee) {
         shift.value.menteeTwoName = selectedMentee.label,
             shift.value.menteeTwoID = selectedMentee.value
+        shift.value.menteeTwoEmployeeNumber = selectedMentee.employeeNumber
     } else {
         shift.value.menteeTwoName = null,
             shift.value.menteeTwoID = null
+        shift.value.menteeTwoEmployeeNumber = null
     }
     if (shift.value.menteeOneID == shift.value.menteeTwoID) {
         shift.value.menteeTwoName = null
         shift.value.menteeTwoID = null
+        shift.value.menteeTwoEmployeeNumber = null
     }
 }
 
@@ -293,6 +302,7 @@ const updateCar = (car) => {
 const dayNightChecker = ref('')
 const dateSelected = async () => {
     shift.value.mentorName = ''
+    shift.value.startTimestamp = new Date(shift.value.startDate)
     dayNightChecker.value = shift.value.car ? shift.value.car.charAt(5) : null
 
     const pFD = platoonFromShift(shift.value.startDate)
@@ -322,7 +332,6 @@ watch(showDialog, (newValue, oldValue) => {
 })
 
 const onReset = () => {
-    console.log('reset hit!')
     shift.value.startDate = undefined
     shift.value.endDate = undefined
     shift.value.startTime = undefined
@@ -332,10 +341,13 @@ const onReset = () => {
     shift.value.platoon = ''
     shift.value.menteeOneName = undefined
     shift.value.menteeOneID = undefined
+    shift.value.menteeOneEmployeeNumber = undefined
     shift.value.menteeTwoName = null
     shift.value.menteeTwoID = null
+    shift.value.menteeTwoEmployeeNumber = null
     shift.value.mentorName = undefined
     shift.value.mentorID = undefined
+    // shift.value.mentorEmployeeNumber = undefined
     shift.value.id = null
     title.value = "Add Shift"
 }
@@ -396,6 +408,12 @@ const scheduleShift = async () => {
         console.error(error)
         showToast('negative', 'error', 'Please fill out all fields')
     }
+}
+
+const deleteShift = async () => {
+    await deleteDoc(doc(db, "scheduledShifts", shift.value.id))
+    onReset()
+    showToast('negative', 'delete', 'Shift Deleted')
 }
 
 </script>
