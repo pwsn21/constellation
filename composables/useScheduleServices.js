@@ -70,6 +70,8 @@ export const qMentorShifts = async (mentorID) => {
     }        
 
 export const platoonFromShift =  (shift) => {
+    if (shift) {
+        
     const shiftDate = ref('')
     let dayNumber = ref('')
     const dayInMilli = 1000 * 60 * 60 * 24
@@ -92,4 +94,5 @@ export const platoonFromShift =  (shift) => {
         platoonNight.value = 'C'
     }
     return {platoonDay, platoonNight}
+}
 }

@@ -22,7 +22,23 @@ export const createUser = async (email, password) => {
             const db = getFirestore()
             const docSnap = getDoc(doc(db, "users", auth.currentUser.uid))
             if(!docSnap.exists){
-                setDoc(doc(db, "users", auth.currentUser.uid), {role: [""]})
+                setDoc(doc(db, "users", auth.currentUser.uid), {
+                    firstName: "",
+                    lastName: "",
+                    phoneNumber: "",
+                    address: "",
+                    city: "",
+                    state: {countryCode: '', label:'', value:''},
+                    country: {label: '', value:''},
+                    employeeNumber: "",
+                    station: "",
+                    status: "",
+                    role: [],                    
+                    car: "",
+                    platoon: "",
+                    rotation: "",
+                    email: auth.currentUser.email
+                })
             }
             const result = sendEmailVerification(auth.currentUser)
             .then(() => {

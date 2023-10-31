@@ -90,7 +90,6 @@
 
             <q-separator inset />
         </q-card>
-        {{ test }}
     </div>
 </template>
 

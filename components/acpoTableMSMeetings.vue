@@ -25,6 +25,11 @@ const columns = [
     { name: 'currentCount', label: 'Shifts Completed in Milestone', field: 'currentCount', sortable: true },
     { name: 'currentRequired', label: 'Required Shifts', field: 'currentRequired' },
 ];
+
+const menteeSelection = () => {
+
+}
+
 </script>
 
 <style scoped></style>

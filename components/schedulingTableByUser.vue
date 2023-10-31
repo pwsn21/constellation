@@ -5,14 +5,14 @@
                 <div class="text-h5 col-3">
                     By User
                 </div>
-                <div class="col-4">
+                <!-- <div class="col-4">
                     <q-select label="Mentee" dense filled v-model="mentee" color="deep-purple-10" :options="activeMentees"
                         emit-value map-options @update:model-value="menteeSelected" />
                 </div>
                 <div class="col-4">
                     <q-select label="Mentor" dense filled v-model="mentor" color="deep-purple-10"
                         :options="activeMentors.allMentors" emit-value map-options @update:model-value="mentorSelected" />
-                </div>
+                </div> -->
             </div>
             <div class="q-mb-xs" style=" max-width: 250px">
                 <q-input v-model="filter" class="bg-grey-4" style="min-width: 200px;" dense filled label="Search..."
@@ -24,13 +24,13 @@
         </div>
         <div>
 
-            <q-table table-header-class="text-white bg-deep-purple-10" :rows="shifts" row-key="id" :columns="columns" dense
-                flat bordered :filter="filter" :pagination="{ sortBy: 'date', descending: true, rowsPerPage: 20 }"
+            <q-table table-header-class="text-white bg-deep-purple-10" :rows="shifts" row-key="id" dense flat bordered
+                :columns="columns" :filter="filter" :pagination="{ sortBy: 'date', descending: true, rowsPerPage: 20 }"
                 no-data-label="Please Select a Mentee or Mentor" @row-click="menteeShift"
                 rows-per-page-label="Shifts per page:">
-                <!-- <template v-slot:body-cell-actions="props">
+                <!-- <template v-slot:body-cell-mentor="props">
                     <q-td :props="props">
-                        <q-btn dense round flat color="red" @click="deleteShift(props.row)" icon="delete"></q-btn>
+                        {{ getUserDetails(props.row.mentorID).name }}
                     </q-td>
                 </template> -->
             </q-table>
@@ -40,38 +40,51 @@
 
 <script setup>
 
+
+
 import { collection, query, onSnapshot, getFirestore, deleteDoc, doc, limit, orderBy, where } from "firebase/firestore";
 const db = getFirestore()
+initUsers()
+const au = useAllUsersData();
 const shifts = ref([])
 const mentee = ref('')
 const activeMentees = await optionsMenteeStatus('In Progress')
 const mentor = ref('')
 const activeMentors = await mentorOptions('', '')
 
-const menteeSelected = () => {
-    mentor.value = ''
-    const q = queryOr('scheduledShifts', 'menteeOneID', mentee.value, 'menteeTwoID', mentee.value)
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        shifts.value = []
-        querySnapshot.forEach((doc) => {
-            const shiftData = doc.data();
-            shiftData.id = doc.id;
-            shifts.value.push(shiftData);
-        })
-    })
+function getUserDetails(uid) {
+    const user = au.value.find((data) => data.uid === uid);
+    if (user) {
+        return user
+        // {
+        //     name: user.name,
+        //     employeeNumber: user.employeeNumber,
+        //     phoneNumber: user.phoneNumber
+        // };
+    } else {
+        return {
+            name: "",
+            employeeNumber: "",
+            phoneNumber: ""
+        };
+    }
 }
 
-const mentorSelected = () => {
-    mentee.value = ''
-    const q = query(collection(db, "scheduledShifts"), where('mentorID', '==', mentor.value), orderBy("creationDate", "desc"), limit(60))
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        shifts.value = [];
-        querySnapshot.forEach((doc) => {
-            const shiftData = doc.data();
-            shiftData.id = doc.id;
-            shifts.value.push(shiftData);
-        })
+const q = queryOr('scheduledShifts', 'car', '249A1D', 'station', '249')
+const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    shifts.value = []
+    querySnapshot.forEach((doc) => {
+        const shiftData = doc.data();
+        shiftData.id = doc.id;
+        shiftData.menteeOneName = getUserDetails(shiftData.menteeOneID).name
+        shiftData.menteeTwoName = getUserDetails(shiftData.menteeTwoID).name
+        shiftData.mentorName = getUserDetails(shiftData.mentorID).name
+        shifts.value.push(shiftData);
     })
+})
+
+const menteeSelected = () => {
+
 }
 
 const emit = defineEmits(["selectedShift"])

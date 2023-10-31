@@ -6,6 +6,8 @@
                 <q-form @submit.prevent="addStation" class="q-gutter-sm">
                     <q-input label="Station Number" v-model="station.number" filled @update:model-value="stationUpdate"
                         hint="e.g. 249" />
+                    <q-input label="Station Address" v-model="station.address" filled @update:model-value="stationUpdate"
+                        hint="e.g. 444 Rousseau St" />
                     <q-input label="City" v-model="station.city" filled hint="e.g. Surrey" />
                     <div class="row justify-between items-center ">
                         <q-input class="col-8" label="Cars" v-model="car" filled hint="e.g. 249A1" />
@@ -65,6 +67,7 @@
 <script setup>
 const station = ref({
     number: '',
+    address: '',
     city: '',
     carLabel: [],
     cars: []
@@ -82,8 +85,11 @@ const pushCar = () => {
         startTime: '18:30',
         endTime: '06:30'
     }
-    station.value.carLabel.push(car.value.toUpperCase());
-    station.value.cars.push(dayCar, nightCar);
+    if (!station.value.carLabel.includes(car.value.toUpperCase())) {
+        station.value.carLabel.push(car.value.toUpperCase())
+    }
+
+    station.value.cars.push(dayCar, nightCar)
     car.value = '';
 }
 

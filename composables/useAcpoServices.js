@@ -24,33 +24,33 @@ export const optionsMenteeStatus = async (status) => {
     options.mentee.push({
         value: mentee.id,
         label: mentee.data().firstName + " " + mentee.data().lastName,
-        employeeNumber: mentee.data().employeeNumber
-    });
-});
+    })
+})
 return options.mentee
 }
 
 export const mentorOptions = async (station, platoon) => {
     const options = reactive ({mentor: [], allMentors:[]})
     const mentorCollection = getCollection('users')
-    const qAllMentors = query(mentorCollection, or(where('role','array-contains','mentor'), where('role','array-contains','pped')), orderBy('firstName'));
-    // const qMentors = queryAnd(mentorCollection,"station",station,"platoon",platoon)
-    const qMentors = query(mentorCollection, and(where('station','==',station),where('platoon','==',platoon),where('role','array-contains','mentor')), orderBy('firstName'));
+    const qAllMentors = query(mentorCollection, where('role','array-contains','mentor'), orderBy('firstName'));
+        // const qMentors = queryAnd(mentorCollection,"station",station,"platoon",platoon)
     const mentorIdsSet = new Set();
-
-    const mentorDocs = await getDocs(qMentors)
-    mentorDocs.forEach((mentor) => {
-        const mentorId = mentor.id
-        if (!mentorIdsSet.has(mentorId)) {
-            mentorIdsSet.add(mentorId)
-            const m = mentor.data()
-            options.mentor.push({
-                value: mentorId,
-                label: `${m.firstName} ${m.lastName}`,
-                phoneNumber: m.phoneNumber
-            })
-        }
-    })
+    if (station && platoon) {
+        const qMentors = query(mentorCollection, and(where('station','==',station),where('platoon','==',platoon),where('role','array-contains','mentor')), orderBy('firstName'))
+        const mentorDocs = await getDocs(qMentors)
+        mentorDocs.forEach((mentor) => {
+            const mentorId = mentor.id
+            if (!mentorIdsSet.has(mentorId)) {
+                mentorIdsSet.add(mentorId)
+                const m = mentor.data()
+                options.mentor.push({
+                    value: mentorId,
+                    label: `${m.firstName} ${m.lastName}`,
+                    phoneNumber: m.phoneNumber
+                })
+            }
+        })
+    }
     
     const allMentorDocs = await getDocs(qAllMentors)
     allMentorDocs.forEach((mentor) => {

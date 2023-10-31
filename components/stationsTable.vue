@@ -61,9 +61,9 @@ const stationSelected = () => {
 
 
 const emit = defineEmits(["selectedShift"])
-const menteeShift = (event, row) => {
-    emit("selectedShift", row.id)
-};
+// const menteeShift = (event, row) => {
+//     emit("selectedShift", row.id)
+// };
 
 // const q = query(collection(db, "scheduledShifts"), where('menteeOneID', '==', mentee.value))
 
