@@ -15,7 +15,7 @@
                 Dashboard
             </q-tab-panel>
             <q-tab-panel name="attendance">
-                <MenteeTableAttendance :selectedMenteeID="selectedMenteeID" />
+                <MenteeTableAttendance :selectedMentee="selectedMentee" />
             </q-tab-panel>
             <q-tab-panel name="dOPS">
                 DOPS
@@ -33,7 +33,7 @@
 <script setup>
 
 const currentMenteeTab = ref('dashboard')
-const mID = defineProps(['selectedMenteeID'])
+const mentee = defineProps(['selectedMentee'])
 
 </script>
 <style scoped></style>

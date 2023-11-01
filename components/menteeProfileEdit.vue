@@ -5,7 +5,7 @@
                 <div class="row justify-center q-gutter-sm q-mt-sm">
                     <q-card class="w-full" style="width: 400px;">
                         <q-card-section>
-                            <div class="text-h5 text-secondary">{{ menteeProfile.firstName }} {{ menteeProfile.lastName }}
+                            <div class="text-h5 text-secondary">{{ mentee.selectedMentee.name }}
                                 ({{
                                     menteeProfile.cohort }})
                             </div>
@@ -16,7 +16,7 @@
                                 :options="options.acpoStatus" lazy-rules
                                 :rules="[val => !!val || 'Status is required. Please select from options.']" />
                             <q-select filled v-model="menteeProfile.pped" label="Assigned Practice Educator"
-                                :options="options.ppeds" />
+                                :options="options.ppeds" emit-value map-options />
                             <DateTimePicker label="Hire Date" :date="menteeProfile.hireDate"
                                 @update:date="updateHireDate" />
 
@@ -106,7 +106,7 @@
                 <div class="q-mt-xs row reverse q-gutter-sm">
                     <q-btn label="Save" type="submit" color="primary" />
                     <q-btn label="Close" color="secondary"
-                        @click="$emit('acpoMode', mID.selectedMenteeID, 'acpoView', 'menteeProfileTab')" />
+                        @click="$emit('acpoMode', mentee.selectedMentee, 'acpoView', 'menteeProfileTab')" />
                 </div>
 
             </q-form>
@@ -117,18 +117,17 @@
 
 <script setup>
 import { doc, setDoc, query, where, getDocs, getFirestore, } from "firebase/firestore";
+const au = useAllUsersData()
 
-
-const mID = defineProps(['selectedMenteeID'])
+const mentee = defineProps(['selectedMentee'])
 const emit = defineEmits(["acpoMode"])
 const db = getFirestore();
 
+
 const expansionHeader = "text-h5 text-secondary"
 
-const data = await (menteeData(mID.selectedMenteeID))
+const data = await (menteeData(mentee.selectedMentee.menteeID))
 let menteeProfile = reactive({
-    firstName: data.firstName || null,
-    lastName: data.lastName || null,
     cohort: data.cohort || null,
     pped: data.pped || null,
     acpoStatus: data.acpoStatus || null,
@@ -149,7 +148,6 @@ let menteeProfile = reactive({
     msTwoRequiredShiftModifier: data.msTwoRequiredShiftModifier || 0,
     msThreeRequiredShiftModifier: data.msThreeRequiredShiftModifier || 0,
     msFourRequiredShiftModifier: data.msFourRequiredShiftModifier || 0,
-
 });
 
 const options = reactive({
@@ -158,18 +156,16 @@ const options = reactive({
     supportLevelHigh: ['High', 'Medium', 'Low'],
     supportLevel: ['Medium', 'Low'],
 })
-// Options for PPEd
-const userCollection = getCollection('users')
-const queryPPEd = query(userCollection, where("role", "==", "Paramedic Practice Educator"))
-const ppedDocs = await getDocs(queryPPEd)
 
-ppedDocs.forEach((pped) => {
-    options.ppeds.push({
-        value: pped.id,
-        label: pped.data().firstName + " " + pped.data().lastName,
-        station: pped.data().station,
-    });
-});
+const ppeds = au.value.filter(user => user.role.includes("pped"))
+ppeds.forEach(pped => {
+    options.ppeds.push(
+        {
+            label: pped.firstName + " " + pped.lastName,
+            value: pped.uid
+        }
+    )
+})
 
 //Support, 3 person config, and development meeting checker
 function setCurrentSupport(menteeProfile) {
@@ -224,14 +220,13 @@ const updateMeetingFour = (date) => { menteeProfile.milestoneMeetingFour = date 
 
 const { showToast } = useNotification();
 
-
 // Save Profile
 const saveAcpOProfile = async () => {
     try {
         setCurrentSupport(menteeProfile)
         threePersonChecker()
         needMeetingChecker()
-        await setFSDoc("acpoMentees", mID.selectedMenteeID, menteeProfile, true)
+        await setFSDoc("acpoMentees", mentee.selectedMentee.menteeID, menteeProfile, true)
         showToast('positive', 'check', 'Saved')
     }
     catch (error) {

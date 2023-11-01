@@ -1,4 +1,4 @@
-import {getDocs, getFirestore, getCountFromServer, query, where, orderBy, or, and} from "firebase/firestore"
+import {getDocs, getFirestore, getCountFromServer, query, where, orderBy, or, and, collection} from "firebase/firestore"
 
 export const menteeData = async (menteeID) => {
     const docAcpoSnap = await getFSDoc("acpoMentees", menteeID);
@@ -21,13 +21,15 @@ export const optionsMenteeStatus = async (status) => {
     const qMentees = query(menteeCollection, where("acpoStatus", "==", status))
     const menteeDocs = await getDocs(qMentees);
     menteeDocs.forEach((mentee) => {
-    options.mentee.push({
-        value: mentee.id,
-        label: mentee.data().firstName + " " + mentee.data().lastName,
-    })
-})
-return options.mentee
+        const m = mentee.data()
+        m.value = m.uid
+        m.label = getUD(m.uid).firstName + ' ' + getUD(m.uid).lastName
+        options.mentee.push(m)
+    }
+    )
+    return options.mentee
 }
+
 
 export const mentorOptions = async (station, platoon) => {
     const options = reactive ({mentor: [], allMentors:[]})
@@ -108,6 +110,7 @@ export const msMeetingTable = async () => {
     const data = reactive({mentee: []})
     const menteeCollection = getCollection('acpoMentees')
     const qMentees = queryAndOr(menteeCollection,'acpoStatus','In Progress','needMSMeeting',true,'needDPMeeting',true)
+    
     const menteeDocs = await getDocs(qMentees)
     
     menteeDocs.forEach(async (mentee) => {
@@ -119,15 +122,37 @@ export const msMeetingTable = async () => {
         required.value = msSupportSnap.data().requiredShifts
         const progress = required.value - (count.data().count)
         if (progress < 9 || m.needDPMeeting) {
-            data.mentee.push({
-                id: mentee.id,
-                name: `${m.firstName} ${m.lastName}`,
-                currentSupport: m.currentSupport,
-                currentMilestone: m.currentMilestone,
-                currentRequired: required.value,
-                currentCount: count.data().count,
-            })
+            m.name = `${getUD(m.uid).firstName} ${getUD(m.uid).lastName}`
+            m.currentRequired = required.value,
+            m.currentCount = count.data().count,
+            data.mentee.push(m)
+        }
     }     
-})
+)
 return data.mentee
 }
+
+
+
+export const getCohorts = async () => {
+    const db = getFirestore()    
+    const results = ref([])
+    const acpoCohortCollection = collection(db, "acpoCohort");
+    const qActiveCohorts = query(acpoCohortCollection, where("status", "==", "active"));
+    const cohortsActive = await getDocs(qActiveCohorts);
+    cohortsActive.forEach((cohort) => {
+        results.value.push(cohort.id)
+        })
+    return results.value
+    }
+
+export function getUD(uid) {
+        const au = useAllUsersData()
+        const user = au.value.find((data) => data.uid === uid);
+        if (user) {
+            return user
+        } else {
+            return null
+        }
+    }
+

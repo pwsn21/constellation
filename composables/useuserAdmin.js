@@ -16,14 +16,12 @@ export const initUsers = async () => {
     });
 }
 
-
-
 export const roles = (role = '', roleName = '') => {
     const roleOptions = [
         { value: "admin", label: "Administrator" },
         { value: "mentee", label: "Mentee" },
         { value: "mentor", label: "Mentor" },
-        { value: "ppl", label: "Paramedic Practice Leader" },
+        { value: "scheduler", label: "Scheduler" },
         { value: "pped", label: "Paramedic Practice Educator" },
     ]
 

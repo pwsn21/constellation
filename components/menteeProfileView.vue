@@ -4,12 +4,12 @@
             <q-card-section>
                 <div class="row justify-between">
                     <div class="text-h4 text-secondary">
-                        {{ menteeProfile.firstName }} {{ menteeProfile.lastName }} ({{ menteeProfile.cohort }}) - {{
+                        {{ menteeID.selectedMentee.name }} ({{ menteeProfile.cohort }}) - {{
                             menteeProfile.acpoStatus }}
                     </div>
                     <div>
                         <q-btn icon="edit" round flat
-                            @click="$emit('acpoMode', mID.selectedMenteeID, 'acpoEdit', 'menteeProfileTab')" />
+                            @click="$emit('acpoMode', menteeID.selectedMentee, 'acpoEdit', 'menteeProfileTab')" />
                     </div>
                 </div>
             </q-card-section>
@@ -95,8 +95,7 @@
 
 <script setup>
 const emit = defineEmits(["acpoMode"])
-const mID = defineProps(['selectedMenteeID'])
-
+const menteeID = defineProps(['selectedMentee'])
 let menteeProfile = ref('')
 let msTwoData = ref('')
 let msThreeData = ref('')
@@ -104,16 +103,16 @@ let msFourData = ref('')
 
 watchEffect(async () => {
     try {
-        menteeProfile.value = await (menteeData(mID.selectedMenteeID))
+        menteeProfile.value = await (menteeData(menteeID.selectedMentee.menteeID))
         menteeProfile.value.developmentPlanMeeting = await dateLongFormat(menteeProfile.value.developmentPlanMeeting)
         menteeProfile.value.closeDevelopmentPlanMeeting = await dateLongFormat(menteeProfile.value.closeDevelopmentPlanMeeting)
         menteeProfile.value.milestoneMeetingTwo = await dateLongFormat(menteeProfile.value.milestoneMeetingTwo)
         menteeProfile.value.milestoneMeetingThree = await dateLongFormat(menteeProfile.value.milestoneMeetingThree)
         menteeProfile.value.milestoneMeetingFour = await dateLongFormat(menteeProfile.value.milestoneMeetingFour)
 
-        msTwoData.value = await calcProgress(menteeProfile.value.supportLevelMSTwo, qMenteeAttendance(mID.selectedMenteeID, 'Milestone 2'), menteeProfile.value.msTwoRequiredShiftModifier)
-        msThreeData.value = await calcProgress(menteeProfile.value.supportLevelMSThree, qMenteeAttendance(mID.selectedMenteeID, 'Milestone 3'), menteeProfile.value.msThreeRequiredShiftModifier)
-        msFourData.value = await calcProgress(menteeProfile.value.supportLevelMSFour, qMenteeAttendance(mID.selectedMenteeID, 'Milestone 4'), menteeProfile.value.msFourRequiredShiftModifier)
+        msTwoData.value = await calcProgress(menteeProfile.value.supportLevelMSTwo, qMenteeAttendance(menteeID.selectedMentee.menteeID, 'Milestone 2'), menteeProfile.value.msTwoRequiredShiftModifier)
+        msThreeData.value = await calcProgress(menteeProfile.value.supportLevelMSThree, qMenteeAttendance(menteeID.selectedMentee.menteeID, 'Milestone 3'), menteeProfile.value.msThreeRequiredShiftModifier)
+        msFourData.value = await calcProgress(menteeProfile.value.supportLevelMSFour, qMenteeAttendance(menteeID.selectedMentee.menteeID, 'Milestone 4'), menteeProfile.value.msFourRequiredShiftModifier)
     } catch (error) {
         console.error(error)
     }

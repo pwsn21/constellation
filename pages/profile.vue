@@ -6,26 +6,25 @@
             <userProfileEdit v-if="profileMode == 'userEdit'" @adminUserMode="onProfileMode" /> -->
         </div>
     </div>
-    <pre>
-        {{ userProfile }}
-    </pre>
 </template>
 
 <script setup>
-initUsers()
 const au = useAllUsersData()
 const firebaseUser = useFirebaseUser()
+const userProfile = ref('')
 
-async function getUD(uid) {
-    await au.value
-    const user = au.value.find((data) => data.uid === uid);
-    if (user) {
-        return user
-    } else {
-        return null
+function getUD(uid) {
+    if (au.value) {
+        const user = au.value.find((data) => data.uid === uid);
+        if (user) {
+            return user
+        } else {
+            return null
+        }
     }
 }
-const userProfile = await getUD(firebaseUser.value.uid)
+
+userProfile.value = getUD(firebaseUser.value.uid)
 
 // const docSnap = await getFSDoc("users", firebaseUser.value.uid);
 // const userProfile = docSnap.data()

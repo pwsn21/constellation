@@ -25,8 +25,8 @@
                             <q-select filled v-model="shift.car" label="Car" :options="options.car"
                                 @update:model-value="updateCar" />
                         </div>
-                        <q-select filled label='Mentor' v-model="shift.mentorName" :options="options.mentor"
-                            :rules="[val => !!val || 'Mentor is required']" />
+                        <q-select filled label='Mentor' v-model="shift.mentorID" :options="options.mentor"
+                            :rules="[val => !!val || 'Mentor is required']" emit-value map-options />
                     </div>
                     <div class="q-mt-xs row reverse q-gutter-sm">
                         <q-btn class="q-mr-sm" label="Add Attendance" type="submit" color="primary" />
@@ -34,42 +34,41 @@
                 </q-form>
             </q-card-section>
         </q-card>
-        <pre>{{ shift }}</pre>
+        <pre>
+            {{ shift }}
+        </pre>
     </div>
 </template>
 
 <script setup>
 import { addDoc, collection, getFirestore, serverTimestamp } from "firebase/firestore";
+
 const db = getFirestore()
 const firebaseUser = useFirebaseUser()
 
-const profileData = reactive(await (userData(firebaseUser.value.uid)))
-const menteeProfileData = reactive(await (menteeData('1gvuIqcoVafmikRg10U95rp7pnz1_2023-3')))
-const menteeShifts = await qMenteeShifts('1gvuIqcoVafmikRg10U95rp7pnz1_2023-3')
+const userProfile = getUD(firebaseUser.value.uid)
+console.log(userProfile)
 
 const shift = reactive({
     date: undefined,
     car: undefined,
     station: undefined,
-    mentorName: 'Patrick',
-    mentorID: 'CYHU9R0b9RWF93RpOm5lGpHLCm02',
+    mentorID: 'AXyEXG4pJ8d3SVfjqpP7C2X5VLE2',
     approvalStatus: 'Pending',
-    cohort: menteeProfileData.cohort,
-    milestone: menteeProfileData.currentMilestone,
-    ppedName: menteeProfileData.pped.label,
-    ppedID: menteeProfileData.pped.value,
+    // cohort: menteeProfileData.cohort,
+    // milestone: menteeProfileData.currentMilestone,
     formType: 'attendance',
-    // mID: firebaseUser.value.uid + "_" + menteeProfileData.cohort,
-    menteeID: '1gvuIqcoVafmikRg10U95rp7pnz1_2023-3',
+    menteeID: 'S9B8JRb46ZP6haXsfUhnwxL6hdy1_2023-3',
+    // menteeID: userProfile.uid + "_" + userProfile.cohort,
     // name: menteeProfileData.firstName + " " + menteeProfileData.lastName,
-    name: 'Mentee Zulu',
     submittedOn: serverTimestamp(),
 })
 
+const mentoroptions = await mentorOptions()
 const options = reactive({
     station: await getStations(),
     car: [],
-    mentor: [],
+    mentor: mentoroptions.allMentors,
 })
 
 const stationSelected = async (car) => {

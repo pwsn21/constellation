@@ -45,16 +45,11 @@ const unsubscribe = onSnapshot(menteeForms, (querySnapshot) => {
     forms.value = []
     querySnapshot.forEach((doc) => {
         const d = doc.data()
-        forms.value.push({
-            id: doc.id,
-            name: d.name,
-            date: d.date,
-            car: d.car,
-            milestone: d.milestone,
-            formType: d.formType,
-            pped: d.ppedName,
-            submittedOn: d.submittedOn.toDate().toDateString(),
-        })
+        d.name = getUD(d.menteeID)
+        d.id = doc.id
+        d.submittedOn = d.submittedOn.toDate().toDateString(),
+            console.log(d.name)
+        forms.value.push(d)
     });
 });
 
@@ -62,10 +57,7 @@ const menteeColumns = [
     { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
     { name: 'car', label: 'Car', field: 'car', align: 'left', sortable: true },
     { name: 'date', label: 'Shift Date', field: 'date', align: 'left', sortable: true },
-    // { name: 'milestone', label: 'Milestone', field: 'milestone' },
-    // { name: 'pped', label: 'Practice Educator', field: 'pped', sortable: true },
     { name: 'actions', label: 'Actions', field: '', align: 'center' },
-    // { name: 'submittedOn', label: 'Submitted On', field: 'submittedOn', align: 'left' }
 ];
 
 const approveForm = async (props) => {

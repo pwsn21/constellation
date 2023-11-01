@@ -15,6 +15,7 @@
                             <q-card-section>
                                 <QList dense>
                                     <QItem>Mentor: {{ shift.mentorName }}</QItem>
+                                    <QItem>Phone: {{ shift.mentorPhoneNumber }}</QItem>
                                 </QList>
                             </q-card-section>
                         </q-card>
@@ -29,8 +30,9 @@
 </template>
 <script setup>
 
-const mID = defineProps(['selectedMenteeID'])
-let menteeShifts = await qMenteeShifts(mID.selectedMenteeID)
+const mentee = defineProps(['selectedMentee'])
+let menteeShifts = await qMenteeShifts(mentee.selectedMentee.uid)
+console.log(mentee.selectedMentee.uid)
 // let mentorShiftData = await qMentorShifts('CYHU9R0b9RWF93RpOm5lGpHLCm02')
 const date = ref('')
 const event = menteeShifts.shiftEvent

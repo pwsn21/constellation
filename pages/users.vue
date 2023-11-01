@@ -44,7 +44,7 @@
 </template>
   
 <script setup>
-initUsers()
+// initUsers()
 const au = useAllUsersData()
 const selectedUser = ref()
 const currentTab = ref('profile')
@@ -55,6 +55,7 @@ const columns = [
     { name: 'station', label: 'Station', field: 'station', sortable: true, },
     { name: 'role', label: 'Role', field: '', sortable: true, },
     { name: 'id', label: 'ID - For dev', field: 'uid', align: 'right' },
+    { name: 'email', label: 'Email', field: 'email', align: 'right' },
 ];
 
 const onUserSelected = (event, row) => {

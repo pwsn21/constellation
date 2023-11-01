@@ -38,6 +38,33 @@
             <q-table table-header-class="bg-brown-10 text-white" :rows="shifts" row-key="id" :columns="columns" dense flat
                 bordered :filter="filter" :pagination="{ sortBy: 'date', descending: true, rowsPerPage: 20 }"
                 no-data-label="Please Select a Date Range" @row-click="menteeShift" rows-per-page-label="Shifts per page:">
+                <template v-slot:body-cell-car="props">
+                    <q-td :props="props">
+                        <q-badge>
+                            {{ props.row.car }}
+                        </q-badge>
+                    </q-td>
+                </template>
+                <template v-slot:body-cell-menteeTwo="props">
+                    <q-td :props="props">
+                        <div v-if="props.row.menteeTwoName === 'N/A'" class="text-grey-5">
+                            {{ props.row.menteeTwoName }}
+                        </div>
+                        <div v-else>
+                            {{ props.row.menteeTwoName }}
+                        </div>
+                    </q-td>
+                </template>
+                <template v-slot:body-cell-menteeTwoEE="props">
+                    <q-td :props="props">
+                        <div v-if="props.row.menteeTwoEmployeeNumber === 'N/A'" class="text-grey-5">
+                            {{ props.row.menteeTwoName }}
+                        </div>
+                        <div v-else>
+                            {{ props.row.menteeTwoName }}
+                        </div>
+                    </q-td>
+                </template>
             </q-table>
         </div>
     </div>
@@ -64,6 +91,11 @@ const dateSelected = () => {
         querySnapshot.forEach((doc) => {
             const shiftData = doc.data();
             shiftData.id = doc.id;
+            shiftData.menteeOneName = getUD(shiftData.menteeOneID).name
+            shiftData.menteeOneEmployeeNumber = getUD(shiftData.menteeOneID).employeeNumber
+            shiftData.menteeTwoName = shiftData.menteeTwoID ? getUD(shiftData.menteeTwoID).name : "N/A"
+            shiftData.menteeTwoEmployeeNumber = shiftData.menteeTwoID ? getUD(shiftData.menteeTwoID).employeeNumber : "N/A"
+            shiftData.mentorName = getUD(shiftData.mentorID).name
             shifts.value.push(shiftData);
         })
     })

@@ -4,11 +4,11 @@
       <h2 class="text-h4 center q-mt-md">ACP-Orientation</h2>
       <q-separator class="q-my-xs" />
     </div>
-    <div v-if="!selectedMenteeID" class="q-pa-md full-width" style="max-width: 850px;">
+    <div v-if="!selectedMentee" class="q-pa-md full-width" style="max-width: 850px;">
       <AcpoDashboard />
       <q-separator class="q-mt-xs" />
     </div>
-    <div v-if="!selectedMenteeID" class="q-pa-md full-width" style="max-width: 850px;">
+    <div v-if="!selectedMentee" class="q-pa-md full-width" style="max-width: 850px;">
       <AcpoTableMSMeetings />
       <q-separator class="q-mt-xs" />
     </div>
@@ -16,7 +16,7 @@
     <div class="q-pa-md full-width" style="max-width: 850px;">
       <AcpoTableMentees @selected-mentee="onMenteeSelected" :openTable="openTable" />
 
-      <div v-if="selectedMenteeID !== ''" class="full-width">
+      <div v-if="selectedMentee !== ''" class="full-width">
         <q-tabs v-model="currentTab" align="left" inline-label stretch class="q-mt-sm text-grey-6" narrow-indicator
           mobile-arrows>
           <q-tab name="menteeProfileTab" label="Profile" icon="person" content-class="text-red-10" />
@@ -31,14 +31,14 @@
           transition-duration="200">
 
           <q-tab-panel name="menteeProfileTab" class="q-px-xs">
-            <menteeProfileView v-if="acpoMode == 'acpoView'" :selectedMenteeID="selectedMenteeID"
-              @acpoMode="onMenteeSelected" transition />
-            <menteeProfileEdit v-if="acpoMode == 'acpoEdit'" :selectedMenteeID="selectedMenteeID"
-              @acpoMode="onMenteeSelected" transition />
+            <menteeProfileView v-if="acpoMode == 'acpoView'" :selectedMentee="selectedMentee" @acpoMode="onMenteeSelected"
+              transition />
+            <menteeProfileEdit v-if="acpoMode == 'acpoEdit'" :selectedMentee="selectedMentee" @acpoMode="onMenteeSelected"
+              transition />
           </q-tab-panel>
 
           <q-tab-panel name="menteeFormsTab">
-            <menteeFormsSubPanel :selectedMenteeID="selectedMenteeID" />
+            <menteeFormsSubPanel :selectedMentee="selectedMentee" />
           </q-tab-panel>
 
           <q-tab-panel name="menteeMeetingMinutesTab">
@@ -46,7 +46,7 @@
           </q-tab-panel>
 
           <q-tab-panel name="menteeScheduleTab">
-            <MenteeScheduleSubPanel :selectedMenteeID="selectedMenteeID" />
+            <MenteeScheduleSubPanel :selectedMentee="selectedMentee" />
           </q-tab-panel>
         </q-tab-panels>
 
@@ -58,18 +58,18 @@
 <script setup>
 const currentTab = ref('menteeProfileTab')
 const acpoMode = ref('acpoView')
-const selectedMenteeID = ref('')
+const selectedMentee = ref('')
 let openTable = ref()
 
 const onMenteeSelected = (ID, mode, tab, table) => {
-  selectedMenteeID.value = ID
+  selectedMentee.value = ID
   acpoMode.value = mode
   currentTab.value = tab
   openTable.value = table
 }
 
 const closeDrawer = () => {
-  selectedMenteeID.value = ''
+  selectedMentee.value = ''
   openTable.value = true
 }
 

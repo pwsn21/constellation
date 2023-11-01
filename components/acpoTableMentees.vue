@@ -26,20 +26,19 @@
   
 <script setup>
 import { getDocs, query, collection, getFirestore, onSnapshot } from "firebase/firestore";
+const au = useAllUsersData()
 
 let showTable = ref(true)
 const db = getFirestore()
 
 const emit = defineEmits(["selectedMentee"])
 const menteeSelection = (event, row) => {
-    emit("selectedMentee", row.id, "acpoView", "menteeProfileTab", false)
+    emit("selectedMentee", row, "acpoView", "menteeProfileTab", false)
     showTable.value = false
 };
 
 const table = defineProps(['openTable'])
 
-
-const acpoCollection = getCollection('acpoMentees')
 const filter = ref('')
 const mentees = ref([])
 
@@ -56,18 +55,13 @@ const unsubscribe = onSnapshot(q, (querySnapshot) => {
     mentees.value = []
     querySnapshot.forEach((doc) => {
         const d = doc.data()
-        mentees.value.push({
-            id: doc.id,
-            name: d.firstName + ' ' + d.lastName || null,
-            acpoStatus: d.acpoStatus || null,
-            cohort: d.cohort || null,
-            threePerson: d.threePerson || null,
-            currentSupport: d.currentSupport || null,
-            currentMilestone: d.currentMilestone || null,
-            pped: d.pped?.label || null,
-        })
+        d.menteeID = doc.id
+        d.name = getUD(d.uid).firstName + ' ' + getUD(d.uid).lastName
+        mentees.value.push(d)
+
     })
 })
+
 
 const menteeColumns = [
     { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
@@ -76,8 +70,7 @@ const menteeColumns = [
     { name: 'milestone', label: 'Milestone', field: 'currentMilestone' },
     { name: 'currentSupport', label: 'Support Level', field: 'currentSupport' },
     { name: 'threePerson', label: 'No. on car', field: 'threePerson' },
-    { name: 'pped', label: 'Practice Educator', field: 'pped', sortable: true },
-];
-
+    { name: 'pped', label: 'Practice Educator', field: 'uid', sortable: true },
+]
 </script>
  

@@ -1,11 +1,13 @@
 <template>
   <div>
-    <div class="q-pa-xs" style="max-width: 850px;">
-      <MenteeFormAttendance />
-    </div>
+    <MenteeFormAttendance v-if="formType == 'attendance'" />
   </div>
 </template>
 
+
 <script setup>
+let formType = ref('attendance')
+
+let currentTab = ref('menteeProgressTab')
 
 </script>

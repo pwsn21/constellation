@@ -10,23 +10,16 @@ export const qMenteeShifts = async (menteeID) => {
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach( async (shift) => {
             const s = shift.data()
-            shiftData.value.push({
-                id: shift.id,
-                car: s.car,
-                station: s.station,
-                platoon: s.platoon,
-                menteeOneName: s.menteeOneName,
-                menteeTwoName: s.menteeTwoName,
-                menteeOneID: s.menteeOneID,
-                menteeTwoID: s.menteeTwoID,
-                mentorName: s.mentorName,
-                mentorID: s.mentorID,
-                dateDisplay: date.formatDate(s.startDate, 'dddd MMMM Do, YYYY'),
-                shiftEvent: s.startDate,
-                startTime: s.startTime,
-                endTime: s.endTime
-            })
+            s.id = shift.id
+            s.dateDisplay = date.formatDate(s.startDate, 'dddd MMMM Do, YYYY')
+            s.shiftEvent = s.startDate
+            s.menteeOneName = getUD(s.menteeOneID).name
+            s.menteeTwoName = s.menteeTwoID ? getUD(s.menteeTwoID).name : null
+            s.mentorName = getUD(s.mentorID).name
+            s.mentorPhoneNumber = getUD(s.mentorID).phoneNumber
+            shiftData.value.push(s)
             shiftEvent.value.push(s.startDate)
+            console.log(shiftData.value)
         })
     return {shiftData,shiftEvent}
 }

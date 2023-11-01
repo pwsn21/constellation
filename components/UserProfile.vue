@@ -6,7 +6,7 @@
         </div>
         <q-separator inset />
         <div v-if="isEdit" class="q-mt-sm q-ml-lg">
-            <q-btn outline size="sm" color="positive" label="Save" />
+            <q-btn outline size="sm" color="positive" label="Save" @click="saveProfile" />
             <q-btn outline size="sm" color="negative" label="Cancel" @click="isEdit = !isEdit" />
         </div>
         <div class="text-subtitle1 text-weight-bold">Contact Information </div>
@@ -14,6 +14,28 @@
 
         <div v-if="props.user">
             <div>
+                <div class="row items-center">
+                    <div class="col-3 text-right q-pr-sm">First Name:</div>
+                    <Transition name="fade" mode="out-in">
+                        <div v-if="!isEdit" class="row items-center">
+                            {{ props.user ? props.user.firstName : 'loading' }}
+                        </div>
+                        <div v-else>
+                            <q-input outlined dense v-model="props.user.firstName" label="First Name" />
+                        </div>
+                    </Transition>
+                </div>
+                <div class="row items-center">
+                    <div class="col-3 text-right q-pr-sm">Last Name:</div>
+                    <Transition name="fade" mode="out-in">
+                        <div v-if="!isEdit" class="row items-center">
+                            {{ props.user ? props.user.lastName : 'loading' }}
+                        </div>
+                        <div v-else>
+                            <q-input outlined dense v-model="props.user.lastName" label="Last Name" />
+                        </div>
+                    </Transition>
+                </div>
                 <div class="row items-center">
                     <div class="col-3 text-right q-pr-sm">Phone:</div>
                     <Transition name="fade" mode="out-in">
@@ -37,17 +59,17 @@
                                 {{ props.user.city }}
                             </div>
                             <div>
-                                <!-- {{ props.user.state.label }} -->
+                                {{ props.user.state.label }}
                             </div>
                             <div>
-                                <!-- {{ props.user.state.countryCode }} -->
+                                {{ props.user.state.countryCode }}
                             </div>
                         </div>
                         <div v-else>
                             <q-input outlined dense v-model="props.user.address" label="Address" type="text" />
                             <q-input outlined dense v-model="props.user.city" label="City" type="text" />
                             <q-input outlined dense v-model="props.user.state.label" label="Province/State" type="text" />
-                            <q-input outlined dense v-model="props.user.state.label" label="Country" type="text" />
+                            <q-input outlined dense v-model="props.user.country.label" label="Country" type="text" />
                         </div>
                     </Transition>
                 </div>
@@ -152,6 +174,11 @@
 const props = defineProps(['user'])
 const isEdit = ref(false)
 const isAdmin = ref(true)
+
+const saveProfile = async () => {
+    await setFSDoc("users", props.user.uid, props.user, true)
+    console.log(props.user)
+}
 </script>
 
 <style scoped>

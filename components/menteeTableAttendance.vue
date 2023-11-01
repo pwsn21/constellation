@@ -20,23 +20,17 @@
 <script setup>
 import { getDocs } from 'firebase/firestore';
 
-const mID = defineProps(['selectedMenteeID'])
+const mentee = defineProps(['selectedMentee'])
 const shiftData = ref([])
 
-const getShifts = qMenteeAttendance(mID.selectedMenteeID)
+const getShifts = qMenteeAttendance(mentee.selectedMentee.menteeID)
 const queryShifts = await getDocs(getShifts)
 
 queryShifts.forEach((shift) => {
     const d = shift.data()
-    shiftData.value.push({
-        milestone: d.milestone,
-        car: d.car,
-        date: d.date,
-        mentorName: d.mentorName,
-        approvalStatus: d.approvalStatus,
-        submittedOn: d.submittedOn.toDate().toDateString(),
-        id: shift.id,
-    })
+    d.submittedOn = d.submittedOn.toDate().toDateString()
+    d.id = shift.id
+    shiftData.value.push(d)
 })
 
 const attendanceColumns = [

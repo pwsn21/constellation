@@ -194,7 +194,9 @@
                     <q-btn label="Cancel" color="primary" v-close-popup />
                     <q-btn label="Overwrite" color="secondary" @click="scheduleShift" v-close-popup />
                 </q-card-actions>
-                {{ originalShift }}
+                <pre>
+                    {{ originalShift }}
+                </pre>
             </q-card>
         </q-dialog>
         <pre>
@@ -212,7 +214,7 @@ const db = getFirestore()
 
 const defaultMonth = date.formatDate(date.addToDate(Date.now(), { months: 1 }), 'YYYY/MM')
 
-let shiftID = defineProps(['shiftID'])
+let selectedShift = defineProps(['selectedShift'])
 let title = ref('Add Shift')
 
 let shift = ref({
@@ -230,20 +232,25 @@ let shift = ref({
     creationDate: serverTimestamp()
 })
 
-let selectedShiftID = ref('')
+let selectedShiftID = ref()
 
-watchEffect(async () => {
-    if (shiftID.shiftID !== "") {
-        const docSnap = await getFSDoc("scheduledShifts", shiftID.shiftID)
-        const shiftData = docSnap.data()
-        selectedShiftID = docSnap.id
+// watchEffect(async () => {
+//     // console.log(selectedShift.selectedShift)
+//     if (selectedShift.selectedShift !== "") {
+//         // const docSnap = await getFSDoc("scheduledShifts", selectedShift.selectedShift.id)
+//         // const shiftData = docSnap.data()
+//         // selectedShiftID = selectedShift.selectedShift
+//         shift.value = selectedShift.selectedShift
+//         // shift.value = shiftData
+//         title.value = `${shift.value.car} (${shift.value.startDate})`
+//     }
+// })
 
-        shift.value = shiftData
-        title.value = `${shift.value.car} (${shift.value.startDate})`
-        console.log(selectedShiftID)
-    }
+watch(selectedShift, () => {
+    shift.value = selectedShift.selectedShift
+    selectedShiftID.value = ref(selectedShift.selectedShift.id)
+    title.value = `${shift.value.car} (${shift.value.startDate})`
 })
-
 
 const mentoroptions = await mentorOptions()
 
@@ -325,8 +332,10 @@ const onReset = () => {
     shift.value.menteeOneID = undefined
     shift.value.menteeTwoID = null
     shift.value.mentorID = undefined
-    selectedShiftID = undefined
+    selectedShiftID.value = null
+    console.log(selectedShiftID.value)
     title.value = "Add Shift"
+    console.log(title.value)
 }
 
 let originalShift = ref('')
@@ -372,13 +381,16 @@ const checkShift = async () => {
 const scheduleShift = async () => {
     try {
         if (originalShift.value) {
+            console.log('delete')
             await deleteDoc(doc(db, "scheduledShifts", originalShift.value.id))
         }
-        if (selectedShiftID) {
-            await setDoc(doc(db, "scheduledShifts", selectedShiftID), shift.value)
+        if (selectedShiftID.value) {
+            console.log('update')
+            await setDoc(doc(db, "scheduledShifts", selectedShiftID.value), shift.value)
             onReset()
             showToast('positive', 'check', 'Shift Updated')
         } else {
+            console.log('add')
             await addDoc(getCollection("scheduledShifts"), shift.value)
             showToast('positive', 'check', 'Shift Added')
         }
@@ -391,7 +403,7 @@ const scheduleShift = async () => {
 }
 
 const deleteShift = async () => {
-    await deleteDoc(doc(db, "scheduledShifts", selectedShiftID))
+    await deleteDoc(doc(db, "scheduledShifts", selectedShiftID.value))
     onReset()
     showToast('positive', 'delete', 'Shift Deleted')
 }

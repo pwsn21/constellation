@@ -3,7 +3,7 @@
         <div class="row justify-between text-deep-purple-10">
             <div class="row justify-between" style="min-width: 500px;">
                 <div class="text-h5 col-3">
-                    By User
+                    View All
                 </div>
                 <!-- <div class="col-4">
                     <q-select label="Mentee" dense filled v-model="mentee" color="deep-purple-10" :options="activeMentees"
@@ -28,6 +28,23 @@
                 :columns="columns" :filter="filter" :pagination="{ sortBy: 'date', descending: true, rowsPerPage: 20 }"
                 no-data-label="Please Select a Mentee or Mentor" @row-click="menteeShift"
                 rows-per-page-label="Shifts per page:">
+                <template v-slot:body-cell-car="props">
+                    <q-td :props="props">
+                        <q-badge>
+                            {{ props.row.car }}
+                        </q-badge>
+                    </q-td>
+                </template>
+                <template v-slot:body-cell-menteeTwo="props">
+                    <q-td :props="props">
+                        <div v-if="props.row.menteeTwoName === 'N/A'" class="text-grey-5">
+                            {{ props.row.menteeTwoName }}
+                        </div>
+                        <div v-else>
+                            {{ props.row.menteeTwoName }}
+                        </div>
+                    </q-td>
+                </template>
                 <!-- <template v-slot:body-cell-mentor="props">
                     <q-td :props="props">
                         {{ getUserDetails(props.row.mentorID).name }}
@@ -52,33 +69,15 @@ const activeMentees = await optionsMenteeStatus('In Progress')
 const mentor = ref('')
 const activeMentors = await mentorOptions('', '')
 
-function getUserDetails(uid) {
-    const user = au.value.find((data) => data.uid === uid);
-    if (user) {
-        return user
-        // {
-        //     name: user.name,
-        //     employeeNumber: user.employeeNumber,
-        //     phoneNumber: user.phoneNumber
-        // };
-    } else {
-        return {
-            name: "",
-            employeeNumber: "",
-            phoneNumber: ""
-        };
-    }
-}
-
-const q = queryOr('scheduledShifts', 'car', '249A1D', 'station', '249')
+const q = collection(db, 'scheduledShifts')
 const unsubscribe = onSnapshot(q, (querySnapshot) => {
     shifts.value = []
     querySnapshot.forEach((doc) => {
         const shiftData = doc.data();
         shiftData.id = doc.id;
-        shiftData.menteeOneName = getUserDetails(shiftData.menteeOneID).name
-        shiftData.menteeTwoName = getUserDetails(shiftData.menteeTwoID).name
-        shiftData.mentorName = getUserDetails(shiftData.mentorID).name
+        shiftData.menteeOneName = getUD(shiftData.menteeOneID).name
+        shiftData.menteeTwoName = shiftData.menteeTwoID ? getUD(shiftData.menteeTwoID).name : "N/A"
+        shiftData.mentorName = getUD(shiftData.mentorID).name
         shifts.value.push(shiftData);
     })
 })
@@ -89,7 +88,7 @@ const menteeSelected = () => {
 
 const emit = defineEmits(["selectedShift"])
 const menteeShift = (event, row) => {
-    emit("selectedShift", row.id)
+    emit("selectedShift", row)
 };
 
 // const q = query(collection(db, "scheduledShifts"), where('menteeOneID', '==', mentee.value))

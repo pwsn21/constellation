@@ -10,6 +10,11 @@
                     </q-item-section>
                 </q-item>
             </q-list>
+            <div v-if="props.user.role.includes('mentee')" class="row justify-between">
+                <q-select square v-model="cohort" :options="cohorts" outlined label="Mentee Cohort" dense
+                    style="min-width: 300px;" />
+                <q-btn label="Create Mentee" size="sm" outline color="primary" @click="createMentee" />
+            </div>
         </div>
         <div class="col-6">
             <div>Add Role(s)</div>
@@ -21,6 +26,9 @@
 </template>
 <script setup>
 const props = defineProps(['user'])
+const cohort = ref('')
+const cohorts = await getCohorts()
+
 const selectedNewRoles = ref([])
 const allRoles = roles()
 
@@ -37,6 +45,16 @@ const removeRoles = async (r) => {
         return rr !== roles(r)[0].value;
     });
     await removeRole(props.user, roles(r)[0].value)
+}
+
+const createMentee = async () => {
+    await setFSDoc("users", props.user.uid, { cohort: cohort.value }, true)
+    await setFSDoc("acpoMentees", `${props.user.uid}_${cohort.value}`, {
+        cohort: cohort.value,
+        uid: props.user.uid
+    },
+        true)
+    console.log(props.user.uid, cohort.value)
 }
 
 </script>

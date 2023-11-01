@@ -14,6 +14,23 @@
             <q-table table-header-class="bg-secondary text-white" :rows="shifts" row-key="id" :columns="columns" dense flat
                 bordered :filter="filter" :pagination="{ sortBy: 'creationDate', descending: true, rowsPerPage: 20 }"
                 @row-click="menteeShift" rows-per-page-label="Shifts per page:">
+                <template v-slot:body-cell-car="props">
+                    <q-td :props="props">
+                        <q-badge>
+                            {{ props.row.car }}
+                        </q-badge>
+                    </q-td>
+                </template>
+                <template v-slot:body-cell-menteeTwo="props">
+                    <q-td :props="props">
+                        <div v-if="props.row.menteeTwoName === 'N/A'" class="text-grey-5">
+                            {{ props.row.menteeTwoName }}
+                        </div>
+                        <div v-else>
+                            {{ props.row.menteeTwoName }}
+                        </div>
+                    </q-td>
+                </template>
             </q-table>
         </div>
     </div>
@@ -27,15 +44,18 @@ const shifts = ref([])
 
 const emit = defineEmits(["selectedShift"])
 const menteeShift = (event, row) => {
-    emit("selectedShift", row.id)
+    emit("selectedShift", row)
 };
 
 const q = query(collection(db, "scheduledShifts"), orderBy("creationDate", "desc"), limit(40))
 const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    shifts.value = [];
+    shifts.value = []
     querySnapshot.forEach((doc) => {
         const shiftData = doc.data();
         shiftData.id = doc.id;
+        shiftData.menteeOneName = getUD(shiftData.menteeOneID).name
+        shiftData.menteeTwoName = shiftData.menteeTwoID ? getUD(shiftData.menteeTwoID).name : "N/A"
+        shiftData.mentorName = getUD(shiftData.mentorID).name
         shifts.value.push(shiftData);
     })
 })

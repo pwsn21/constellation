@@ -26,8 +26,8 @@ const columns = [
     { name: 'currentRequired', label: 'Required Shifts', field: 'currentRequired' },
 ];
 
-const menteeSelection = () => {
-
+const menteeSelection = (event, row) => {
+    console.log(row)
 }
 
 </script>
