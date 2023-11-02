@@ -325,7 +325,7 @@ watch(showDialog, (newValue, oldValue) => {
 const emit = defineEmits(["selectedShift"])
 const onReset = () => {
 
-    selectedShiftID.value = null
+    selectedShiftID.value = ''
     title.value = "Add Shift"
     shift.value.startDate = undefined
     shift.value.endDate = undefined
