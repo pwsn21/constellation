@@ -200,7 +200,7 @@
             </q-card>
         </q-dialog>
         <pre>
-            {{ selectedShiftID }}            
+            {{ selectedShiftID }}        
         </pre>
     </div>
 </template>
@@ -214,7 +214,7 @@ const db = getFirestore()
 
 const defaultMonth = date.formatDate(date.addToDate(Date.now(), { months: 1 }), 'YYYY/MM')
 
-let selectedShift = defineProps(['selectedShift'])
+let selectedShift = defineProps(['shiftData'])
 let title = ref('Add Shift')
 
 let shift = ref({
@@ -232,7 +232,7 @@ let shift = ref({
     creationDate: serverTimestamp()
 })
 
-let selectedShiftID = ref()
+let selectedShiftID = ref('')
 
 // watchEffect(async () => {
 //     // console.log(selectedShift.selectedShift)
@@ -247,10 +247,12 @@ let selectedShiftID = ref()
 // })
 
 watch(selectedShift, () => {
-    shift.value = selectedShift.selectedShift
-    selectedShiftID.value = ref(selectedShift.selectedShift.id)
+    shift.value = selectedShift.shiftData
+    selectedShiftID.value = selectedShift.shiftData.id
     title.value = `${shift.value.car} (${shift.value.startDate})`
-})
+}, { immediate: true })
+
+
 
 const mentoroptions = await mentorOptions()
 
@@ -320,8 +322,11 @@ watch(showDialog, (newValue, oldValue) => {
         originalShift.value = ''
     }
 })
-
+const emit = defineEmits(["selectedShift"])
 const onReset = () => {
+
+    selectedShiftID.value = null
+    title.value = "Add Shift"
     shift.value.startDate = undefined
     shift.value.endDate = undefined
     shift.value.startTime = undefined
@@ -332,10 +337,7 @@ const onReset = () => {
     shift.value.menteeOneID = undefined
     shift.value.menteeTwoID = null
     shift.value.mentorID = undefined
-    selectedShiftID.value = null
-    console.log(selectedShiftID.value)
-    title.value = "Add Shift"
-    console.log(title.value)
+
 }
 
 let originalShift = ref('')

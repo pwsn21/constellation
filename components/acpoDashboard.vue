@@ -4,9 +4,6 @@
             In Progress: {{ menteesCountInProgress.length }}
         </div>
         <div>
-            Need Meeting: {{ menteesNeedMeeting.length }}
-        </div>
-        <div>
             Signed Off: {{ menteesCountSignedOff.length }}
         </div>
     </div>
@@ -18,7 +15,6 @@
 
 const menteesCountInProgress = await optionsMenteeStatus('In Progress')
 const menteesCountSignedOff = await optionsMenteeStatus('Signed Off')
-const menteesNeedMeeting = await msMeetingTable()
 
 </script>
 

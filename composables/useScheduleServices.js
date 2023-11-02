@@ -7,19 +7,21 @@ export const qMenteeShifts = async (menteeID) => {
     
     const shiftsCollection = getCollection("scheduledShifts")
     const q = query(shiftsCollection, or(where("menteeOneID", "==", menteeID), where("menteeTwoID", "==", menteeID)), orderBy('startDate'))
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(q)
+        
         querySnapshot.forEach( async (shift) => {
             const s = shift.data()
+            const stnDetails = await getStationDetails(s.station)
             s.id = shift.id
             s.dateDisplay = date.formatDate(s.startDate, 'dddd MMMM Do, YYYY')
             s.shiftEvent = s.startDate
+            s.address = stnDetails.address
             s.menteeOneName = getUD(s.menteeOneID).name
             s.menteeTwoName = s.menteeTwoID ? getUD(s.menteeTwoID).name : null
             s.mentorName = getUD(s.mentorID).name
             s.mentorPhoneNumber = getUD(s.mentorID).phoneNumber
             shiftData.value.push(s)
             shiftEvent.value.push(s.startDate)
-            console.log(shiftData.value)
         })
     return {shiftData,shiftEvent}
 }

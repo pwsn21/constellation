@@ -42,9 +42,9 @@ import { collection, query, onSnapshot, getFirestore, deleteDoc, doc, limit, ord
 const db = getFirestore()
 const shifts = ref([])
 
-const emit = defineEmits(["selectedShift"])
+const emit = defineEmits(["shiftData"])
 const menteeShift = (event, row) => {
-    emit("selectedShift", row)
+    emit("shiftData", row)
 };
 
 const q = query(collection(db, "scheduledShifts"), orderBy("creationDate", "desc"), limit(40))

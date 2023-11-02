@@ -25,22 +25,20 @@
 </template>
   
 <script setup>
-import { getDocs, query, collection, getFirestore, onSnapshot } from "firebase/firestore";
-const au = useAllUsersData()
 
 let showTable = ref(true)
-const db = getFirestore()
 
 const emit = defineEmits(["selectedMentee"])
 const menteeSelection = (event, row) => {
-    emit("selectedMentee", row, "acpoView", "menteeProfileTab", false)
+    emit("selectedMentee", row, "acpoView", "menteeProgressTab", false)
     showTable.value = false
 };
 
 const table = defineProps(['openTable'])
 
 const filter = ref('')
-const mentees = ref([])
+const mentees = menteesData()
+console.log(mentees)
 
 watchEffect(async () => {
     showTable.value = table.openTable
@@ -50,19 +48,6 @@ watchEffect(async () => {
     }
 })
 
-const q = query(collection(db, "acpoMentees"));
-const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    mentees.value = []
-    querySnapshot.forEach((doc) => {
-        const d = doc.data()
-        d.menteeID = doc.id
-        d.name = getUD(d.uid).firstName + ' ' + getUD(d.uid).lastName
-        mentees.value.push(d)
-
-    })
-})
-
-
 const menteeColumns = [
     { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
     { name: 'acpoStatus', label: 'Status', field: 'acpoStatus', sortable: true, },
@@ -70,7 +55,7 @@ const menteeColumns = [
     { name: 'milestone', label: 'Milestone', field: 'currentMilestone' },
     { name: 'currentSupport', label: 'Support Level', field: 'currentSupport' },
     { name: 'threePerson', label: 'No. on car', field: 'threePerson' },
-    { name: 'pped', label: 'Practice Educator', field: 'uid', sortable: true },
+    { name: 'pped', label: 'Practice Educator', field: 'pped', sortable: true },
 ]
 </script>
  

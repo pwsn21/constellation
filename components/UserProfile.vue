@@ -44,7 +44,7 @@
                         </div>
                         <div v-else>
                             <q-input outlined dense v-model="props.user.phoneNumber" label="(###) ### - ####"
-                                mask="(###) ### - ####" type="tel" />
+                                mask="###-###-####" type="tel" />
                         </div>
                     </Transition>
                 </div>

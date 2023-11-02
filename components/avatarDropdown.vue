@@ -1,7 +1,6 @@
 <template>
     <div>
         <q-btn :label="avatar" round class="bg-secondary text-white">
-
             <q-menu color="secondary" transition-show="jump-down" transition-hide="jump-up" dropdown-icon="person"
                 auto-close>
                 <q-list>
@@ -34,7 +33,7 @@
 <script setup>
 
 const firebaseUser = await useFirebaseUser()
-const profileData = await userData(firebaseUser.value.uid);
+const profileData = getUD(firebaseUser.value.uid);
 let avatar = ref('')
 
 profileData.firstName ? avatar.value = profileData.firstName.charAt(0) + profileData.lastName.charAt(0) : avatar.value = 'user'

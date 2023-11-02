@@ -106,7 +106,7 @@
                 <div class="q-mt-xs row reverse q-gutter-sm">
                     <q-btn label="Save" type="submit" color="primary" />
                     <q-btn label="Close" color="secondary"
-                        @click="$emit('acpoMode', mentee.selectedMentee, 'acpoView', 'menteeProfileTab')" />
+                        @click="$emit('acpoMode', mentee.selectedMentee, 'acpoView', 'menteeProgressTab')" />
                 </div>
 
             </q-form>

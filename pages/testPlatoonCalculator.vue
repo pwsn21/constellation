@@ -1,6 +1,6 @@
 <template>
     <div class="q-pa-lg row justify-center">
-        <q-date v-model="shiftDate" @update:model-value="convert" />
+        <q-date v-model="shiftDate" @update:model-value="convert" today-btn />
     </div>
     <pre>
         <!-- {{ shiftDate }} -->

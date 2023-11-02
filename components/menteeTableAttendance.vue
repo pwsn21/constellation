@@ -10,7 +10,7 @@
             </template>
             <template v-slot:no-data="{ message }">
                 <div class="full-width row flex-center text-primary">
-                    <q-icon size="30px" name="sym_o_sentiment_very_dissatisfied" /> {{ message }}
+                    <q-icon size="30px" name="sym_o_sentiment_dissatisfied" /> {{ message }}
                 </div>
             </template>
         </q-table>
