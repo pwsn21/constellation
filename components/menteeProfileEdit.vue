@@ -3,7 +3,7 @@
         <q-page>
             <q-form @submit.prevent="saveAcpOProfile">
                 <div class="row justify-center q-gutter-sm q-mt-sm">
-                    <q-card class="w-full" style="width: 400px;">
+                    <q-card class="w-full" style="width: 375px;">
                         <q-card-section>
                             <div class="text-h5 text-secondary">{{ mentee.selectedMentee.name }}
                                 ({{
@@ -22,7 +22,7 @@
 
                         </q-card-section>
                     </q-card>
-                    <q-card class="w-full" style="width: 400px;">
+                    <q-card class="w-full" style="width: 375px;">
                         <q-list bordered>
                             <q-expansion-item group="milestones" label="Milestone 2" default-opened
                                 :header-class="expansionHeader">
@@ -50,6 +50,8 @@
                                     </q-card-section>
                                     <q-card-section>
                                         <div>
+                                            <q-input label="Completed Shift Modifier" filled type="number"
+                                                v-model.number="menteeProfile.msTwoRequiredCountModifier" />
                                             <q-input label="Required Shift Modifier" filled type="number"
                                                 v-model.number="menteeProfile.msTwoRequiredShiftModifier" />
                                         </div>
@@ -70,6 +72,8 @@
                                     </q-card-section>
                                     <q-card-section>
                                         <div>
+                                            <q-input label="Completed Shift Modifier" filled type="number"
+                                                v-model.number="menteeProfile.msThreeRequiredCountModifier" />
                                             <q-input label="Required Shift Modifier" filled type="number"
                                                 v-model.number="menteeProfile.msThreeRequiredShiftModifier" />
                                         </div>
@@ -92,6 +96,8 @@
                                     </q-card-section>
                                     <q-card-section>
                                         <div>
+                                            <q-input label="Completed Shift Modifier" filled type="number"
+                                                v-model.number="menteeProfile.msFourRequiredCountModifier" />
                                             <q-input label="Required Shift Modifier" filled type="number"
                                                 v-model.number="menteeProfile.msFourRequiredShiftModifier" />
                                         </div>
@@ -145,9 +151,12 @@ let menteeProfile = reactive({
     threePerson: data.threePerson || 3,
     needDPMeeting: data.needDPMeeting || false,
     needMSMeeting: data.needMSMeeting || false,
-    msTwoRequiredShiftModifier: data.msTwoRequiredShiftModifier || 0,
-    msThreeRequiredShiftModifier: data.msThreeRequiredShiftModifier || 0,
-    msFourRequiredShiftModifier: data.msFourRequiredShiftModifier || 0,
+    msTwoRequiredShiftModifier: data.msTwoRequiredShiftModifier || null,
+    msThreeRequiredShiftModifier: data.msThreeRequiredShiftModifier || null,
+    msFourRequiredShiftModifier: data.msFourRequiredShiftModifier || null,
+    msTwoRequiredCountModifier: data.msTwoRequiredCountModifier || null,
+    msThreeRequiredCountModifier: data.msThreeRequiredCountModifier || null,
+    msFourRequiredCountModifier: data.msFourRequiredCountModifier || null,
 });
 
 const options = reactive({

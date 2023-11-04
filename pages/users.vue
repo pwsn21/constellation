@@ -1,14 +1,17 @@
 <template>
     <div class="q-ma-sm">
-        <q-input v-model="filter" class="bg-grey-4" color="primary" header-class="text-primary" dense filled
-            label="Search..." clearable />
-        <q-table :filter="filter" :rows="au" :columns="columns" row-key="uid" @row-click="onUserSelected">
-            <template v-slot:top-right="props">
-                <q-input outlined dense debounce="300" v-model="filter" placeholder="Block Id">
-                    <template v-slot:append>
-                        <q-icon name="search" />
-                    </template>
-                </q-input>
+        <q-table :filter="filter" :rows="au" :columns="columns" row-key="uid" @row-click="onUserSelected" title="Users"
+            title-class="text-h4" table-header-class="bg-primary text-white">
+            <template v-slot:top="props" class="bg-primary">
+                <div class="row justify-between" style="width:100%">
+                    <div class="text-h4">Users</div>
+                    <q-input v-model="filter" class="bg-grey-4" dense debounce="300" color="primary"
+                        header-class="text-primary" filled label="Search..." clearable style="300px;">
+                        <template v-slot:append>
+                            <q-icon name="search" />
+                        </template>
+                    </q-input>
+                </div>
             </template>
             <template v-slot:body-cell-role="props">
                 <q-td :props="props">
@@ -44,7 +47,6 @@
 </template>
   
 <script setup>
-// initUsers()
 const au = useAllUsersData()
 const selectedUser = ref()
 const currentTab = ref('profile')
@@ -54,8 +56,8 @@ const columns = [
     { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
     { name: 'station', label: 'Station', field: 'station', sortable: true, },
     { name: 'role', label: 'Role', field: '', sortable: true, },
-    { name: 'id', label: 'ID - For dev', field: 'uid', align: 'right' },
     { name: 'email', label: 'Email', field: 'email', align: 'right' },
+    { name: 'id', label: 'ID - For dev', field: 'uid', align: 'right' },
 ];
 
 const onUserSelected = (event, row) => {

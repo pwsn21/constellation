@@ -3,7 +3,7 @@
         <div>
 
             <q-expansion-item label="Mentees" class="text-h5 text-primary" header-class="q-pa-none" header-style="bg-white"
-                expand-icon-toggle expand-icon-class="text-primary" default-opened dense flat v-model="showTable">
+                expand-icon-class="text-primary" default-opened dense flat v-model="showTable">
 
                 <div class="q-my-sm" style=" max-width: 250px">
                     <q-input v-model="filter" class="bg-grey-4" color="primary" header-class="text-primary" dense filled
@@ -38,7 +38,6 @@ const table = defineProps(['openTable'])
 
 const filter = ref('')
 const mentees = menteesData()
-console.log(mentees)
 
 watchEffect(async () => {
     showTable.value = table.openTable

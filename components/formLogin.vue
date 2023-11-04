@@ -1,63 +1,62 @@
 <template>
   <div>
-    <div class="flex justify-center">
-      <div class="tw-p-10  tw-w-11/12">
+    <q-card style="width: 100%">
 
-        <div class="q-pa-md">
-          <div>
-            <h2 class="tw-text-4xl tw-pb-10">Log In</h2>
-          </div>
-          <q-form @submit.prevent="loginUser" @reset="onReset" class="q-gutter-md">
-            <q-input filled v-model="email" type="email" label="Email" hint="Your BCEHS or PHSA Email" lazy-rules :rules="[
-              val => (isValidEmail(val).valid) || (isValidEmail(val).message),
-            ]" />
+      <q-img src="~/assets/images/street.jpg" :ratio="7 / 1">
+        <div class="absolute-left column justify-center text-white text-h4" style="width: 100%">Log In</div>
+      </q-img>
+      <div class="q-pa-md">
 
-            <q-input filled type="password" v-model="password" label="Password" lazy-rules :rules="[
+        <q-form @submit.prevent="loginUser" @reset="onReset" class="q-gutter-md">
+          <q-input filled v-model="email" type="email" label="Email" hint="Your BCEHS or PHSA Email" lazy-rules :rules="[
+            val => (isValidEmail(val).valid) || (isValidEmail(val).message),
+          ]" />
+
+          <q-input filled :type="hidePassword ? 'password' : 'text'" v-model="password" label="Password" lazy-rules
+            hide-bottom-space :rules="[
               val => (isValidPassword(val).valid) || (isValidPassword(val).message),
-            ]" />
+            ]">
+            <template v-slot:append>
+              <q-icon :name="hidePassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                @click="hidePassword = !hidePassword" />
+            </template>
+          </q-input>
+          <div>
+            <q-btn flat class="q-px-none" color="primary" label="Reset Password" no-caps
+              @click="$emit('change', 'passwordreset')" />
+          </div>
+
+          <div class="flex justify-between">
             <div>
-              <q-btn flat padding="none" label="Forgot Password?" no-caps @click="$emit('change', 'passwordreset')" />
+              <q-btn label="Log-In" type="submit" color="primary" />
+              <q-btn label="Clear" type="reset" color="primary" flat class="q-ml-sm" />
             </div>
-
-            <div class="flex justify-between">
-              <div>
-                <q-btn label="Log-In" type="submit" color="primary" />
-                <q-btn label="Clear" type="reset" color="primary" flat class="q-ml-sm" />
-                <!-- <q-btn label="Create Test User" type="reset" color="accent" class="q-ml-sm" @click="createTestUser" /> -->
-              </div>
-              <div>
-                <q-btn label="Register" color="secondary" @click="$emit('change', 'Register')" />
-              </div>
+            <div>
+              <q-btn label="Register" color="secondary" @click="$emit('change', 'Register')" />
             </div>
-          </q-form>
-
-        </div>
-
+          </div>
+        </q-form>
       </div>
-    </div>
+    </q-card>
   </div>
 </template>
 
 <script setup>
-
-import { ref } from 'vue'
 const emit = defineEmits(["change"])
 const { showToast } = useNotification()
 
 const firebaseUser = useFirebaseUser()
+const hidePassword = ref(true)
 const email = ref("");
 const password = ref("");
-
-
 
 const onReset = () => {
   email.value = ""
   password.value = ""
-
+  hidePassword.value = true
 }
 
 const loginUser = async () => {
-
   await signInUser(email.value, password.value)
     .then((result) => {
       if (result.code) {
@@ -65,16 +64,6 @@ const loginUser = async () => {
       }
     })
 };
-
-// const createTestUser = async () => {
-
-//   await createUser('hjawsdfjtdf@bcehs.ca', 'testuesrpass')
-//     .then((result) => {
-//       if (result.code) {
-//         showToast('red-5', 'warning', 'Invalid User or Password')
-//       }
-//     })
-// };
 </script>
 
 <style scoped></style>

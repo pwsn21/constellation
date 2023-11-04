@@ -53,8 +53,8 @@ const unsubscribe = onSnapshot(q, (querySnapshot) => {
     querySnapshot.forEach((doc) => {
         const shiftData = doc.data();
         shiftData.id = doc.id;
-        shiftData.menteeOneName = getUD(shiftData.menteeOneID).name
-        shiftData.menteeTwoName = shiftData.menteeTwoID ? getUD(shiftData.menteeTwoID).name : "N/A"
+        shiftData.menteeOneName = getUD(shiftData.menteeOneID.slice(0, -7)).name
+        shiftData.menteeTwoName = shiftData.menteeTwoID ? getUD(shiftData.menteeTwoID.slice(0, -7)).name : "N/A"
         shiftData.mentorName = getUD(shiftData.mentorID).name
         shifts.value.push(shiftData);
     })

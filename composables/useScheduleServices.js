@@ -8,7 +8,6 @@ export const qMenteeShifts = async (menteeID) => {
     const shiftsCollection = getCollection("scheduledShifts")
     const q = query(shiftsCollection, or(where("menteeOneID", "==", menteeID), where("menteeTwoID", "==", menteeID)), orderBy('startDate'))
         const querySnapshot = await getDocs(q)
-        
         querySnapshot.forEach( async (shift) => {
             const s = shift.data()
             const stnDetails = await getStationDetails(s.station)
@@ -16,14 +15,14 @@ export const qMenteeShifts = async (menteeID) => {
             s.dateDisplay = date.formatDate(s.startDate, 'dddd MMMM Do, YYYY')
             s.shiftEvent = s.startDate
             s.address = stnDetails.address
-            s.menteeOneName = getUD(s.menteeOneID).name
-            s.menteeTwoName = s.menteeTwoID ? getUD(s.menteeTwoID).name : null
+            s.menteeOneName = getUD(s.menteeOneID.slice(0,-7)).name
+            s.menteeTwoName = s.menteeTwoID ? getUD(s.menteeTwoID.slice(0,-7)).name : null
             s.mentorName = getUD(s.mentorID).name
             s.mentorPhoneNumber = getUD(s.mentorID).phoneNumber
             shiftData.value.push(s)
             shiftEvent.value.push(s.startDate)
         })
-    return {shiftData,shiftEvent}
+            return {shiftData,shiftEvent}
 }
 
 export const qShiftDuplicate = async (car, field, userID, shiftDate) => {

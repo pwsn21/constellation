@@ -1,9 +1,10 @@
-import {getDocs, getFirestore, getCountFromServer, query, where, orderBy, or, and, collection, onSnapshot} from "firebase/firestore"
+import {getDocs, getFirestore, getCountFromServer, query, where, orderBy, doc, and, collection, onSnapshot} from "firebase/firestore"
 
-// export const menteeData = async (menteeID) => {
-//     const docAcpoSnap = await getFSDoc("acpoMentees", menteeID);
-//     return (await docAcpoSnap).data()
-//     }
+export const menteeData = async (menteeID) => {
+    const docAcpoSnap = await getFSDoc("acpoMentees", menteeID);
+    const m = docAcpoSnap.data()
+    return m
+    }
     
 export const menteesData = () => {
     const db = getFirestore()
@@ -23,6 +24,7 @@ export const menteesData = () => {
         return mentees
 }
     
+
 export const qMenteeAttendance = (menteeID, currentMilestone) => {
     const menteeShifts = query(getCollection("acpoFormsAttendance"), where("menteeID", "==", menteeID))
     if (!currentMilestone){
@@ -30,7 +32,8 @@ export const qMenteeAttendance = (menteeID, currentMilestone) => {
     }else {
         const qMSShifts = queryAnd(menteeShifts, "milestone", currentMilestone,"approvalStatus", "Approved")
     return qMSShifts
-}}
+}
+}
 
 export const optionsMenteeStatus = async (status) => {
     const options = reactive ({mentee: []})
@@ -39,10 +42,11 @@ export const optionsMenteeStatus = async (status) => {
     const menteeDocs = await getDocs(qMentees);
     menteeDocs.forEach((mentee) => {
         const m = mentee.data()
-        m.value = m.uid
+        m.value = mentee.id
         m.label = getUD(m.uid).firstName + ' ' + getUD(m.uid).lastName
         options.mentee.push(m)
-    })
+    }
+    )
     return options.mentee
 }
 
@@ -51,7 +55,6 @@ export const mentorOptions = async (station, platoon) => {
     const options = reactive ({mentor: [], allMentors:[]})
     const mentorCollection = getCollection('users')
     const qAllMentors = query(mentorCollection, where('role','array-contains','mentor'), orderBy('firstName'));
-        // const qMentors = queryAnd(mentorCollection,"station",station,"platoon",platoon)
     const mentorIdsSet = new Set();
     if (station && platoon) {
         const qMentors = query(mentorCollection, and(where('station','==',station),where('platoon','==',platoon),where('role','array-contains','mentor')), orderBy('firstName'))
@@ -64,7 +67,6 @@ export const mentorOptions = async (station, platoon) => {
                 options.mentor.push({
                     value: mentorId,
                     label: `${m.firstName} ${m.lastName}`,
-                    phoneNumber: m.phoneNumber
                 })
             }
         })
@@ -99,11 +101,11 @@ export const mentorFormsPendingApproval = async (mentorID) => {
     }
 }
 
-export const calcProgress = async (supportLevel, query, requiredmodifier) => {
+export const calcProgress = async (supportLevel, query, requiredmodifier, countmodifer) => {
     const required = ref('')
     const count = ref('')
     const progress = ref('')
-    const modifiers = ref(requiredmodifier)
+    const reqmodifiers = ref(requiredmodifier)
         
     //finds number of required shifts based on mentee support level
         if (supportLevel) {
@@ -114,11 +116,11 @@ export const calcProgress = async (supportLevel, query, requiredmodifier) => {
         }
     //counts number of shifts mentee has done
     const noMSShifts = await getCountFromServer(query)
-    count.value = noMSShifts.data() ? noMSShifts.data().count : 0
+    count.value = noMSShifts.data() ? noMSShifts.data().count + countmodifer : 0
     //calculate progress - zero if calculates infinity
-    progress.value = count.value / (required.value + modifiers.value) || 0
+    progress.value = count.value / (required.value + reqmodifiers.value) || 0
 
-    return {required, count, modifiers, progress}
+    return {required, count, reqmodifiers, progress}
 }
 
 export const msMeetingTable = async () => {  

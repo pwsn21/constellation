@@ -5,17 +5,17 @@
       <q-separator class="q-my-xs" />
     </div>
     <div v-if="profileData.role.includes('admin') || profileData.role.includes('pped')">
-      <div v-if="!selectedMentee" class="q-pa-md full-width" style="min-width: 850px;">
+      <div v-if="!selectedMentee" class="q-pa-md full-width" style="min-width: 800px;">
         <AcpoDashboard />
         <q-separator class="q-mt-xs" />
       </div>
-      <div v-if="!selectedMentee" class="q-pa-md full-width" style="min-width: 850px;">
+      <div v-if="!selectedMentee" class="q-pa-md full-width" style="min-width: 800px;">
         <AcpoTableMSMeetings @selected-mentee="onMenteeSelected" transition />
         <q-separator class="q-mt-xs" />
       </div>
     </div>
 
-    <div class="q-pa-md full-width" style="max-width: 850px;">
+    <div class="q-pa-md full-width" style="max-width: 800px;">
       <div
         v-if="profileData.role.includes('admin') || profileData.role.includes('pped') || profileData.role.includes('scheduler')">
         <AcpoTableMentees @selected-mentee="onMenteeSelected" :openTable="openTable" />
@@ -68,22 +68,20 @@
 const firebaseUser = await useFirebaseUser()
 const profileData = await getUD(firebaseUser.value.uid)
 
-
 const currentTab = ref('menteeProgressTab')
 const acpoMode = ref('acpoView')
 const selectedMentee = ref('')
 let openTable = ref()
 
 if (profileData.role.includes('mentee')) {
-  selectedMentee.value = {
-    menteeID: `${profileData.uid}_${profileData.cohort}`,
-    name: `${profileData.name}`,
-    uid: profileData.uid
-  }
+  const menteeID = profileData.uid + "_" + profileData.cohort
+  selectedMentee.value = await menteeData(menteeID)
+  selectedMentee.value.name = getUD(profileData.uid).name
+  selectedMentee.value.menteeID = menteeID
 }
 
-const onMenteeSelected = (ID, mode, tab, table) => {
-  selectedMentee.value = ID
+const onMenteeSelected = (data, mode, tab, table) => {
+  selectedMentee.value = data
   acpoMode.value = mode
   currentTab.value = tab
   openTable.value = table

@@ -1,88 +1,170 @@
 <template>
     <div>
-        <div class="row justify-between text-teal-10">
-            <div class="row justify-start" style="min-width: 500px;">
-                <div class="text-h5 col-3">
-                    By Station
-                </div>
-                <div class="col-5">
-                    <q-select label="Station" dense filled v-model="station" :options="stations" emit-value map-options
-                        @update:model-value="stationSelected" color="teal-10" />
-                </div>
-            </div>
-        </div>
-        <div>
 
-            <q-table :rows="cars" row-key="car.id" :columns="columns" grid hide-bottom
-                no-data-label="Please Select a Station">
-                <template v-slot:item="props">
-                    <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
-                        <q-card flat bordered>
-                            <q-card-section class="bg-primary text-white text-h5 flex justify-between">
-                                <strong>{{ props.row.label }}</strong>
-                                <q-btn dense round flat color="red" @click="deleteShift(props.row)" icon="delete"></q-btn>
+        <q-table :rows="stations.stations" row-key="number" :columns="columns" @row-click="edit" :filter="filter"
+            table-header-class="bg-primary text-white">
+            <template v-slot:top="props" class="bg-primary">
+                <div class="row justify-between" style="width:100%">
+                    <div class="text-h4">Stations</div>
+                    <div class="flex q-gutter-md">
+                        <q-btn color="primary" label="Add Station" icon="add" @click="addStation" />
+                        <q-input v-model="filter" class="bg-grey-4" dense debounce="300" color="primary"
+                            header-class="text-primary" filled label="Search..." clearable style="300px;">
+                            <template v-slot:append>
+                                <q-icon name="search" />
+                            </template>
+                        </q-input>
+                    </div>
+                </div>
+            </template>
+        </q-table>
+
+        <div v-if="selectedStation" class="flex justify-center q-ma-md">
+            <q-card style="max-width: 80%">
+                <q-card-section class="bg-primary text-white flex justify-between">
+                    <div>
+                        <div v-if="!isEdit" class="text-h5">{{ selectedStation.number }} - {{ selectedStation.city }}</div>
+                        <div v-else class="flex justify-left">
+                            <q-input v-model="selectedStation.number" dense label="Station Number" label-color="white"
+                                mask="###" input-class="text-white">
+                            </q-input>
+                            <q-input v-model="selectedStation.city" dense label="City" label-color="white"
+                                input-class="text-white">
+                            </q-input>
+                        </div>
+                        <div v-if="!isEdit" class="text-subtitle1">{{ selectedStation.address }}</div>
+                        <div v-else><q-input v-model="selectedStation.address" dense label="Address" label-color="white"
+                                input-class="text-white">
+                            </q-input>
+                        </div>
+                    </div>
+                    <div>
+                        <q-btn icon="check" v-if="isEdit" color="green" flat round @click="saveStation" />
+                        <q-btn icon="edit" v-else flat round @click="isEdit = !isEdit" />
+                    </div>
+                </q-card-section>
+                <q-card-section dense>
+                    <div v-if="isEdit">
+                        <q-card style="min-width: 200px;" class="q-ma-sm">
+                            <q-card-section class="bg-primary text-white">
+                                <div class="flex justify-between items-center">
+                                    <q-input v-model="newCar.label" dense label="New Car" label-color="white" bottom-slots
+                                        input-class="text-white">
+                                        <template v-slot:hint>
+                                            <div class="text-grey-5">e.g. 247A1D</div>
+                                        </template>
+                                    </q-input>
+                                    <q-btn color="secondary" label="Add Car" icon="add" @click="addCar" />
+                                </div>
                             </q-card-section>
-                            <q-separator />
                             <q-card-section>
-                                <q-list>
-                                    <div>Shift Start: {{ props.row.startTime }}</div>
-                                    <div>Shift End: {{ props.row.endTime }}</div>
-                                </q-list>
+                                <div>
+                                    <q-input v-model="newCar.startTime" dense label="Shift Start" input-class="text-black"
+                                        color="primary" hint="In 24H Format" mask="##:##">
+
+                                    </q-input>
+                                    <q-input v-model="newCar.endTime" dense label="Shift End" input-class="text-black"
+                                        color="primary" hint="In 24H Format" mask="##:##">
+                                    </q-input>
+                                </div>
                             </q-card-section>
                         </q-card>
+
                     </div>
-                </template>
-                <!-- <template v-slot:body-cell-actions="props">
-                    <q-td :props="props">
-                    </q-td>
-                </template> -->
-            </q-table>
+                </q-card-section>
+                <q-card-section class="flex">
+
+
+                    <div v-for="car in selectedStation.cars">
+                        <q-card style="min-width: 200px;" class="q-ma-sm">
+                            <q-card-section class="bg-primary text-white">
+                                <div v-if="!isEdit" class="text-h6">
+                                    {{ car.label }}
+                                </div>
+                                <div v-else class="flex justify-between items-center">
+                                    <q-input v-model="car.label" dense label="Car" label-color="white" bottom-slots
+                                        input-class="text-white">
+                                        <template v-slot:hint>
+                                            <div class="text-grey-5">e.g. 247A1D</div>
+                                        </template>
+                                    </q-input>
+                                    <q-btn icon="delete" v-if="isEdit" color="red" flat round @click="deleteCar(car)" />
+                                </div>
+                            </q-card-section>
+                            <q-card-section>
+                                <div v-if="!isEdit" class="text-subtitle2">
+                                    <div>Shift Start: {{ car.startTime }}</div>
+                                    <div>Shift End: {{ car.endTime }}</div>
+                                </div>
+                                <div v-else>
+                                    <q-input v-model="car.startTime" dense label="Shift Start" input-class="text-black"
+                                        color="primary" hint="In 24H Format" mask="##:##">
+
+                                    </q-input>
+                                    <q-input v-model="car.endTime" dense label="Shift End" input-class="text-black"
+                                        color="primary" hint="In 24H Format" mask="##:##">
+
+                                    </q-input>
+                                </div>
+                            </q-card-section>
+                        </q-card>
+
+                    </div>
+                </q-card-section>
+            </q-card>
         </div>
     </div>
 </template>
 
 <script setup>
-
-import { collection, query, onSnapshot, getFirestore, deleteDoc, doc, limit, orderBy, where, updateDoc, arrayRemove } from "firebase/firestore";
-const db = getFirestore()
-const cars = ref([])
-const station = ref('')
-const stations = await getStations()
-
-const stationSelected = () => {
-    const unsub = onSnapshot(doc(db, "stations", station.value), (doc) => {
-        cars.value = []
-        doc.data().cars.forEach((car) => {
-            cars.value.push(car)
-        })
-    })
+import { collection, query, onSnapshot, getDocs, getFirestore, doc, updateDoc } from "firebase/firestore";
+const stations = defineProps(['stations'])
+const filter = ref('')
+const isEdit = ref(false)
+const selectedStation = ref('')
+const edit = (event, row) => {
+    isEdit.value = false
+    selectedStation.value = row
 }
 
+const newCar = ref({
+    label: '',
+    startTime: '06:30',
+    endTime: '18:30'
+})
 
+const addCar = async () => {
+    newCar.value.label = newCar.value.label.toUpperCase()
+    selectedStation.value.cars.push(newCar.value)
+    newCar.value = {
+        label: '',
+        startTime: '06:30',
+        endTime: '18:30'
+    }
+    saveStation()
+}
 
-const emit = defineEmits(["selectedShift"])
-// const menteeShift = (event, row) => {
-//     emit("selectedShift", row.id)
-// };
-
-// const q = query(collection(db, "scheduledShifts"), where('menteeOneID', '==', mentee.value))
-
+const deleteCar = (car) => {
+    const index = selectedStation.value.cars.indexOf(car)
+    selectedStation.value.cars.splice(index, 1)
+}
 
 const columns = [
-    { name: 'car', label: 'Car', field: 'label', align: 'left', sortable: true, },
-    { name: 'startTime', label: 'Shift Start', field: 'startTime', align: 'left', sortable: true },
-    { name: 'endTime', label: 'Shift End', field: 'endTime', align: 'left', sortable: true },
-    // { name: 'actions', label: 'Actions', field: '', align: 'center' }
+    { name: 'number', label: 'Station', field: 'number', align: 'left', sortable: true, },
+    { name: 'city', label: 'City', field: 'city', align: 'left', sortable: true },
+    { name: 'address', label: 'Address', field: 'address', align: 'left', sortable: true },
 ];
 
-const filter = ref('')
-
-const deleteShift = async (car) => {
-    console.log(car)
-    // await deleteDoc(doc(db, "station", car.id));
-    await updateDoc(doc(db, 'stations', station.value), { cars: arrayRemove(car) })
-
+const saveStation = async () => {
+    isEdit.value = !isEdit.value
+    await setFSDoc("stations", selectedStation.value.number, selectedStation.value, true)
 }
+
+const addStation = () => {
+    selectedStation.value = { cars: [] }
+    isEdit.value = true
+}
+
 </script>
 
 <style scoped></style>

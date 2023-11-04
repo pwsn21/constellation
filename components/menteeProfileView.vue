@@ -1,20 +1,20 @@
 <template>
     <div class="q-mb-md">
-        <q-card class="q-mt-none" style="min-width: 400px; max-width: 850px;">
+        <q-card class="q-mt-none" style="min-width: 375px; max-width: 850px;">
             <q-card-section>
                 <div class="row justify-between items-center">
                     <div class="col">
                         <div class="text-h4 text-secondary">
-                            {{ menteeID.selectedMentee.name }} ({{ menteeProfile.cohort }})
+                            {{ prop.selectedMentee.name }}
                         </div>
                         <div v-if="!profileData.role.includes('mentee')" class="text-subtitle1 text-secondary">
-                            {{ menteeProfile.acpoStatus }}
+                            {{ menteeProfile.cohort }} ({{ menteeProfile.acpoStatus }})
                         </div>
                     </div>
 
                     <div v-if="profileData.role.includes('admin') || profileData.role.includes('pped')">
                         <q-btn icon="edit" round flat
-                            @click="$emit('acpoMode', menteeID.selectedMentee, 'acpoEdit', 'menteeProgressTab')" />
+                            @click="$emit('acpoMode', prop.selectedMentee, 'acpoEdit', 'menteeProgressTab')" />
                     </div>
                 </div>
             </q-card-section>
@@ -37,14 +37,14 @@
 
     <div class="full-width">
         <div class="row justify-between q-gutter-sm">
-            <q-card style="min-width: 400px; max-width: 400px; width: 100%;">
+            <q-card style="min-width: 375px; max-width: 375px; width: 100%;">
                 <q-card-section>
                     <div class="text-h6 text-weight-bold">Milestone 2 </div>
 
                     <q-linear-progress :value="msTwoData.progress" size="20px" color="secondary" track-color="secondary">
                         <div class="text-caption text-white text-weight-bold absolute-full flex flex-center">
-                            {{ msTwoData.count }}/{{ msTwoData.required }} {{ msTwoData.modifiers === 0 ? '' : `+
-                            ${msTwoData.modifiers}` }}
+                            {{ msTwoData.count }}/{{ msTwoData.required }} {{ msTwoData.reqmodifiers === null ? '' : `+
+                            ${msTwoData.reqmodifiers}` }}
 
                         </div>
                     </q-linear-progress>
@@ -66,13 +66,14 @@
                 </q-card-section>
             </q-card>
 
-            <q-card style="min-width: 400px; max-width: 400px; width: 100%;">
+            <q-card style="min-width: 375px; max-width: 375px; width: 100%;">
                 <q-card-section>
                     <div class="text-h6 text-weight-bold">Milestone 3 </div>
                     <q-linear-progress :value="msThreeData.progress" size="20px" color="secondary" track-color="secondary">
                         <div class="text-caption text-white text-weight-bold absolute-full flex flex-center">
-                            {{ msThreeData.count }}/{{ msThreeData.required }} {{ msThreeData.modifiers === 0 ? '' : `+
-                            ${msThreeData.modifiers}` }}
+                            {{ msThreeData.count }}/{{ msThreeData.required }} {{ msThreeData.reqmodifiers === null ? '' :
+                                `+
+                            ${msThreeData.reqmodifiers}` }}
                         </div>
                     </q-linear-progress>
 
@@ -86,13 +87,13 @@
                     </q-list>
                 </q-card-section>
             </q-card>
-            <q-card style="min-width: 400px; max-width: 400px; width: 100%;">
+            <q-card style="min-width: 375px; max-width: 375px; width: 100%;">
                 <q-card-section>
                     <div class="text-h6 text-weight-bold">Milestone 4 </div>
                     <q-linear-progress :value="msFourData.progress" size="20px" color="secondary" track-color="secondary">
                         <div class="text-caption text-white text-weight-bold absolute-full flex flex-center">
-                            {{ msFourData.count }}/{{ msFourData.required }} {{ msFourData.modifiers === 0 ? '' : `+
-                            ${msFourData.modifiers}` }}
+                            {{ msFourData.count }}/{{ msFourData.required }} {{ msFourData.reqmodifiers === null ? '' : `+
+                            ${msFourData.reqmodifiers}` }}
                         </div>
                     </q-linear-progress>
 
@@ -105,9 +106,6 @@
                         </q-item>
                     </q-list>
                 </q-card-section>
-
-
-                <q-separator inset />
             </q-card>
         </div>
     </div>
@@ -116,11 +114,9 @@
 <script setup>
 const firebaseUser = await useFirebaseUser()
 const profileData = getUD(firebaseUser.value.uid)
-
-const msCardStyle = "width=100%; min-width: 400px; max-width: 850px;"
-
+import { date } from 'quasar'
 const emit = defineEmits(["acpoMode"])
-const menteeID = defineProps(['selectedMentee'])
+const prop = defineProps(['selectedMentee'])
 let menteeProfile = ref('')
 let msTwoData = ref('')
 let msThreeData = ref('')
@@ -128,16 +124,16 @@ let msFourData = ref('')
 
 watchEffect(async () => {
     try {
-        menteeProfile.value = await (menteeData(menteeID.selectedMentee.menteeID))
+        menteeProfile.value = await (menteeData(prop.selectedMentee.menteeID))
         menteeProfile.value.developmentPlanMeeting = await dateLongFormat(menteeProfile.value.developmentPlanMeeting)
         menteeProfile.value.closeDevelopmentPlanMeeting = await dateLongFormat(menteeProfile.value.closeDevelopmentPlanMeeting)
-        menteeProfile.value.milestoneMeetingTwo = await dateLongFormat(menteeProfile.value.milestoneMeetingTwo)
+        menteeProfile.value.milestoneMeetingTwo = menteeProfile.value.milestoneMeetingTwo
         menteeProfile.value.milestoneMeetingThree = await dateLongFormat(menteeProfile.value.milestoneMeetingThree)
         menteeProfile.value.milestoneMeetingFour = await dateLongFormat(menteeProfile.value.milestoneMeetingFour)
 
-        msTwoData.value = await calcProgress(menteeProfile.value.supportLevelMSTwo, qMenteeAttendance(menteeID.selectedMentee.menteeID, 'Milestone 2'), menteeProfile.value.msTwoRequiredShiftModifier)
-        msThreeData.value = await calcProgress(menteeProfile.value.supportLevelMSThree, qMenteeAttendance(menteeID.selectedMentee.menteeID, 'Milestone 3'), menteeProfile.value.msThreeRequiredShiftModifier)
-        msFourData.value = await calcProgress(menteeProfile.value.supportLevelMSFour, qMenteeAttendance(menteeID.selectedMentee.menteeID, 'Milestone 4'), menteeProfile.value.msFourRequiredShiftModifier)
+        msTwoData.value = await calcProgress(menteeProfile.value.supportLevelMSTwo, qMenteeAttendance(prop.selectedMentee.menteeID, 'Milestone 2'), menteeProfile.value.msTwoRequiredShiftModifier, menteeProfile.value.msTwoRequiredCountModifier)
+        msThreeData.value = await calcProgress(menteeProfile.value.supportLevelMSThree, qMenteeAttendance(prop.selectedMentee.menteeID, 'Milestone 3'), menteeProfile.value.msThreeRequiredShiftModifier, menteeProfile.value.msThreeRequiredCountModifier)
+        msFourData.value = await calcProgress(menteeProfile.value.supportLevelMSFour, qMenteeAttendance(prop.selectedMentee.menteeID, 'Milestone 4'), menteeProfile.value.msFourRequiredShiftModifier, menteeProfile.value.msFourRequiredCountModifier)
     } catch (error) {
         console.error(error)
     }

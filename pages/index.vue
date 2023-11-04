@@ -6,17 +6,12 @@
       </h2>
     </div>
 
-
     <div>
       <div class="q-py-sm q-gutter-sm" v-if="profileData.name">
         <div class="row justify-center">
-          <div class="col-6" style="min-width: 400px;">
+          <div class="col-6" style="min-width: 400px; max-width: 850;">
             <q-card>
-              <q-card-section class="bg-primary text-white">
-                <div class="text-h5">Create Profile</div>
-                <div class="text-subtitle2"></div>
-              </q-card-section>
-
+              <q-img src="~/assets/images/261.jpg" :ratio="2 / 1" />
               <q-card-section class="bg-blue-1">
                 <p class="q-py-sm"> Welcome to Constellation, your access to the ACP Orientation Program!</p>
                 <p class="q-py-sm">Constellation is meant to consolidate all program information into one convenient

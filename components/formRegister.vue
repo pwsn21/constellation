@@ -1,37 +1,32 @@
 <template>
-  <div class="flex justify-center">
-    <div class="tw-p-10  tw-w-11/12">
+  <div>
+    <q-card style="width: 100%">
 
+      <q-img src="~/assets/images/smh.jpg" :ratio="7 / 1">
+        <div class="absolute-left column justify-center text-white text-h4" style="width: 100%">Register</div>
+      </q-img>
       <div class="q-pa-md">
-        <div>
-          <h2 class="tw-text-4xl tw-pb-10">Register</h2>
-        </div>
         <q-form @submit.prevent="registerUser" @reset="onReset" class="q-gutter-md">
           <q-input filled v-model="email" type="email" label="Email" hint="Your BCEHS or PHSA Email" lazy-rules :rules="[
             val => (isValidEmail(val).valid) || (isValidEmail(val).message),
           ]" />
 
-          <q-input filled type="password" v-model="password" label="Password" lazy-rules :rules="[
+          <q-input filled type="password" v-model="password" label="Password" lazy-rules hide-bottom-space :rules="[
             val => (isValidPassword(val).valid) || (isValidPassword(val).message),
           ]" />
 
-          <q-input filled type="password" v-model="passwordConfirm" label="Confirm Password" lazy-rules :rules="[
-            val => (isValidPasswordConfirm(val, password).valid) || (isValidPasswordConfirm(val, password).message),
-          ]" />
+          <q-input filled type="password" v-model="passwordConfirm" label="Confirm Password" hide-bottom-space lazy-rules
+            :rules="[
+              val => (isValidPasswordConfirm(val, password).valid) || (isValidPasswordConfirm(val, password).message),
+            ]" />
 
           <div class="flex justify-between">
-            <div>
-              <q-btn label="Register" type="submit" color="primary" />
-              <q-btn label="Clear" type="reset" color="primary" flat class="q-ml-sm" />
-              <q-btn label="Back" color="primary" @click="$emit('change', 'Login')" flat class="q-ml-sm" />
-            </div>
-            <div>
-
-            </div>
+            <q-btn label="Register" type="submit" color="secondary" />
+            <q-btn label="Back" color="primary" @click="$emit('change', 'Login')" flat class="q-ml-sm" />
           </div>
         </q-form>
       </div>
-    </div>
+    </q-card>
   </div>
 </template>
 

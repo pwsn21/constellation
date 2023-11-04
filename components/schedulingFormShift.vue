@@ -234,23 +234,24 @@ let shift = ref({
 
 let selectedShiftID = ref('')
 
-// watchEffect(async () => {
-//     // console.log(selectedShift.selectedShift)
-//     if (selectedShift.selectedShift !== "") {
-//         // const docSnap = await getFSDoc("scheduledShifts", selectedShift.selectedShift.id)
-//         // const shiftData = docSnap.data()
-//         // selectedShiftID = selectedShift.selectedShift
-//         shift.value = selectedShift.selectedShift
-//         // shift.value = shiftData
-//         title.value = `${shift.value.car} (${shift.value.startDate})`
-//     }
-// })
+// watch(selectedShift, () => {
+//     shift.value = selectedShift.shiftData
+//     selectedShiftID.value = selectedShift.shiftData.id
+//     title.value = `${shift.value.car} (${shift.value.startDate})`
+// }, { immediate: true })
 
-watch(selectedShift, () => {
-    shift.value = selectedShift.shiftData
-    selectedShiftID.value = selectedShift.shiftData.id
-    title.value = `${shift.value.car} (${shift.value.startDate})`
-}, { immediate: true })
+watchEffect(async () => {
+
+    if (selectedShift.selectedShift !== "") {
+        const docSnap = await getFSDoc("scheduledShifts", selectedShift.selectedShift.id)
+        const shiftData = docSnap.data()
+        selectedShiftID = selectedShift.selectedShift
+        shift.value = selectedShift.selectedShift
+        shift.value = shiftData
+        title.value = `${shift.value.car} (${shift.value.startDate})`
+    }
+})
+
 
 
 

@@ -1,7 +1,7 @@
 <template>
     <div>
         <q-expansion-item :label="`Mentees Needing Meeting - ${mentees.length}`" class="text-h5 text-primary"
-            header-class="q-pa-none" header-style="bg-white" expand-icon-toggle expand-icon-class="text-primary" dense flat>
+            header-class="q-pa-none" header-style="bg-white" expand-icon-class="text-primary" dense flat>
             <div>
                 <q-table :rows="mentees" :columns="columns" row-key="id" title-class="text-h4"
                     table-header-class="bg-primary text-white" @row-click="menteeSelection"

@@ -28,14 +28,11 @@
             </div> -->
         </div>
     </div>
-    <pre>
-        {{ menteeShifts }}
-    </pre>
 </template>
 <script setup>
 
 const mentee = defineProps(['selectedMentee'])
-let menteeShifts = await qMenteeShifts(mentee.selectedMentee.uid)
+let menteeShifts = await qMenteeShifts(mentee.selectedMentee.menteeID)
 
 // let mentorShiftData = await qMentorShifts('CYHU9R0b9RWF93RpOm5lGpHLCm02')
 const date = ref('')

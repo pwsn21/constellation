@@ -153,7 +153,7 @@
         <div v-if="props.user">
             <div class="row">
                 <div class="col-2 text-right q-pr-sm">Role(s):</div>
-                <div v-if="isEdit && isAdmin" class="col">
+                <div v-if="isEdit && profileData.role.includes('admin')" class="col">
                     <UserRoleAdmin :user="props.user" />
                 </div>
                 <div v-else>
@@ -173,7 +173,9 @@
 <script setup>
 const props = defineProps(['user'])
 const isEdit = ref(false)
-const isAdmin = ref(true)
+
+const firebaseUser = await useFirebaseUser()
+const profileData = await getUD(firebaseUser.value.uid)
 
 const saveProfile = async () => {
     await setFSDoc("users", props.user.uid, props.user, true)
