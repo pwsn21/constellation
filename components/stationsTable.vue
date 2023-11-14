@@ -1,23 +1,24 @@
 <template>
     <div>
-
-        <q-table :rows="stations.stations" row-key="number" :columns="columns" @row-click="edit" :filter="filter"
-            table-header-class="bg-primary text-white">
-            <template v-slot:top="props" class="bg-primary">
-                <div class="row justify-between" style="width:100%">
-                    <div class="text-h4">Stations</div>
-                    <div class="flex q-gutter-md">
-                        <q-btn color="primary" label="Add Station" icon="add" @click="addStation" />
-                        <q-input v-model="filter" class="bg-grey-4" dense debounce="300" color="primary"
-                            header-class="text-primary" filled label="Search..." clearable style="300px;">
-                            <template v-slot:append>
-                                <q-icon name="search" />
-                            </template>
-                        </q-input>
+        <div>
+            <q-table :rows="stations.stations" row-key="number" :columns="columns" @row-click="edit" :filter="filter"
+                table-header-class="bg-primary text-white">
+                <template v-slot:top="props" class="bg-primary">
+                    <div class="row justify-between" style="width:100%">
+                        <div class="text-h4">Stations</div>
+                        <div class="flex q-gutter-md">
+                            <q-btn color="primary" label="Add Station" icon="add" @click="addStation" />
+                            <q-input v-model="filter" class="bg-grey-4" dense debounce="300" color="primary"
+                                header-class="text-primary" filled label="Search..." clearable style="300px;">
+                                <template v-slot:append>
+                                    <q-icon name="search" />
+                                </template>
+                            </q-input>
+                        </div>
                     </div>
-                </div>
-            </template>
-        </q-table>
+                </template>
+            </q-table>
+        </div>
 
         <div v-if="selectedStation" class="flex justify-center q-ma-md">
             <q-card style="max-width: 80%">
@@ -43,7 +44,7 @@
                         <q-btn icon="edit" v-else flat round @click="isEdit = !isEdit" />
                     </div>
                 </q-card-section>
-                <q-card-section dense>
+                <q-card-section dense class="q-pb-none">
                     <div v-if="isEdit">
                         <q-card style="min-width: 200px;" class="q-ma-sm">
                             <q-card-section class="bg-primary text-white">
@@ -72,7 +73,7 @@
 
                     </div>
                 </q-card-section>
-                <q-card-section class="flex">
+                <q-card-section class="flex q-pt-none" dense>
 
 
                     <div v-for="car in selectedStation.cars">
@@ -117,11 +118,13 @@
 </template>
 
 <script setup>
-import { collection, query, onSnapshot, getDocs, getFirestore, doc, updateDoc } from "firebase/firestore";
+const { showToast } = useNotification()
 const stations = defineProps(['stations'])
 const filter = ref('')
 const isEdit = ref(false)
+
 const selectedStation = ref('')
+
 const edit = (event, row) => {
     isEdit.value = false
     selectedStation.value = row
@@ -132,14 +135,29 @@ const newCar = ref({
     startTime: '06:30',
     endTime: '18:30'
 })
+const carLabel = ref('')
+
 
 const addCar = async () => {
     newCar.value.label = newCar.value.label.toUpperCase()
-    selectedStation.value.cars.push(newCar.value)
-    newCar.value = {
-        label: '',
-        startTime: '06:30',
-        endTime: '18:30'
+    carLabel.value = newCar.value.label.slice(0, -1)
+    if (!selectedStation.value.carLabel) {
+        selectedStation.value.carLabel = []
+    }
+    if (!selectedStation.value.carLabel.includes(carLabel.value)) {
+        selectedStation.value.carLabel.push(carLabel.value)
+        carLabel.value = ''
+    }
+    if (!selectedStation.value.cars.some(car => car.label === newCar.value.label)) {
+        selectedStation.value.cars.push(newCar.value)
+        newCar.value = {
+            label: '',
+            startTime: '06:30',
+            endTime: '18:30'
+        }
+        showToast('positive', 'check', 'Car Added')
+    } else {
+        showToast('negative', 'error', 'Car Already Exists, Please edit the car instead')
     }
     saveStation()
 }
@@ -147,6 +165,8 @@ const addCar = async () => {
 const deleteCar = (car) => {
     const index = selectedStation.value.cars.indexOf(car)
     selectedStation.value.cars.splice(index, 1)
+    selectedStation.value.carLabel = []
+    selectedStation.value.carLabel = [...new Set(selectedStation.value.cars.map(car => car.label.slice(0, -1)))];
 }
 
 const columns = [
@@ -156,7 +176,7 @@ const columns = [
 ];
 
 const saveStation = async () => {
-    isEdit.value = !isEdit.value
+    isEdit.value = false
     await setFSDoc("stations", selectedStation.value.number, selectedStation.value, true)
 }
 

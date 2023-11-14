@@ -1,6 +1,6 @@
 <template>
     <div>
-        <q-date v-model="shiftDate" @update:model-value="convert" today-btn>
+        <q-date v-model="shiftDate" @update:model-value="convert" today-btn no-unset>
             <div class="q-pt-none column items-center">
                 <q-badge color="yellow-10">
                     Days: {{ platoon.platoonDay }} Platoon

@@ -16,7 +16,7 @@
                 <div>
                     <q-table :rows="mentees" :columns="menteeColumns" row-key="id" title-class="text-h4" :filter="filter"
                         table-header-class="bg-primary text-white" @row-click="menteeSelection"
-                        :pagination="{ sortBy: 'cohort', descending: false, rowsPerPage: 10 }">
+                        :pagination="{ sortBy: 'cohort', descending: true, rowsPerPage: 10 }">
                     </q-table>
                 </div>
             </q-expansion-item>

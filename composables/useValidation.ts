@@ -27,10 +27,14 @@ export const isValidLastName = (lastName: string) => {
 }
 
 export const isValidPhone = (phone: string) => {
-    if (!(phone.length > 15)) return {valid: false, message:"Invalid Phone ID. Must be (###) ### - ####"}
+    if (!(phone.length == 12)) return {valid: false, message:"###-###-####"}
     return {valid:true, message:""}
 }
 export const isValidEmployeeNumber = (employeeNumber: string) => {
     if (!(employeeNumber.length > 5)) return {valid: false, message:"Invalid Employee ID. Must be ######"}
+    return {valid:true, message:""}
+}
+export const isValidCohort = (cohort: string) => {
+    if (!(cohort.length == 6)) return {valid: false, message:"Cohort must be YYYY-#"}
     return {valid:true, message:""}
 }

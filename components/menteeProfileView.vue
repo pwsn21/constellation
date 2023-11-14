@@ -114,7 +114,6 @@
 <script setup>
 const firebaseUser = await useFirebaseUser()
 const profileData = getUD(firebaseUser.value.uid)
-import { date } from 'quasar'
 const emit = defineEmits(["acpoMode"])
 const prop = defineProps(['selectedMentee'])
 let menteeProfile = ref('')
@@ -125,11 +124,6 @@ let msFourData = ref('')
 watchEffect(async () => {
     try {
         menteeProfile.value = await (menteeData(prop.selectedMentee.menteeID))
-        menteeProfile.value.developmentPlanMeeting = await dateLongFormat(menteeProfile.value.developmentPlanMeeting)
-        menteeProfile.value.closeDevelopmentPlanMeeting = await dateLongFormat(menteeProfile.value.closeDevelopmentPlanMeeting)
-        menteeProfile.value.milestoneMeetingTwo = menteeProfile.value.milestoneMeetingTwo
-        menteeProfile.value.milestoneMeetingThree = await dateLongFormat(menteeProfile.value.milestoneMeetingThree)
-        menteeProfile.value.milestoneMeetingFour = await dateLongFormat(menteeProfile.value.milestoneMeetingFour)
 
         msTwoData.value = await calcProgress(menteeProfile.value.supportLevelMSTwo, qMenteeAttendance(prop.selectedMentee.menteeID, 'Milestone 2'), menteeProfile.value.msTwoRequiredShiftModifier, menteeProfile.value.msTwoRequiredCountModifier)
         msThreeData.value = await calcProgress(menteeProfile.value.supportLevelMSThree, qMenteeAttendance(prop.selectedMentee.menteeID, 'Milestone 3'), menteeProfile.value.msThreeRequiredShiftModifier, menteeProfile.value.msThreeRequiredCountModifier)

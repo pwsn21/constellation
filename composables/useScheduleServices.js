@@ -3,7 +3,9 @@ import { date } from 'quasar'
 
 export const qMenteeShifts = async (menteeID) => {
     let shiftData = ref([])
-    let shiftEvent = ref([])
+    let shiftNight = ref([])
+    let shiftDay = ref([])
+    let shiftMisc = ref([])
     
     const shiftsCollection = getCollection("scheduledShifts")
     const q = query(shiftsCollection, or(where("menteeOneID", "==", menteeID), where("menteeTwoID", "==", menteeID)), orderBy('startDate'))
@@ -12,55 +14,55 @@ export const qMenteeShifts = async (menteeID) => {
             const s = shift.data()
             const stnDetails = await getStationDetails(s.station)
             s.id = shift.id
-            s.dateDisplay = date.formatDate(s.startDate, 'dddd MMMM Do, YYYY')
             s.shiftEvent = s.startDate
-            s.address = stnDetails.address
+            s.address = stnDetails?.address
             s.menteeOneName = getUD(s.menteeOneID.slice(0,-7)).name
-            s.menteeTwoName = s.menteeTwoID ? getUD(s.menteeTwoID.slice(0,-7)).name : null
-            s.mentorName = getUD(s.mentorID).name
-            s.mentorPhoneNumber = getUD(s.mentorID).phoneNumber
+            s.menteeTwoName = s.menteeTwoID ? getUD(s.menteeTwoID.slice(0,-7)).name : "N/A"
+            s.mentorName = getUD(s.mentorID).name ? getUD(s.mentorID).name : s.mentorID
+            s.mentorPhoneNumber = s.mentorID ? getUD(s.mentorID).phoneNumber : null
             shiftData.value.push(s)
-            shiftEvent.value.push(s.startDate)
-        })
-            return {shiftData,shiftEvent}
-}
-
-export const qShiftDuplicate = async (car, field, userID, shiftDate) => {
-    let shiftData = ref([])
-        const shiftsCollection = getCollection("scheduledShifts")
-    if (!userID){
-        return shiftData
-    } else {
-    const q = query(shiftsCollection, 
-        and(
-            or(
-                where(field, "==", userID), 
-                where("menteeTwoID", "==", userID),
-                where("car", "==", car)
-                ), 
-            where('startDate', '==', shiftDate)), 
-        orderBy('startDate'))
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-            const s = doc.data();
-            s.id = doc.id;
-            shiftData.value.push(s);
-            })
+            if(s.car.charAt(s.car.length - 1) === 'D'){
+                shiftDay.value.push(s.startDate)
+            } else if (s.car.charAt(s.car.length - 1) === 'N'){
+                shiftNight.value.push(s.startDate)
+            } else {
+                shiftMisc.value.push(s.startDate)
             }
-    return shiftData
+        })
+            return {shiftData,shiftNight,shiftDay,shiftMisc}
 }
 
 export const qMentorShifts = async (mentorID) => {
     let shiftData = ref([])
+    let shiftNight = ref([])
+    let shiftDay = ref([])
+    let shiftMisc = ref([])
+    
         const shiftsCollection = getCollection("scheduledShifts");
     const q = query(shiftsCollection, where("mentorID", "==", mentorID))
         const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((shift) => {          
-                const s = doc.data();
-                s.id = doc.id;
-                shiftData.value.push(s);
-                })
-        return shiftData
+        querySnapshot.forEach( async (shift) => {          
+            const s = shift.data()
+            const stnDetails = await getStationDetails(s.station)
+            s.id = shift.id
+            s.shiftEvent = s.startDate
+            s.address = stnDetails?.address
+            s.menteeOneName = getUD(s.menteeOneID.slice(0,-7)).name
+            s.menteeOnePhoneNumber = getUD(s.menteeOneID.slice(0,-7)).phoneNumber
+            s.menteeTwoName = s.menteeTwoID ? getUD(s.menteeTwoID.slice(0,-7)).name : "N/A"
+            s.menteeTwoPhoneNumber = s.menteeTwoID ? getUD(s.menteeTwoID.slice(0,-7)).phoneNumber : "N/A"
+            s.mentorName = getUD(s.mentorID).name ? getUD(s.mentorID).name : s.mentorID
+            s.mentorPhoneNumber = s.mentorID ? getUD(s.mentorID).phoneNumber : null
+            shiftData.value.push(s)
+            if(s.car.charAt(s.car.length - 1) === 'D'){
+                shiftDay.value.push(s.startDate)
+            } else if (s.car.charAt(s.car.length - 1) === 'N'){
+                shiftNight.value.push(s.startDate)
+            } else {
+                shiftMisc.value.push(s.startDate)
+            }
+        })
+            return {shiftData,shiftNight,shiftDay,shiftMisc}
     }        
 
 export const platoonFromShift =  (shift) => {

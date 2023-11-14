@@ -1,32 +1,34 @@
 <template>
-    <div class="full-width">
+    <div>
+        <div class="flex justify-start">
+            <div class="text-h5 text-primary center q-pa-none">Pending Attendance Forms</div>
+        </div>
         <div>
-            <div class="flex justify-center">
-                <h2 class="text-h4 center q-pa-md">Pending Forms</h2>
-            </div>
-            <div>
-                <q-expansion-item label="Pending Attendance Forms" class="text-h5 text-primary" header-class="q-pa-none"
-                    header-style="bg-white" expand-icon-toggle expand-icon-class="text-primary" default-opened dense flat>
-                    <div>
-                        <q-table :rows="forms" :columns="menteeColumns" row-key="id" title-class="text-h4"
-                            table-header-class="bg-primary text-white" no-data-label="No Pending Attendance Forms"
-                            :pagination="{ sortBy: 'submittedOn', descending: true, rowsPerPage: 20 }">
-                            <template v-slot:body-cell-actions="props">
-                                <q-td :props="props">
-                                    <q-btn dense round flat color="green" @click="approveForm(props.row)"
-                                        icon="check"></q-btn>
-                                    <q-btn dense round flat color="red" @click="denyForm(props.row)" icon="block"></q-btn>
-                                </q-td>
-                            </template>
-                            <template v-slot:no-data="{ message }">
-                                <div class="full-width row flex-center text-primary">
-                                    <q-icon size="30px" name="mood" /> {{ message }}
-                                </div>
-                            </template>
-                        </q-table>
+            <q-table :rows="forms" :columns="menteeColumns" row-key="id" title-class="text-h4" dense
+                table-header-class="bg-primary text-white" no-data-label="No Pending Attendance Forms"
+                :pagination="{ sortBy: 'submittedOn', descending: true, rowsPerPage: 20 }">
+                <template v-slot:body-cell-actions="props">
+                    <q-td :props="props">
+                        <q-btn dense round flat color="green" @click="approveShift(props.row)" icon="check"></q-btn>
+                        <q-btn dense round flat color="red" icon="block" :props="props">
+                            <q-menu dense :props="props">
+                                <q-item class="q-pa-xs" dense>
+                                    <q-btn dense flat color="red" @click="denyShift(props.row, 'did not show')" icon="block"
+                                        label="Did Not Show" no-caps />
+                                </q-item>
+                                <q-item class="q-pa-xs" dense>
+
+                                </q-item>
+                            </q-menu>
+                        </q-btn>
+                    </q-td>
+                </template>
+                <template v-slot:no-data="{ message }">
+                    <div class="full-width row flex-center text-primary">
+                        <q-icon size="30px" name="mood" /> {{ message }}
                     </div>
-                </q-expansion-item>
-            </div>
+                </template>
+            </q-table>
         </div>
     </div>
 </template>
@@ -34,24 +36,25 @@
 <script setup>
 import { query, onSnapshot, orderBy } from "firebase/firestore";
 
-const firebaseUser = useFirebaseUser()
+const mentorID = defineProps(['mentorID'])
 
-const pendingAttendance = getCollection('acpoFormsAttendance')
-const menteeForms = query(queryAnd(pendingAttendance, "mentorID", firebaseUser.value.uid, "approvalStatus", "Pending"), orderBy('submittedOn'))
+// const pendingAttendance = getCollection('acpoFormsAttendance')
+// const menteeForms = query(queryAnd(pendingAttendance, "mentorID", mentorID.mentorID, "approvalStatus", "Pending"), orderBy('submittedOn'))
 
-const forms = ref([])
+// const forms = ref([])
 
-const unsubscribe = onSnapshot(menteeForms, (querySnapshot) => {
-    forms.value = []
-    querySnapshot.forEach((doc) => {
-        const d = doc.data()
-        d.name = getUD(d.menteeID)
-        d.id = doc.id
-        d.submittedOn = d.submittedOn.toDate().toDateString(),
-            console.log(d.name)
-        forms.value.push(d)
-    });
-});
+// const unsubscribe = onSnapshot(menteeForms, (querySnapshot) => {
+//     forms.value = []
+//     querySnapshot.forEach((doc) => {
+//         const d = doc.data()
+//         d.name = getUD(d.menteeID.slice(0, -7)).name
+//         d.id = doc.id
+//         d.submittedOn = d.submittedOn.toDate().toDateString(),
+//             forms.value.push(d)
+//     });
+// });
+
+const forms = await mentorPendingAttendance(mentorID.mentorID)
 
 const menteeColumns = [
     { name: 'name', label: 'Name', field: 'name', align: 'left', sortable: true },
@@ -60,12 +63,12 @@ const menteeColumns = [
     { name: 'actions', label: 'Actions', field: '', align: 'center' },
 ];
 
-const approveForm = async (props) => {
+const approveShift = async (props) => {
     await setFSDoc("acpoFormsAttendance", props.id, { approvalStatus: 'Approved' }, { merge: true })
 }
 
-const denyForm = async (props) => {
-    await setFSDoc("acpoFormsAttendance", props.id, { approvalStatus: 'Denied' }, { merge: true })
+const denyShift = async (props, reason) => {
+    await setFSDoc("acpoFormsAttendance", props.id, { approvalStatus: 'Denied', deniedReason: reason }, { merge: true })
 }
 
 </script>

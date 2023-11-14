@@ -14,10 +14,8 @@
           ]" />
 
           <div class="flex justify-between">
-
-            <q-btn label="Send Reset Link" type="submit" color="primary" />
             <q-btn label="back" color="primary" @click="$emit('change', 'Login')" flat class="q-ml-sm" />
-
+            <q-btn label="Send Reset Link" type="submit" color="primary" />
           </div>
         </q-form>
       </div>

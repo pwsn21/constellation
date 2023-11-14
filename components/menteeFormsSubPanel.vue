@@ -34,7 +34,7 @@
             <q-tab-panel name="formDOPS">
                 DOPS Form
             </q-tab-panel>
-            <q-tab-panel name="attendance">
+            <q-tab-panel name="attendance" class="q-px-none">
                 <MenteeTableAttendance :selectedMentee="selectedMentee" />
             </q-tab-panel>
             <q-tab-panel name="dOPS">
@@ -51,8 +51,10 @@
 </template>
 
 <script setup>
+const firebaseUser = await useFirebaseUser()
+const profileData = await getUD(firebaseUser.value.uid)
 
-const currentFormTab = ref('formAdd')
+const currentFormTab = ref('attendance')
 const mentee = defineProps(['selectedMentee'])
 let formType = ref('')
 

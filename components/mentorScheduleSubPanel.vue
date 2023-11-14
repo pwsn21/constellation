@@ -25,10 +25,17 @@
                                             {{ shift.address }}
                                         </NuxtLink>
                                     </QItem>
-                                    <QItem>Mentor: {{ shift.mentorName }}</QItem>
-                                    <QItem>Phone:
-                                        <NuxtLink :to="`tel:${shift.mentorPhoneNumber}`">
-                                            {{ shift.mentorPhoneNumber }}
+                                    <QItem>Mentee #1: {{ shift.menteeOneName }}</QItem>
+                                    <QItem :inset-level="1">Phone:
+                                        <NuxtLink :to="`tel:${shift.menteeOnePhoneNumber}`">
+                                            {{ shift.menteeOnePhoneNumber }}
+                                        </NuxtLink>
+                                    </QItem>
+                                    <QItem v-if="!(shift.menteeTwoName == 'N/A')">Mentee #2: {{ shift.menteeTwoName }}
+                                    </QItem>
+                                    <QItem v-if="!(shift.menteeTwoName == 'N/A')" :inset-level="1">Phone:
+                                        <NuxtLink :to="`tel:${shift.menteeTwoPhoneNumber}`">
+                                            {{ shift.menteeTwoPhoneNumber }}
                                         </NuxtLink>
                                     </QItem>
                                 </QList>
@@ -42,18 +49,18 @@
     </div>
 </template>
 <script setup>
+const firebaseUser = await useFirebaseUser()
+const profileData = await getUD(firebaseUser.value.uid)
 
-const mentee = defineProps(['selectedMentee'])
-let menteeShifts = await qMenteeShifts(mentee.selectedMentee.menteeID)
+let mentorShifts = await qMentorShifts(firebaseUser.value.uid)
 
-// let mentorShiftData = await qMentorShifts('CYHU9R0b9RWF93RpOm5lGpHLCm02')
 import { date } from 'quasar'
 
 const shift = ref(date.formatDate(new Date(Date.now()), 'YYYY/MM/DD'))
-const eventDay = menteeShifts.shiftDay
-const eventNight = menteeShifts.shiftNight
-const eventMisc = menteeShifts.shiftMisc
-const data = menteeShifts.shiftData
+const eventDay = mentorShifts.shiftDay
+const eventNight = mentorShifts.shiftNight
+const eventMisc = mentorShifts.shiftMisc
+const data = mentorShifts.shiftData
 
 const eventsFn = (date) => {
     return eventDay.value.includes(date) || eventNight.value.includes(date) || eventMisc.value.includes(date);

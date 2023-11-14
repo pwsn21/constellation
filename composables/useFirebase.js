@@ -37,7 +37,8 @@ export const createUser = async (email, password) => {
                     car: "",
                     platoon: "",
                     rotation: "",
-                    email: auth.currentUser.email
+                    email: auth.currentUser.email,
+                    uid: auth.currentUser.uid
                 })
             }
             const result = sendEmailVerification(auth.currentUser)

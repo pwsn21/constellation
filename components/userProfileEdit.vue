@@ -8,8 +8,8 @@
                             <div class="text-h5">Personal</div>
                             <q-input filled dense v-model="profileData.firstName" label="First Name" lazy-rules :rules="[
                                 val => (isValidFirstName(val).valid) || (isValidFirstName(val).message),]" />
-                            <q-input filled dense v-model="profileData.lastName" label="Last Name" lazy-rules :rules="[
-                                val => (isValidLastName(val).valid) || (isValidLastName(val).message),]" />
+                            <q-input filled dense v-model="profileData.lastName" label="Last Name" lazy-rules
+                                :rules="[val => (isValidLastName(val).valid) || (isValidLastName(val).message),]" />
                             <q-input filled dense type="tel" mask="(###) ### - ####" hint="(###) ### - ####"
                                 v-model="profileData.phoneNumber" label="Phone Number" lazy-rules
                                 :rules="[val => (isValidPhone(val).valid) || (isValidPhone(val).message),]" />

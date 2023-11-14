@@ -1,4 +1,6 @@
 import {getDocs, getFirestore, getCountFromServer, query, where, orderBy, doc, and, collection, onSnapshot} from "firebase/firestore"
+import { date } from 'quasar'
+
 
 export const menteeData = async (menteeID) => {
     const docAcpoSnap = await getFSDoc("acpoMentees", menteeID);
@@ -19,12 +21,25 @@ export const menteesData = () => {
             d.pped = d.pped ? getUD(d.pped).name : 'No PPEd Assigned'
             mentees.value.push(d)
             })
-        }
-        )
+        })
         return mentees
 }
-    
 
+export const cohortData = () => {
+    const db = getFirestore()
+    const cohorts = ref([])
+    const q = query(collection(db, "acpoCohort"));
+    onSnapshot(q, (querySnapshot) => {
+        cohorts.value = []
+        querySnapshot.forEach((doc) => {
+            const d = doc.data()
+            d.cohortID = doc.id                   
+            cohorts.value.push(d)
+            })
+        })
+        return cohorts
+}
+    
 export const qMenteeAttendance = (menteeID, currentMilestone) => {
     const menteeShifts = query(getCollection("acpoFormsAttendance"), where("menteeID", "==", menteeID))
     if (!currentMilestone){
@@ -32,8 +47,48 @@ export const qMenteeAttendance = (menteeID, currentMilestone) => {
     }else {
         const qMSShifts = queryAnd(menteeShifts, "milestone", currentMilestone,"approvalStatus", "Approved")
     return qMSShifts
+}}
+
+export const mentorPendingAttendance = (mentorID) => {
+    
+    const pendingAttendance = getCollection('acpoFormsAttendance')
+    const menteeForms = query(queryAnd(pendingAttendance, "mentorID", mentorID, "approvalStatus", "Pending"), orderBy('submittedOn'))
+    const forms = ref([])
+    
+    onSnapshot(menteeForms, (querySnapshot) => {
+        forms.value = []
+        querySnapshot.forEach((doc) => {
+            const d = doc.data()
+            d.name = getUD(d.menteeID.slice(0, -7)).name
+            d.id = doc.id
+            d.submittedOn = d.submittedOn.toDate().toDateString(),
+                forms.value.push(d)
+        });
+    });
+    return forms
 }
+
+export const menteeAttendanceForms = (menteeID) => {
+        const pendingAttendance = getCollection('acpoFormsAttendance')
+    const menteeForms = query(pendingAttendance, where('menteeID', '==', menteeID), orderBy('submittedOn'))
+        const forms = ref([])
+        onSnapshot(menteeForms, (querySnapshot) => {
+        forms.value = []
+        querySnapshot.forEach((doc) => {
+            const d = doc.data()
+            d.mentorName = getUD(d.mentorID).name
+            d.id = doc.id
+            d.submittedOn = d.submittedOn ? d.submittedOn.toDate().toDateString() : 'N/A'
+                forms.value.push(d)
+        });
+    });
+    return forms
 }
+
+
+
+
+
 
 export const optionsMenteeStatus = async (status) => {
     const options = reactive ({mentee: []})
@@ -85,20 +140,6 @@ export const mentorOptions = async (station, platoon) => {
         }
     })
     return options
-}
-
-export const mentorFormsPendingApproval = async (mentorID) => {
-    if (mentorID){
-    const pendingAttendance = getCollection('acpoFormsAttendance')
-    const result = await getCountFromServer(queryAnd(pendingAttendance,"mentorID", mentorID, 'approvalStatus', 'Pending'))
-        if (result.data().count > 0 ){
-            return true
-        } else {
-            return false
-        }
-    } else {
-        return false
-    }
 }
 
 export const calcProgress = async (supportLevel, query, requiredmodifier, countmodifer) => {
@@ -154,7 +195,7 @@ export const getCohorts = async () => {
     const db = getFirestore()    
     const results = ref([])
     const acpoCohortCollection = collection(db, "acpoCohort");
-    const qActiveCohorts = query(acpoCohortCollection, where("status", "==", "active"));
+    const qActiveCohorts = query(acpoCohortCollection, where("status", "==", "Active"));
     const cohortsActive = await getDocs(qActiveCohorts);
     cohortsActive.forEach((cohort) => {
         results.value.push(cohort.id)
@@ -168,9 +209,9 @@ export function getUD(uid) {
         if (user) {
             return user
         } else {
-            return null
-        }
+            return {firstName: 'no user found', lastName:'no last',role: []}
     }
+}
 export async function getStationDetails(stnNumber) {
         const allStations = await getStations()
         const station = allStations.find((data) => data.number === stnNumber);

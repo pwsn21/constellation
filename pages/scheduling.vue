@@ -1,50 +1,51 @@
 <template>
     <div>
         <q-splitter v-model="splitter" style="height: fit-content" unit="px">
-
             <template #before>
                 <div>
-                    <SchedulingFormShift :shiftData="shiftData" />
+                    <SchedulingFormShift :allShiftData="allShiftData" />
                 </div>
             </template>
-
             <template #after>
-                <q-tabs v-model="currentTab" align="left" inline-label stretch class="q-mt-sm text-grey-6" narrow-indicator>
-                    <q-tab name="lastAdded" label="Last Added" icon="calendar_month" content-class="text-red-10" />
-                    <q-tab name="byUser" label="View All" icon="people" class="text-deep-purple-10" />
-                    <!-- <q-tab name="byStation" label="View By Station" icon="emoji_transportation" class="text-teal-10" /> -->
-                    <q-tab name="byDate" label="View By Date Range" icon="date_range" class="text-brown-10" />
-                </q-tabs>
-                <q-tab-panels v-model="currentTab" transition-next="jump-down" animated transition-prev="jump-down"
-                    transition-duration="200">
-                    <q-tab-panel name="lastAdded" class="q-px-xs">
-                        <schedulingTableLastAdded @shift-data="onShiftSelected" />
-                    </q-tab-panel>
-                    <q-tab-panel name="byUser" class="q-px-xs">
-                        <schedulingTableByUser @selected-shift="onShiftSelected" />
-                    </q-tab-panel>
-                    <!-- <q-tab-panel name="byStation">
-                        <schedulingTableByStation @selected-shift="onShiftSelected" />
-                    </q-tab-panel> -->
-                    <q-tab-panel name="byDate">
-                        <schedulingTableByDate @selected-shift="onShiftSelected" />
-                    </q-tab-panel>
-                </q-tab-panels>
+                <schedulingTable :allShiftData="allShiftData" />
             </template>
         </q-splitter>
     </div>
 </template>
 
 <script setup>
+import { collection, onSnapshot, getFirestore, query, orderBy, limit } from "firebase/firestore";
+import { date } from 'quasar'
+
+const db = getFirestore()
 const splitter = ref(505)
-let shiftData = ref('')
-const currentTab = ref('lastAdded')
+let allShiftData = ref([])
 
-const onShiftSelected = (shift) => {
+const q = query(collection(db, "scheduledShifts"), orderBy("creationDate", "desc"), limit(700))
 
-    shiftData.value = shift
-}
+onSnapshot(q, (snap) => {
+    const arr = [];
+    for (const [key, value] of Object.entries(snap.docs)) {
+        let d = value.data()
+        d.shiftID = value.id
+        d.creationDate = d.creationDate?.toDate()?.toLocaleString()
+        d.menteeOneName = getUD(d.menteeOneID.slice(0, -7)).name
+        d.menteeOneEE = getUD(d.menteeOneID.slice(0, -7)).employeeNumber
+        d.menteeTwoName = d.menteeTwoID ? getUD(d.menteeTwoID.slice(0, -7)).name : "N/A"
+        d.menteeTwoEE = d.menteeTwoID ? getUD(d.menteeTwoID.slice(0, -7)).employeeNumber : "N/A"
+        d.mentorName = getUD(d.mentorID).name ? getUD(d.mentorID).name : d.mentorID
+        arr.push(d)
+    }
+    allShiftData.value = arr
+})
 
+// const onShiftSelected = (shift) => {
+//     selectedShift.value = shift
+// }
+
+// const reset = (emit) => {
+//     selectedShift.value = emit
+// }
 
 </script>
 

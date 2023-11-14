@@ -27,10 +27,10 @@
             <NuxtLink to="/"><q-icon name="dashboard" class="q-mx-sm" />Dashboard</NuxtLink>
           </q-item>
           <q-item clickable>
-            <NuxtLink to="/acpoAdmin"><q-icon name="groups" class="q-mx-sm" />ACP-Orientation</NuxtLink>
+            <NuxtLink to="/acpo"><q-icon name="groups" class="q-mx-sm" />ACP-Orientation</NuxtLink>
           </q-item>
           <q-item clickable v-if="profileData.role.includes('admin') || profileData.role.includes('pped')">
-            <NuxtLink to="/users"><q-icon name="people" class="q-mx-sm" />Users</NuxtLink>
+            <NuxtLink to="/users"><q-icon name="manage_accounts" class="q-mx-sm" />Users</NuxtLink>
           </q-item>
           <q-item clickable v-if="profileData.role.includes('admin') || profileData.role.includes('scheduler')">
             <NuxtLink to="/scheduling"><q-icon name="calendar_today" class="q-mx-sm" />Scheduling</NuxtLink>
@@ -57,6 +57,7 @@
 </template>
   
 <script setup>
+
 const firebaseUser = await useFirebaseUser()
 const profileData = getUD(firebaseUser.value.uid)
 

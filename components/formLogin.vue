@@ -2,18 +2,19 @@
   <div>
     <q-card style="width: 100%">
 
-      <q-img src="~/assets/images/street.jpg" :ratio="7 / 1">
+      <q-img src="~/assets/images/street.png" :ratio="7 / 1">
         <div class="absolute-left column justify-center text-white text-h4" style="width: 100%">Log In</div>
       </q-img>
       <div class="q-pa-md">
 
-        <q-form @submit.prevent="loginUser" @reset="onReset" class="q-gutter-md">
-          <q-input filled v-model="email" type="email" label="Email" hint="Your BCEHS or PHSA Email" lazy-rules :rules="[
-            val => (isValidEmail(val).valid) || (isValidEmail(val).message),
-          ]" />
+        <q-form @submit.prevent="loginUser" class="q-gutter-md">
+          <q-input filled clearable v-model="email" type="email" label="Email" hint="Your BCEHS or PHSA Email" lazy-rules
+            :rules="[
+              val => (isValidEmail(val).valid) || (isValidEmail(val).message),
+            ]" />
 
-          <q-input filled :type="hidePassword ? 'password' : 'text'" v-model="password" label="Password" lazy-rules
-            hide-bottom-space :rules="[
+          <q-input filled clearable :type="hidePassword ? 'password' : 'text'" v-model="password" label="Password"
+            lazy-rules hide-bottom-space :rules="[
               val => (isValidPassword(val).valid) || (isValidPassword(val).message),
             ]">
             <template v-slot:append>
@@ -26,15 +27,17 @@
               @click="$emit('change', 'passwordreset')" />
           </div>
 
-          <div class="flex justify-between">
-            <div>
-              <q-btn label="Log-In" type="submit" color="primary" />
-              <q-btn label="Clear" type="reset" color="primary" flat class="q-ml-sm" />
-            </div>
-            <div>
-              <q-btn label="Register" color="secondary" @click="$emit('change', 'Register')" />
-            </div>
+          <!-- <div class="col"> -->
+          <div class="flex justify-center">
+            <q-btn label="Log-In" type="submit" color="primary" />
           </div>
+          <div class="column items-center">
+            <div class="text-secondary">
+              Don't have an account?
+            </div>
+            <q-btn label="Register Here" no-caps flat color="secondary" @click="$emit('change', 'Register')" />
+          </div>
+          <!-- </div> -->
         </q-form>
       </div>
     </q-card>
@@ -49,12 +52,6 @@ const firebaseUser = useFirebaseUser()
 const hidePassword = ref(true)
 const email = ref("");
 const password = ref("");
-
-const onReset = () => {
-  email.value = ""
-  password.value = ""
-  hidePassword.value = true
-}
 
 const loginUser = async () => {
   await signInUser(email.value, password.value)

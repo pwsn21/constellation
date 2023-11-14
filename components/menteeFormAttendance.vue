@@ -3,7 +3,7 @@
         <q-card>
             <q-card-section class="q-my-sm text-center text-h4 bg-primary text-white"> Add Attendance </q-card-section>
             <q-card-section>
-                <q-form @submit.prevent="addAttendance">
+                <q-form @submit.prevent="checkAttendance">
                     <div>
                         <q-select label="Milestone" v-model="shift.milestone"
                             :options="['Milestone 2', 'Milestone 3', 'Milestone 4']" filled />
@@ -13,7 +13,7 @@
                                 <q-icon name="event" class="cursor-pointer">
                                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
                                         <q-date v-model="shift.date" @update:model-value="dateSelected" today-btn
-                                            :events="event">
+                                            :events="eventsFn" :event-color="customEventColor">
                                             <q-btn v-close-popup flat label="close" />
                                         </q-date>
                                     </q-popup-proxy>
@@ -36,6 +36,9 @@
             </q-card-section>
         </q-card>
     </div>
+    <pre>
+        {{ forms }}
+    </pre>
 </template>
 
 <script setup>
@@ -46,8 +49,26 @@ const firebaseUser = useFirebaseUser()
 
 const userProfile = getUD(firebaseUser.value.uid)
 const prop = defineProps(['selectedMentee'])
+
+const forms = await menteeAttendanceForms(prop.selectedMentee.menteeID)
+
 let menteeShifts = await qMenteeShifts(prop.selectedMentee.menteeID)
-const event = menteeShifts.shiftEvent
+
+const eventDay = menteeShifts.shiftDay
+const eventNight = menteeShifts.shiftNight
+const eventsFn = (date) => {
+    return eventDay.value.includes(date) || eventNight.value.includes(date);
+};
+
+const customEventColor = computed(() => (date) => {
+    if (eventDay.value.includes(date)) {
+        return 'yellow-10';  // Assign teal color for dates in array1
+    } else if (eventNight.value.includes(date)) {
+        return 'primary';  // Assign orange color for dates in array2
+    } else {
+        return 'gray';  // Assign a default color for all other dates
+    }
+});
 
 const shift = reactive({
     date: undefined,
@@ -87,6 +108,15 @@ const dateSelected = async (date) => {
 const updateCar = (selectedCars) => { shift.car = selectedCars.label }
 
 const { showToast } = useNotification();
+
+
+const checkAttendance = () => {
+    if (forms.value.find(item => (item.date === shift.date && (item.approvalStatus === 'Approved' || item.approvalStatus === 'Pending')))) {
+        showToast('negative', 'error', 'Attendance already submitted for this date');
+    } else {
+        addAttendance()
+    }
+}
 
 const addAttendance = async () => {
     try {

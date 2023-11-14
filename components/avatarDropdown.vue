@@ -36,13 +36,15 @@ const firebaseUser = await useFirebaseUser()
 const profileData = getUD(firebaseUser.value.uid);
 let avatar = ref('')
 
-profileData.firstName ? avatar.value = profileData.firstName.charAt(0) + profileData.lastName.charAt(0) : avatar.value = 'user'
+if (profileData.firstName.length > 0 && profileData.lastName.length > 0) {
+    avatar.value = profileData.firstName?.charAt(0) + profileData.lastName?.charAt(0)
+} else {
+    avatar.value = 'user'
+}
 
 const logout = () => {
     signOutUser();
 }
-
-const dark = ref(true)
 
 </script>
 

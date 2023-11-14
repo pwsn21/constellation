@@ -3,7 +3,7 @@
         <q-card>
             <q-card-section class="q-my-sm text-center text-h4 bg-primary text-white"> {{ title }} </q-card-section>
             <q-card-section>
-                <q-form @submit.prevent="shiftCheck">
+                <q-form @submit.prevent="checkShift">
                     <div class="row q-gutter-xs">
                         <div class="col"><q-select filled v-model="shift.menteeOneID" label="Mentee One"
                                 :options="options.mentee" @update:model-value="menteeOneSelected" clearable emit-value
@@ -25,7 +25,7 @@
                         <div class="flex justify-between q-gutter-xs no-wrap">
                             <div>
                                 <q-date v-model="shift.startDate" @update:model-value="dateSelected" flat bordered
-                                    :default-year-month="defaultMonth" no-unset today-btn />
+                                    :default-year-month="defaultMonth" no-unset />
                             </div>
                             <div class="column justify-end q-gutter-xs">
                                 <q-input filled label="Start Date" v-model="shift.startDate" mask="####/##/##">
@@ -94,9 +94,12 @@
                     </div>
 
                     <div class="q-mt-xs row reverse q-gutter-sm">
-                        <q-btn class="q-mr-sm" label="Add Shift" type="submit" color="primary" />
+                        <q-btn v-if="!selectedShiftID" class="q-mr-sm" label="Add Shift" type="submit" color="primary" />
+                        <q-btn v-if="selectedShiftID" class="q-mr-sm" label="Update Shift" type="submit" color="primary" />
+                        <q-btn v-if="selectedShiftID" class="q-mr-sm" label="Delete Shift" color="secondary"
+                            @click="deleteShift" />
                         <q-space />
-                        <q-btn label="Reset" @click="onReset" color="primary" type="reset" class="q-ml-sm" flat />
+                        <q-btn label="Reset" @click="onReset" color="primary" class="q-ml-sm" flat />
                     </div>
                 </q-form>
             </q-card-section>
@@ -106,7 +109,7 @@
         <q-dialog v-model="showDialog">
             <q-card>
                 <q-toolbar class="bg-secondary text-white justify-center text-h5">
-                    {{ duplicateMessage }}</q-toolbar>
+                    {{ dupicateMessage }}</q-toolbar>
                 <q-card-section>
                     <div class="text-subtitle1">Either an employee is already scheduled or the shift exist with other
                         employees.</div>
@@ -149,10 +152,11 @@
                                 <q-item-label class="text-weight-bold">Mentee One: </q-item-label>
                             </q-item-section>
                             <q-item-section>
-                                <q-item-label>{{ originalShift.menteeOneName }}</q-item-label>
+                                <q-item-label>{{ originalShift.menteeOneName ? originalShift.menteeOneName : 'N/A'
+                                }}</q-item-label>
                             </q-item-section>
                             <q-item-section>
-                                <q-item-label>{{ getUD(shift.menteeOneID.slice(0, -7)).name }} </q-item-label>
+                                <q-item-label>{{ shift.menteeOneName ? shift.menteeOneName : 'N/A' }} </q-item-label>
                             </q-item-section>
                         </q-item>
                         <q-item>
@@ -160,13 +164,11 @@
                                 <q-item-label class="text-weight-bold">Mentee Two: </q-item-label>
                             </q-item-section>
                             <q-item-section>
-                                <q-item-label>
-                                    {{ originalShift.menteeTwoID ? originalShift.menteeTwoName : 'N/A' }}
+                                <q-item-label>{{ originalShift.menteeTwoName ? originalShift.menteeTwoName : 'N/A' }}
                                 </q-item-label>
                             </q-item-section>
                             <q-item-section>
-                                <q-item-label>{{ shift.menteeTwoID ? getUD(shift.menteeTwoID.slice(0, -7)).name : 'N/A'
-                                }}</q-item-label>
+                                <q-item-label>{{ shift.menteeTwoName ? shift.menteeTwoName : 'N/A' }} </q-item-label>
                             </q-item-section>
                         </q-item>
                         <q-item>
@@ -178,7 +180,7 @@
                                 </q-item-label>
                             </q-item-section>
                             <q-item-section>
-                                <q-item-label>{{ getUD(shift.mentorID).name }} </q-item-label>
+                                <q-item-label>{{ shift.mentorName }} </q-item-label>
                             </q-item-section>
                         </q-item>
                     </q-list>
@@ -188,11 +190,18 @@
                     <p>This cannot be undone.</p>
                 </q-card-section>
                 <q-card-actions>
+
                     <q-btn label="Cancel" color="primary" v-close-popup />
-                    <q-btn label="Overwrite" color="secondary" @click="shiftOverwrite" v-close-popup />
+                    <q-btn label="Overwrite" color="secondary" @click="scheduleShift" v-close-popup />
                 </q-card-actions>
+                <pre>
+                    {{ originalShift }}
+                </pre>
             </q-card>
         </q-dialog>
+        <pre>
+            {{ selectedShiftID }}        
+        </pre>
     </div>
 </template>
 
@@ -205,12 +214,12 @@ const db = getFirestore()
 
 const defaultMonth = date.formatDate(date.addToDate(Date.now(), { months: 1 }), 'YYYY/MM')
 
-let props = defineProps(['allShiftData'])
-
+let selectedShift = defineProps(['shiftData'])
 let title = ref('Add Shift')
 
 let shift = ref({
     startDate: undefined,
+    startTimestamp: undefined,
     endDate: undefined,
     startTime: undefined,
     endTime: undefined,
@@ -223,27 +232,44 @@ let shift = ref({
     creationDate: serverTimestamp()
 })
 
+let selectedShiftID = ref('')
+
+// watch(selectedShift, () => {
+//     shift.value = selectedShift.shiftData
+//     selectedShiftID.value = selectedShift.shiftData.id
+//     title.value = `${shift.value.car} (${shift.value.startDate})`
+// }, { immediate: true })
+
+watchEffect(async () => {
+
+    if (selectedShift.selectedShift !== "") {
+        const docSnap = await getFSDoc("scheduledShifts", selectedShift.selectedShift.id)
+        const shiftData = docSnap.data()
+        selectedShiftID = selectedShift.selectedShift
+        shift.value = selectedShift.selectedShift
+        shift.value = shiftData
+        title.value = `${shift.value.car} (${shift.value.startDate})`
+    }
+})
+
+
+
+
 const mentoroptions = await mentorOptions()
-const miscShifts = ['Holidays', 'Sick']
+const miscShifts = [{ label: 'Holidays', value: 'holidays' }, { label: 'Sick', value: 'sick' }]
 const observationShifts = ['Observation']
 const stationsList = await getStations()
 
 const options = reactive({
     mentee: await optionsMenteeStatus("In Progress"),
-    mentor: [...mentoroptions.allMentors, ...miscShifts, ...observationShifts],
-    station: [...stationsList, ...miscShifts],
+    mentor: mentoroptions.allMentors,
+    station: [...stationsList, ...miscShifts]
     car: [],
 })
 
-
 const stationSelected = async (station) => {
-    if (miscShifts.some(shift => station.includes(shift))) {
-        shift.value.car = station
-        shift.value.mentorID = station
-    } else {
-        shift.value.car = undefined
-        options.car = await getCars(station)
-    }
+    shift.value.car = undefined
+    options.car = await getCars(station)
 }
 
 const menteeOneSelected = () => {
@@ -268,13 +294,9 @@ const updateCar = (car) => {
 
 const dayNightChecker = ref('')
 const dateSelected = async () => {
-    if (miscShifts.some(shiftType => shift.value.station.includes(shiftType))) {
-        shift.value.endDate = shift.value.startDate
-        shift.value.startTime = '00:00'
-        shift.value.endTime = '00:00'
-    } else if (shift.value.startDate) {
+    if (shift.value.startDate) {
         shift.value.mentorID = undefined
-
+        shift.value.startTimestamp = new Date(shift.value.startDate)
         dayNightChecker.value = shift.value.car ? shift.value.car.charAt(5) : null
 
         const pFD = platoonFromShift(shift.value.startDate)
@@ -289,7 +311,7 @@ const dateSelected = async () => {
         }
 
         const mentors = await mentorOptions(shift.value.station, shift.value.platoon)
-        options.mentor = [...mentors.mentor, ...mentors.allMentors, ...miscShifts, ...observationShifts]
+        options.mentor = [...mentors.mentor, ...mentors.allMentors]
         if (mentors.mentor.length > 0) {
             shift.value.mentorID = options.mentor[0].value
         } else {
@@ -299,8 +321,16 @@ const dateSelected = async () => {
 }
 
 let showDialog = ref(false)
-
+watch(showDialog, (newValue, oldValue) => {
+    if (oldValue === true && newValue === false) {
+        originalShift.value = ''
+    }
+})
+const emit = defineEmits(["selectedShift"])
 const onReset = () => {
+
+    selectedShiftID.value = ''
+    title.value = "Add Shift"
     shift.value.startDate = undefined
     shift.value.endDate = undefined
     shift.value.startTime = undefined
@@ -311,63 +341,79 @@ const onReset = () => {
     shift.value.menteeOneID = undefined
     shift.value.menteeTwoID = null
     shift.value.mentorID = undefined
-}
 
+}
 
 let originalShift = ref('')
-let duplicateMessage = ref('')
+let dupicateMessage = ref('')
 const { showToast } = useNotification()
 
-function findDuplicate(objToCheck) {
-    if (props.allShiftData.find(item => item.startDate === objToCheck.startDate && item.car === objToCheck.car)) {
-        duplicateMessage.value = 'Car already exists for that date'
-        return props.allShiftData.find(item => item.startDate === objToCheck.startDate && item.car === objToCheck.car);
-    } else if (props.allShiftData.find(item => item.startDate === objToCheck.startDate && item.mentorID === objToCheck.mentorID)) {
-        duplicateMessage.value = 'Mentor already scheduled that day'
-        return props.allShiftData.find(item => item.startDate === objToCheck.startDate && item.mentorID === objToCheck.mentorID)
-    }
-    else if (props.allShiftData.find(item => item.startDate === objToCheck.startDate && (item.menteeOneID === objToCheck.menteeOneID || item.menteeOneID === objToCheck.menteeTwoID))) {
-        duplicateMessage.value = 'Mentee already scheduled that day'
-        return props.allShiftData.find(item => item.startDate === objToCheck.startDate && (item.menteeOneID === objToCheck.menteeOneID || item.menteeOneID === objToCheck.menteeTwoID))
-    }
-    else if (props.allShiftData.find(item => item.startDate === objToCheck.startDate && (item.menteeTwoID === objToCheck.menteeOneID || item.menteeOneID === objToCheck.menteeTwoID))) {
-        duplicateMessage.value = 'Mentee already scheduled that day'
-        return props.allShiftData.find(item => item.startDate === objToCheck.startDate && (item.menteeTwoID === objToCheck.menteeOneID || item.menteeOneID === objToCheck.menteeTwoID))
-    }
-}
-
-const shiftOverwrite = async () => {
-    await deleteDoc(doc(db, "scheduledShifts", originalShift.value.shiftID));
-    originalShift.value = ''
-    shiftCheck()
-}
-
-const shiftCheck = async () => {
+const checkShift = async () => {
+    // check if mentee or mentor already scheduled
+    // check if shift already exists
     try {
-        if (findDuplicate(shift.value)) {
+        const menteeOneAlreadyScheduled = await qShiftDuplicate(",", "menteeOneID", shift.value.menteeOneID, shift.value.startDate)
+        const menteeTwoAlreadyScheduled = await qShiftDuplicate(",", "menteeOneID", shift.value.menteeTwoID, shift.value.startDate)
+        const mentorAlreadyScheduled = await qShiftDuplicate(",", "mentorID", shift.value.mentorID, shift.value.startDate)
+        const shiftAlreadyScheduled = await qShiftDuplicate(shift.value.car, ",", ",,", shift.value.startDate)
+        if (shiftAlreadyScheduled.value.length > 0) {
+            originalShift.value = shiftAlreadyScheduled.value[0]
             showDialog.value = true
-            originalShift.value = findDuplicate(shift.value)
+            dupicateMessage.value = "Shift Exists"
+        } else if (menteeOneAlreadyScheduled.value.length > 0) {
+            originalShift.value = menteeOneAlreadyScheduled.value[0]
+            showDialog.value = true
+            dupicateMessage.value = "Mentee Scheduled on Another Car"
+
+        } else if (menteeTwoAlreadyScheduled.value.length > 0) {
+            originalShift.value = menteeTwoAlreadyScheduled.value[0]
+            showDialog.value = true
+            dupicateMessage.value = "Mentee Scheduled on Another Car"
+
+        } else if (mentorAlreadyScheduled.value.length > 0) {
+            originalShift.value = mentorAlreadyScheduled.value[0]
+            showDialog.value = true
+            dupicateMessage.value = "Mentor Scheduled on Another Car"
         } else {
-            shiftSchedule()
+            scheduleShift()
         }
     }
-
     catch (error) {
         console.error(error)
         showToast('negative', 'error', 'Scheduling Conflict')
     }
 }
 
-const shiftSchedule = async () => {
+const scheduleShift = async () => {
     try {
-        await addDoc(getCollection("scheduledShifts"), shift.value)
-        showToast('positive', 'check', 'Shift Added')
+        if (originalShift.value) {
+            console.log('delete')
+            await deleteDoc(doc(db, "scheduledShifts", originalShift.value.id))
+        }
+        if (selectedShiftID.value) {
+            console.log('update')
+            await setDoc(doc(db, "scheduledShifts", selectedShiftID.value), shift.value)
+            onReset()
+            showToast('positive', 'check', 'Shift Updated')
+        } else {
+            console.log('add')
+            await addDoc(getCollection("scheduledShifts"), shift.value)
+            showToast('positive', 'check', 'Shift Added')
+        }
+        originalShift.value = ''
     }
     catch (error) {
         console.error(error)
         showToast('negative', 'error', 'Please fill out all fields')
     }
 }
+
+const deleteShift = async () => {
+    await deleteDoc(doc(db, "scheduledShifts", selectedShiftID.value))
+    onReset()
+    showToast('positive', 'delete', 'Shift Deleted')
+}
+
 </script>
 
 <style scoped></style>

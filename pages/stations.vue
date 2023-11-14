@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="flex justify-center">
         <!-- <q-splitter v-model="splitter" style="height: fit-content" unit="px">
 
             <template #before>
@@ -9,8 +9,8 @@
             </template>
 
             <template #after> -->
-        <div class="q-ma-xs">
-            <stationsTable :stations="stations" />
+        <div class="q-ma-lg" style="width: 800px;">
+            <stationsTable :stations="allStationsData" />
         </div>
         <!-- </template>
         </q-splitter> -->
@@ -18,9 +18,8 @@
 </template>
 
 <script setup>
-import { collection, query, onSnapshot, getFirestore, deleteDoc, doc, limit, orderBy, where, updateDoc, arrayRemove } from "firebase/firestore";
-const splitter = ref(505)
-const stations = ref([])
+import { collection, onSnapshot, getFirestore } from "firebase/firestore";
+const allStationsData = ref([])
 const db = getFirestore();
 
 onSnapshot(collection(db, "stations"), (snap) => {
@@ -29,7 +28,7 @@ onSnapshot(collection(db, "stations"), (snap) => {
         let d = value.data()
         arr.push(d)
     }
-    stations.value = arr
+    allStationsData.value = arr
 })
 
 
