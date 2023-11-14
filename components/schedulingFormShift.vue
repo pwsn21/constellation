@@ -319,22 +319,25 @@ let duplicateMessage = ref('')
 const { showToast } = useNotification()
 
 function findDuplicate(objToCheck) {
-    if (props.allShiftData.find(item => item.startDate === objToCheck.startDate && item.car === objToCheck.car)) {
-        duplicateMessage.value = 'Car already exists for that date'
-        return props.allShiftData.find(item => item.startDate === objToCheck.startDate && item.car === objToCheck.car);
-    } else if (props.allShiftData.find(item => item.startDate === objToCheck.startDate && item.mentorID === objToCheck.mentorID)) {
-        duplicateMessage.value = 'Mentor already scheduled that day'
-        return props.allShiftData.find(item => item.startDate === objToCheck.startDate && item.mentorID === objToCheck.mentorID)
+    const checkDuplicate = (property, message) => {
+        const duplicateItem = props.allShiftData.find(item => item.startDate === objToCheck.startDate && item[property] === objToCheck[property])
+        if (duplicateItem) {
+            duplicateMessage.value = message;
+        }
+        return duplicateItem;
     }
-    else if (props.allShiftData.find(item => item.startDate === objToCheck.startDate && (item.menteeOneID === objToCheck.menteeOneID || item.menteeOneID === objToCheck.menteeTwoID))) {
-        duplicateMessage.value = 'Mentee already scheduled that day'
-        return props.allShiftData.find(item => item.startDate === objToCheck.startDate && (item.menteeOneID === objToCheck.menteeOneID || item.menteeOneID === objToCheck.menteeTwoID))
+    const carDuplicate = checkDuplicate('car', 'Car already exists for that date')
+    if (carDuplicate) {
+        return carDuplicate;
     }
-    else if (props.allShiftData.find(item => item.startDate === objToCheck.startDate && (item.menteeTwoID === objToCheck.menteeOneID || item.menteeOneID === objToCheck.menteeTwoID))) {
-        duplicateMessage.value = 'Mentee already scheduled that day'
-        return props.allShiftData.find(item => item.startDate === objToCheck.startDate && (item.menteeTwoID === objToCheck.menteeOneID || item.menteeOneID === objToCheck.menteeTwoID))
+    const mentorDuplicate = checkDuplicate('mentorID', 'Mentor already scheduled that day')
+    if (mentorDuplicate) {
+        return mentorDuplicate;
     }
+    const menteeDuplicate = checkDuplicate('menteeOneID', 'Mentee already scheduled that day') || checkDuplicate('menteeTwoID', 'Mentee already scheduled that day');
+    return menteeDuplicate;
 }
+
 
 const shiftOverwrite = async () => {
     await deleteDoc(doc(db, "scheduledShifts", originalShift.value.shiftID));

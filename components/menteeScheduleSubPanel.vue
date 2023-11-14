@@ -42,12 +42,10 @@
     </div>
 </template>
 <script setup>
+import { date } from 'quasar'
 
 const mentee = defineProps(['selectedMentee'])
 let menteeShifts = await qMenteeShifts(mentee.selectedMentee.menteeID)
-
-// let mentorShiftData = await qMentorShifts('CYHU9R0b9RWF93RpOm5lGpHLCm02')
-import { date } from 'quasar'
 
 const shift = ref(date.formatDate(new Date(Date.now()), 'YYYY/MM/DD'))
 const eventDay = menteeShifts.shiftDay

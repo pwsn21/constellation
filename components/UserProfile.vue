@@ -231,21 +231,14 @@ const options = reactive({
     filteredCountry: [],
     filteredState: [],
     filteredCity: [],
-    station: [],
+    station: await getStations(),
     status: ['Casual', 'Full-time Irregularly Scheduled', 'Full-time Regularly Scheduled'],
     car: [],
     platoon: ['A', 'B', 'C', 'D', 'Off Platoon'],
     rotation: ['R1', 'R2', 'R3', 'R4', 'Off Platoon'],
 })
 
-//Options 
-const stationCollection = await getDocs(collection(db, "stations"));
-stationCollection.forEach((station) => {
-    options.station.push({
-        label: station.id + " - " + station.data().city,
-        value: station.id
-    });
-});
+// //Options 
 
 const stationSelected = async () => {
     props.user.car = "";

@@ -12,8 +12,6 @@
                                 <q-btn dense flat color="red" @click="deleteForm(props.row)" icon="delete"
                                     label="Delete Form" no-caps />
                             </q-item>
-                            <!-- <q-item class="q-pa-xs" dense>
-                            </q-item> -->
                         </q-menu>
                     </q-btn>
                     <div v-else-if="props.row.approvalStatus == 'Denied'" class="text-grey-5">
@@ -30,8 +28,6 @@
                                 <q-btn dense flat color="red" @click="denyShift(props.row, 'Did Not Show')" icon="block"
                                     label="Did Not Show" no-caps />
                             </q-item>
-                            <!-- <q-item class="q-pa-xs" dense>
-                            </q-item> -->
                         </q-menu>
                     </q-btn>
                 </q-td>
@@ -68,9 +64,7 @@ const attendanceColumns = [
     { name: 'date', label: 'Shift Date', field: 'date', align: 'left', sortable: true },
     { name: 'car', label: 'Car', field: 'car', align: 'left', sortable: true },
     { name: 'mentorName', label: 'Mentor', field: 'mentorName', align: 'left', sortable: true },
-    { name: 'submittedOn', label: 'Submitted On', field: 'submittedOn', align: 'left' },
     { name: 'approvalStatus', label: 'Status', field: 'approvalStatus', align: 'left', sortable: true },
-
     { name: 'actions', label: 'Misc', field: '', align: 'center' }
 ];
 

@@ -6,7 +6,7 @@
         <div>
             <q-table :rows="forms" :columns="menteeColumns" row-key="id" title-class="text-h4" dense
                 table-header-class="bg-primary text-white" no-data-label="No Pending Attendance Forms"
-                :pagination="{ sortBy: 'submittedOn', descending: true, rowsPerPage: 20 }">
+                :pagination="{ rowsPerPage: 20 }">
                 <template v-slot:body-cell-actions="props">
                     <q-td :props="props">
                         <q-btn dense round flat color="green" @click="approveShift(props.row)" icon="check"></q-btn>
@@ -34,25 +34,7 @@
 </template>
 
 <script setup>
-import { query, onSnapshot, orderBy } from "firebase/firestore";
-
 const mentorID = defineProps(['mentorID'])
-
-// const pendingAttendance = getCollection('acpoFormsAttendance')
-// const menteeForms = query(queryAnd(pendingAttendance, "mentorID", mentorID.mentorID, "approvalStatus", "Pending"), orderBy('submittedOn'))
-
-// const forms = ref([])
-
-// const unsubscribe = onSnapshot(menteeForms, (querySnapshot) => {
-//     forms.value = []
-//     querySnapshot.forEach((doc) => {
-//         const d = doc.data()
-//         d.name = getUD(d.menteeID.slice(0, -7)).name
-//         d.id = doc.id
-//         d.submittedOn = d.submittedOn.toDate().toDateString(),
-//             forms.value.push(d)
-//     });
-// });
 
 const forms = await mentorPendingAttendance(mentorID.mentorID)
 

@@ -1,6 +1,4 @@
 import {getDocs, getFirestore, getCountFromServer, query, where, orderBy, doc, and, collection, onSnapshot} from "firebase/firestore"
-import { date } from 'quasar'
-
 
 export const menteeData = async (menteeID) => {
     const docAcpoSnap = await getFSDoc("acpoMentees", menteeID);
@@ -45,14 +43,14 @@ export const qMenteeAttendance = (menteeID, currentMilestone) => {
     if (!currentMilestone){
         return menteeShifts
     }else {
-        const qMSShifts = queryAnd(menteeShifts, "milestone", currentMilestone,"approvalStatus", "Approved")
+        const qMSShifts = query(menteeShifts, where("milestone","==", currentMilestone), where("approvalStatus","==", "Approved"))
     return qMSShifts
 }}
 
 export const mentorPendingAttendance = (mentorID) => {
     
     const pendingAttendance = getCollection('acpoFormsAttendance')
-    const menteeForms = query(queryAnd(pendingAttendance, "mentorID", mentorID, "approvalStatus", "Pending"), orderBy('submittedOn'))
+    const menteeForms = query(pendingAttendance, where("mentorID","==", mentorID), where("approvalStatus","==", "Pending"), orderBy('submittedOn'))
     const forms = ref([])
     
     onSnapshot(menteeForms, (querySnapshot) => {
@@ -61,7 +59,7 @@ export const mentorPendingAttendance = (mentorID) => {
             const d = doc.data()
             d.name = getUD(d.menteeID.slice(0, -7)).name
             d.id = doc.id
-            d.submittedOn = d.submittedOn.toDate().toDateString(),
+            // d.submittedOn = d.submittedOn.toDate().toDateString() ? d.submittedOn.toDate().toDateString() : "N/A"
                 forms.value.push(d)
         });
     });
@@ -78,17 +76,12 @@ export const menteeAttendanceForms = (menteeID) => {
             const d = doc.data()
             d.mentorName = getUD(d.mentorID).name
             d.id = doc.id
-            d.submittedOn = d.submittedOn ? d.submittedOn.toDate().toDateString() : 'N/A'
+            // d.submittedOn = d.submittedOn.toDate().toDateString() ? d.submittedOn.toDate().toDateString() : 'N/A'
                 forms.value.push(d)
         });
     });
     return forms
 }
-
-
-
-
-
 
 export const optionsMenteeStatus = async (status) => {
     const options = reactive ({mentee: []})
@@ -104,7 +97,6 @@ export const optionsMenteeStatus = async (status) => {
     )
     return options.mentee
 }
-
 
 export const mentorOptions = async (station, platoon) => {
     const options = reactive ({mentor: [], allMentors:[]})
@@ -189,8 +181,6 @@ export const msMeetingTable = async () => {
 return data.mentee
 }
 
-
-
 export const getCohorts = async () => {
     const db = getFirestore()    
     const results = ref([])
@@ -201,24 +191,5 @@ export const getCohorts = async () => {
         results.value.push(cohort.id)
         })
     return results.value
-    }
-
-export function getUD(uid) {
-        const au = useAllUsersData()
-        const user = au.value.find((data) => data.uid === uid);
-        if (user) {
-            return user
-        } else {
-            return {firstName: 'no user found', lastName:'no last',role: []}
-    }
-}
-export async function getStationDetails(stnNumber) {
-        const allStations = await getStations()
-        const station = allStations.find((data) => data.number === stnNumber);
-        if (station) {
-            return station
-        } else {
-            return null
-        }
     }
 

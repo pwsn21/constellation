@@ -137,7 +137,6 @@ const newCar = ref({
 })
 const carLabel = ref('')
 
-
 const addCar = async () => {
     newCar.value.label = newCar.value.label.toUpperCase()
     carLabel.value = newCar.value.label.slice(0, -1)

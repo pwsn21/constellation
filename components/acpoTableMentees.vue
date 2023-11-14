@@ -39,12 +39,8 @@ const table = defineProps(['openTable'])
 const filter = ref('')
 const mentees = menteesData()
 
-watchEffect(async () => {
+watchEffect(() => {
     showTable.value = table.openTable
-    try {
-    } catch (error) {
-        console.error(error)
-    }
 })
 
 const menteeColumns = [

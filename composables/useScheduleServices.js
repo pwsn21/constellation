@@ -1,5 +1,4 @@
 import { doc, query, where, or, getDocs, orderBy, and } from "firebase/firestore"
-import { date } from 'quasar'
 
 export const qMenteeShifts = async (menteeID) => {
     let shiftData = ref([])
@@ -38,7 +37,7 @@ export const qMentorShifts = async (mentorID) => {
     let shiftDay = ref([])
     let shiftMisc = ref([])
     
-        const shiftsCollection = getCollection("scheduledShifts");
+    const shiftsCollection = getCollection("scheduledShifts");
     const q = query(shiftsCollection, where("mentorID", "==", mentorID))
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach( async (shift) => {          

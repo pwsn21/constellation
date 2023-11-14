@@ -6,15 +6,6 @@ export const getCollection =  (fsCollection) => {
     return result
 }
 
-export const queryAnd =  (fsCollection,key1,value1,key2,value2) => {   
-    const qAnd = query(fsCollection, and(where(key1, "==", value1), where(key2, "==", value2)))
-    return qAnd
-}
-export const queryOr =  (fsCollection,key1,value1,key2,value2) => {   
-    const coll = getCollection(fsCollection)
-    const qOr = query(coll, or(where(key1, "==", value1), where(key2, "==", value2)))
-    return qOr
-}
 export const queryAndOr =  (fsCollection,key1,value1,keyA,valueA,keyB,valueB) => {   
     const qAndOr = query(fsCollection, 
         and(

@@ -11,27 +11,7 @@
       </div>
       <div v-if="!selectedMentee && profileData.role.includes('pped')" class="q-pa-md full-width"
         style="min-width: 800px;">
-
-        <q-expansion-item label="Practice Educators - Mentoring Tab" header-class="q-pa-none text-primary text-h5"
-          header-style="bg-white" expand-icon-class=" text-primary" dense flat>
-          <q-tabs v-model="currentTab" align="left" inline-label stretch class="q-mt-sm text-grey-6" narrow-indicator
-            mobile-arrows>
-            <q-tab name="mentorFormsTab" label="Forms (Mentor)" icon="assignment" class="text-purple-10"
-              v-if="profileData.role.includes('pped')" />
-            <q-tab name="mentorScheduleTab" label="Schedule (Mentor)" icon="calendar_month" class="text-deep-orange-10"
-              v-if="profileData.role.includes('pped')" />
-          </q-tabs>
-          <q-tab-panels v-model="currentTab" transition-next="jump-down" animated transition-prev="jump-down"
-            transition-duration="200">
-            <q-tab-panel name="mentorFormsTab" class="q-px-none">
-              <mentorFormsSubPanel />
-            </q-tab-panel>
-            <q-tab-panel name="mentorScheduleTab">
-              <mentorScheduleSubPanel />
-            </q-tab-panel>
-          </q-tab-panels>
-        </q-expansion-item>
-
+        <acpoPpedMentoring />
         <q-separator class="q-mt-xs" />
       </div>
       <div v-if="!selectedMentee && (profileData.role.includes('admin') || profileData.role.includes('pped'))"

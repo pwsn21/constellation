@@ -5,8 +5,7 @@
             <q-card-section>
                 <q-form @submit.prevent="checkAttendance">
                     <div>
-                        <q-select label="Milestone" v-model="shift.milestone"
-                            :options="['Milestone 2', 'Milestone 3', 'Milestone 4']" filled />
+                        <q-select label="Milestone" v-model="shift.milestone" :options="options.milestone" filled />
 
                         <q-input filled label="Date" v-model="shift.date" @update:model-value="dateSelected">
                             <template #append>
@@ -36,9 +35,6 @@
             </q-card-section>
         </q-card>
     </div>
-    <pre>
-        {{ forms }}
-    </pre>
 </template>
 
 <script setup>
@@ -62,11 +58,11 @@ const eventsFn = (date) => {
 
 const customEventColor = computed(() => (date) => {
     if (eventDay.value.includes(date)) {
-        return 'yellow-10';  // Assign teal color for dates in array1
+        return 'yellow-10'
     } else if (eventNight.value.includes(date)) {
-        return 'primary';  // Assign orange color for dates in array2
+        return 'primary'
     } else {
-        return 'gray';  // Assign a default color for all other dates
+        return 'pink-8'
     }
 });
 
@@ -89,6 +85,7 @@ const options = reactive({
     station: await getStations(),
     car: [],
     mentor: mentoroptions.allMentors,
+    milestone: ['Milestone 2', 'Milestone 3', 'Milestone 4']
 })
 
 const stationSelected = async (car) => {
@@ -108,7 +105,6 @@ const dateSelected = async (date) => {
 const updateCar = (selectedCars) => { shift.car = selectedCars.label }
 
 const { showToast } = useNotification();
-
 
 const checkAttendance = () => {
     if (forms.value.find(item => (item.date === shift.date && (item.approvalStatus === 'Approved' || item.approvalStatus === 'Pending')))) {

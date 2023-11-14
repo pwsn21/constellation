@@ -45,19 +45,6 @@ export const clearAllRoles = async () => {
     });
 }
 
-export const addTestRoles = async () => {
-    const db = getFirestore();
-    let userRef = doc(db, "users", 'PqqzqNh8xEfE5qoCTrweoY92uBN2');
-    await updateDoc(userRef, {
-        "role": ['admin', 'mentee'],
-    });
-
-    userRef = doc(db, "users", 'CYHU9R0b9RWF93RpOm5lGpHLCm02');
-    await updateDoc(userRef, {
-        "role": ['admin', 'pped'],
-    });
-}
-
 export const addRole = async (user, role) => {
     const db = getFirestore();
     const userRoles = user.role
