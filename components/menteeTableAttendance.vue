@@ -28,6 +28,10 @@
                                 <q-btn dense flat color="red" @click="denyShift(props.row, 'Did Not Show')" icon="block"
                                     label="Did Not Show" no-caps />
                             </q-item>
+                            <q-item class="q-pa-xs" dense>
+                                <q-btn dense flat color="red" @click="deleteForm(props.row)" icon="delete"
+                                    label="Delete Form" no-caps />
+                            </q-item>
                         </q-menu>
                     </q-btn>
                 </q-td>

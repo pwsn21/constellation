@@ -10,9 +10,10 @@
                         <div class="text-h5 text-secondary">Scheduled Shifts</div>
                         <div class="flex items-center">
                             <q-input filled dense label="Date Range" v-model="inputDisplay" color="green-10"
-                                class="bg-grey-4" style="min-width: 250px;">
+                                class="bg-grey-4" style="min-width: 250px;" lazy-rules mask="####/##/## - ####/##/##"
+                                :rules="[val => (isValidDateRange(val).valid) || (isValidDateRange(val).message),]"
+                                hide-bottom-space>
                                 <template #append>
-                                    <!-- <q-icon name="close" class="cursor-pointer" round flat /> -->
                                     <q-btn v-if="inputDisplay" icon="close" size="7px" round flat
                                         class="bg-grey-6 text-grey-4" @click="clearDateFilter" />
                                     <q-icon name="event" class="cursor-pointer">

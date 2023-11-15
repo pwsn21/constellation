@@ -1,6 +1,7 @@
 <template>
     <div>
-        <q-input filled clearable hide-bottom-space :label="label" :model-value="date" @update:model-value="updateType">
+        <q-input filled clearable hide-bottom-space :label="label" :model-value="date" @update:model-value="updateType"
+            mask="Aaa, ##/##/####, ##:##">
             <template #prepend>
                 <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">

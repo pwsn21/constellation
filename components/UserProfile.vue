@@ -22,7 +22,8 @@
                                         </div>
                                         <div v-else>
                                             <q-input filled dense v-model="props.user.firstName" label="First Name"
-                                                :style="inputWidth" />
+                                                :style="inputWidth" lazy-rules hide-bottom-space
+                                                :rules="[val => (isValidFirstName(val).valid) || (isValidFirstName(val).message),]" />
                                         </div>
                                     </Transition>
                                 </div>
@@ -34,7 +35,8 @@
                                         </div>
                                         <div v-else>
                                             <q-input filled dense v-model="props.user.lastName" label="Last Name"
-                                                :style="inputWidth" />
+                                                :style="inputWidth" hide-bottom-space lazy-rules
+                                                :rules="[val => (isValidLastName(val).valid) || (isValidLastName(val).message),]" />
                                         </div>
                                     </Transition>
                                 </div>
@@ -72,7 +74,7 @@
                                         <div v-else>
                                             <q-input filled dense v-model="props.user.address" label="Address" type="text"
                                                 :style="inputWidth" hide-bottom-space lazy-rules
-                                                :rules="[val => !!val || 'Address is required']" />
+                                                :rules="[val => (isValidAddress(val).valid) || (isValidAddress(val).message),]" />
                                             <q-select filled dense v-model="props.user.country" hide-bottom-space
                                                 :style="inputWidth" :options="options.filteredCountry" label="Country"
                                                 lazy-rules :rules="[val => !!val || 'Country is required']"

@@ -11,12 +11,13 @@
                             </div>
                             <q-separator />
                         </q-card-section>
-                        <q-card-section>
+                        <q-card-section class="q-gutter-xs">
                             <q-select filled v-model="menteeProfile.acpoStatus" label="ACP-O Status"
-                                :options="options.acpoStatus" lazy-rules
-                                :rules="[val => !!val || 'Status is required. Please select from options.']" />
+                                :options="options.acpoStatus" lazy-rules hide-bottom-space
+                                :rules="[val => (isValidOption(val).valid) || (isValidOption(val).message),]" />
                             <q-select filled v-model="menteeProfile.pped" label="Assigned Practice Educator"
-                                :options="options.ppeds" emit-value map-options />
+                                :options="options.ppeds" emit-value map-options lazy-rules hide-bottom-space
+                                :rules="[val => (isValidOption(val).valid) || (isValidOption(val).message),]" />
                             <DateTimePicker label="Hire Date" :date="menteeProfile.hireDate"
                                 @update:date="updateHireDate" />
 
@@ -28,27 +29,26 @@
                                 :header-class="expansionHeader">
                                 <!-- Milestone Two -->
                                 <q-card>
-
                                     <q-separator inset />
-                                    <q-card-section>
+                                    <q-card-section class="q-gutter-xs">
                                         <q-select filled v-model="menteeProfile.supportLevelMSTwo"
                                             label="Milestone 2 Support Level" :options="options.supportLevelHigh" />
                                         <DateTimePicker v-if="menteeProfile.supportLevelMSTwo === 'High'"
                                             label="Development Plan Meeting Date"
                                             :date="menteeProfile.developmentPlanMeeting" @update:date="updateMeetingDP" />
-
                                         <DateTimePicker v-if="menteeProfile.supportLevelMSTwo === 'High'"
                                             label="Closing Development Plan Meeting Date"
                                             :date="menteeProfile.closeDevelopmentPlanMeeting"
                                             @update:date="updateMeetingCloseDP" />
-
                                         <q-toggle v-if="menteeProfile.supportLevelMSTwo === 'High'" :false-value="2"
                                             :label="`Mentee is in ${menteeProfile.threePerson} person configuration`"
                                             :true-value="3" color="secondary" v-model="menteeProfile.threePerson" />
                                         <dateTimePicker :date="menteeProfile.milestoneMeetingTwo"
                                             @update:date="updateMeetingTwo" label="Milestone 2 Meeting Date" />
                                     </q-card-section>
+                                    <q-separator inset />
                                     <q-card-section>
+                                        <div class="text-secondary text-subtitle1">Shift Modifiers</div>
                                         <div>
                                             <q-input label="Completed Shift Modifier" filled type="number"
                                                 v-model.number="menteeProfile.msTwoRequiredCountModifier" />
@@ -71,6 +71,7 @@
                                             @update:date="updateMeetingThree" label="Milestone 3 Meeting Date" />
                                     </q-card-section>
                                     <q-card-section>
+                                        <div class="text-secondary text-subtitle1">Shift Modifiers</div>
                                         <div>
                                             <q-input label="Completed Shift Modifier" filled type="number"
                                                 v-model.number="menteeProfile.msThreeRequiredCountModifier" />
@@ -95,6 +96,7 @@
                                             @update:date="updateMeetingFour" label="Milestone 4 Meeting Date" />
                                     </q-card-section>
                                     <q-card-section>
+                                        <div class="text-secondary text-subtitle1">Shift Modifiers</div>
                                         <div>
                                             <q-input label="Completed Shift Modifier" filled type="number"
                                                 v-model.number="menteeProfile.msFourRequiredCountModifier" />

@@ -1,10 +1,8 @@
 <template>
     <div class="full-width">
         <div>
-
             <q-expansion-item label="Mentees" class="text-h5 text-primary" header-class="q-pa-none" header-style="bg-white"
                 expand-icon-class="text-primary" default-opened dense flat v-model="showTable">
-
                 <div class="q-my-sm" style=" max-width: 250px">
                     <q-input v-model="filter" class="bg-grey-4" color="primary" header-class="text-primary" dense filled
                         label="Search..." clearable> <template v-slot:append>
@@ -12,7 +10,6 @@
                         </template>
                     </q-input>
                 </div>
-
                 <div>
                     <q-table :rows="mentees" :columns="menteeColumns" row-key="id" title-class="text-h4" :filter="filter"
                         table-header-class="bg-primary text-white" @row-click="menteeSelection"

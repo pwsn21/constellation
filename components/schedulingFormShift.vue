@@ -7,7 +7,8 @@
                     <div class="row q-gutter-xs">
                         <div class="col"><q-select filled v-model="shift.menteeOneID" label="Mentee One"
                                 :options="options.mentee" @update:model-value="menteeOneSelected" clearable emit-value
-                                map-options />
+                                map-options lazy-rules hide-bottom-space
+                                :rules="[val => (isValidOption(val).valid) || (isValidOption(val).message),]" />
                         </div>
                         <div class="col"><q-select filled v-model="shift.menteeTwoID" label="Mentee Two"
                                 :options="options.mentee" @update:model-value="menteeTwoSelected" clearable emit-value
@@ -17,9 +18,11 @@
                     <div>
                         <div class="q-my-xs q-gutter-xs">
                             <q-select filled v-model="shift.station" label="Station" :options="options.station"
-                                @update:model-value="stationSelected" emit-value map-options />
+                                @update:model-value="stationSelected" emit-value map-options lazy-rules hide-bottom-space
+                                :rules="[val => (isValidOption(val).valid) || (isValidOption(val).message),]" />
                             <q-select filled v-model="shift.car" label="Car" :options="options.car"
-                                @update:model-value="updateCar" />
+                                @update:model-value="updateCar" lazy-rules hide-bottom-space
+                                :rules="[val => (isValidOption(val).valid) || (isValidOption(val).message),]" />
                         </div>
 
                         <div class="flex justify-between q-gutter-xs no-wrap">
@@ -28,7 +31,10 @@
                                     :default-year-month="defaultMonth" no-unset today-btn />
                             </div>
                             <div class="column justify-end q-gutter-xs">
-                                <q-input filled label="Start Date" v-model="shift.startDate" mask="####/##/##">
+                                <q-input filled label="Start Date" v-model="shift.startDate" lazy-rules mask="####/##/##"
+                                    :rules="[
+                                        val => (isValidDate(val).valid) || (isValidDate(val).message),
+                                    ]" hide-bottom-space>
                                     <template #append>
                                         <q-icon name="event" class="cursor-pointer">
                                             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -39,7 +45,9 @@
                                         </q-icon>
                                     </template>
                                 </q-input>
-                                <q-input filled label="Start Time" v-model="shift.startTime" mask="##:##">
+                                <q-input filled label="Start Time" v-model="shift.startTime" mask="##:##" lazy-rules
+                                    :rules="[val => (isValidTime(val).valid) || (isValidTime(val).message),]"
+                                    hide-bottom-space>
                                     <template #append>
                                         <q-icon name="access_time" class="cursor-pointer">
                                             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -52,7 +60,10 @@
                                     </template>
                                 </q-input>
 
-                                <q-input filled label="End Date" v-model="shift.endDate" mask="####/##/##">
+                                <q-input filled label="End Date" v-model="shift.endDate" lazy-rules mask="####/##/##"
+                                    :rules="[
+                                        val => (isValidDate(val).valid) || (isValidDate(val).message),
+                                    ]" hide-bottom-space>
                                     <template #append>
                                         <q-icon name="event" class="cursor-pointer">
                                             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -63,7 +74,9 @@
                                         </q-icon>
                                     </template>
                                 </q-input>
-                                <q-input filled label="End Time" v-model="shift.endTime" mask="##:##">
+                                <q-input filled label="End Time" v-model="shift.endTime" mask="##:##" lazy-rules
+                                    :rules="[val => (isValidTime(val).valid) || (isValidTime(val).message),]"
+                                    hide-bottom-space>
                                     <template #append>
                                         <q-icon name="access_time" class="cursor-pointer">
                                             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -80,8 +93,8 @@
                         </div>
                         <div class="q-my-xs">
                             <q-select filled label='Mentor' v-model="shift.mentorID" :options="options.mentor" emit-value
-                                map-options lazy-rules ondemand hide-bottom-space
-                                :rules="[val => !!val || 'Mentor is required']">
+                                map-options ondemand hide-bottom-space lazy-rules
+                                :rules="[val => (isValidOption(val).valid) || (isValidOption(val).message),]">
                                 <template v-slot:no-option>
                                     <q-item>
                                         <q-item-section class="text-italic">
