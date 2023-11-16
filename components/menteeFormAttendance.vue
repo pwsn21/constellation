@@ -122,9 +122,11 @@ const checkAttendance = () => {
     }
 }
 
+const emit = defineEmits(['attendanceView'])
 const addAttendance = async () => {
     try {
         await addDoc(collection(db, "acpoFormsAttendance"), shift)
+        emit('attendanceView', 'attendance')
         showToast('positive', 'check', 'Form Added');
     }
     catch (error) {

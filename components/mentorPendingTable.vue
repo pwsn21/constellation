@@ -13,7 +13,7 @@
                         <q-btn dense round flat color="red" icon="block" :props="props">
                             <q-menu dense :props="props">
                                 <q-item class="q-pa-xs" dense>
-                                    <q-btn dense flat color="red" @click="denyShift(props.row, 'did not show')" icon="block"
+                                    <q-btn dense flat color="red" @click="denyShift(props.row, 'Did Not Show')" icon="block"
                                         label="Did Not Show" no-caps />
                                 </q-item>
                                 <q-item class="q-pa-xs" dense>

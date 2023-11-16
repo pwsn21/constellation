@@ -29,7 +29,7 @@
         <q-tab-panels v-model="currentFormTab" transition-next="jump-down" animated transition-prev="jump-down"
             transition-duration="200">
             <q-tab-panel name="formAttendance">
-                <MenteeFormAttendance :selectedMentee="selectedMentee" />
+                <MenteeFormAttendance :selectedMentee="selectedMentee" @attendanceView="attendanceView" />
             </q-tab-panel>
             <q-tab-panel name="formDOPS">
                 DOPS Form
@@ -56,10 +56,13 @@ const profileData = await getUD(firebaseUser.value.uid)
 
 const currentFormTab = ref('attendance')
 const mentee = defineProps(['selectedMentee'])
-let formType = ref('')
 
 const addForm = (type) => {
     currentFormTab.value = type
+}
+
+const attendanceView = (view) => {
+    currentFormTab.value = view
 }
 
 

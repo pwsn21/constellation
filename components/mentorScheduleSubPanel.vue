@@ -2,7 +2,8 @@
     <div class="q-pa-xs">
         <div class="row justify-around">
             <div class="column justify-between items-center q-my-xs">
-                <QDate :events="eventsFn" :event-color="customEventColor" v-model="shift" color="deep-orange-10" />
+                <QDate :events="eventsFn" :event-color="customEventColor" v-model="shift" color="deep-orange-10"
+                    today-btn />
             </div>
             <div class="row justify-between" style="height:300px">
                 <q-tab-panels v-model="shift" animated transition-prev="fade" transition-next="fade">

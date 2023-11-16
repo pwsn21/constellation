@@ -23,7 +23,7 @@
                             <q-menu dense :props="props">
                                 <q-item class="q-pa-xs" dense>
                                     <q-btn dense flat color="red" @click="deleteStation(props)" icon="delete"
-                                        label="Delete Form" no-caps />
+                                        label="Delete Station" no-caps />
                                 </q-item>
                             </q-menu>
                         </q-btn>

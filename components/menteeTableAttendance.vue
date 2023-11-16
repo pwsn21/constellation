@@ -64,7 +64,7 @@ const mentee = defineProps(['selectedMentee'])
 const forms = await menteeAttendanceForms(mentee.selectedMentee.menteeID)
 
 const attendanceColumns = [
-    { name: 'milestone', label: 'Name', field: 'milestone', align: 'left', sortable: true },
+    { name: 'milestone', label: 'Milestone', field: 'milestone', align: 'left', sortable: true },
     { name: 'date', label: 'Shift Date', field: 'date', align: 'left', sortable: true },
     { name: 'car', label: 'Car', field: 'car', align: 'left', sortable: true },
     { name: 'mentorName', label: 'Mentor', field: 'mentorName', align: 'left', sortable: true },

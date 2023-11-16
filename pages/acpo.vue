@@ -15,8 +15,8 @@
         <q-separator class="q-mt-xs" />
       </div>
       <div v-if="!selectedMentee && (profileData.role.includes('admin') || profileData.role.includes('pped'))"
-        class="q-px-md full-width" style="min-width: 800px;">
-        <AcpoTableMSMeetings @selected-mentee="onMenteeSelected" transition />
+        class="q-px-md full-width" style="max-width: 800px;">
+        <AcpoTableMSMeetings @selected-mentee="onMenteeSelected" :mentees="mentees" />
         <q-separator class="q-mt-xs" />
       </div>
     </div>
@@ -30,7 +30,7 @@
     <div class="q-px-md full-width" style="max-width: 800px;">
       <div
         v-if="profileData.role.includes('admin') || profileData.role.includes('pped') || profileData.role.includes('scheduler')">
-        <AcpoTableMentees @selected-mentee="onMenteeSelected" :openTable="openTable" />
+        <AcpoTableMentees @selected-mentee="onMenteeSelected" :openTable="openTable" :mentees="mentees" />
       </div>
       <div
         v-if="selectedMentee !== '' || profileData.role.includes('mentee') || (profileData.role.includes('mentor') && !profileData.role.includes('pped'))">
@@ -64,8 +64,8 @@
           <q-tab-panel name="menteeProgressTab" class="q-px-xs">
             <menteeProfileView v-if="acpoMode == 'acpoView'" :selectedMentee="selectedMentee"
               @acpoMode="onMenteeSelected" />
-            <menteeProfileEdit v-if="acpoMode == 'acpoEdit'" :selectedMentee="selectedMentee" @acpoMode="onMenteeSelected"
-              transition />
+            <menteeProfileEdit v-if="acpoMode == 'acpoEdit'" :selectedMentee="selectedMentee"
+              @acpoMode="onMenteeSelected" />
           </q-tab-panel>
 
           <q-tab-panel name="menteeFormsTab" class="q-px-none">
@@ -96,6 +96,7 @@
 <script setup>
 const firebaseUser = await useFirebaseUser()
 const profileData = await getUD(firebaseUser.value.uid)
+const mentees = menteesData()
 
 const currentTab = ref('menteeProgressTab')
 const acpoMode = ref('acpoView')

@@ -1,6 +1,5 @@
 import { collection, onSnapshot, getFirestore, query, orderBy, limit } from "firebase/firestore";
 
-
 export const scheduledShifts = () => {
     const db = getFirestore()
     const q = query(collection(db, "scheduledShifts"), orderBy("creationDate", "desc"), limit(700))
@@ -30,7 +29,6 @@ export const allStations = () => {
         for (const [key, value] of Object.entries(snap.docs)) {
             let d = value.data()
             arr.value.push(d)
-            
         }
     })
     return arr

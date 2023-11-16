@@ -117,14 +117,13 @@ const profileData = getUD(firebaseUser.value.uid)
 const emit = defineEmits(["acpoMode"])
 const prop = defineProps(['selectedMentee'])
 let menteeProfile = ref('')
-let msTwoData = ref('')
+let msTwoData = ref({ count: 0, required: 0, reqmodifiers: 0, progress: 0 })
 let msThreeData = ref('')
 let msFourData = ref('')
 
 watchEffect(async () => {
     try {
         menteeProfile.value = await (menteeData(prop.selectedMentee.menteeID))
-
         msTwoData.value = await calcProgress(menteeProfile.value.supportLevelMSTwo, qMenteeAttendance(prop.selectedMentee.menteeID, 'Milestone 2'), menteeProfile.value.msTwoRequiredShiftModifier, menteeProfile.value.msTwoRequiredCountModifier)
         msThreeData.value = await calcProgress(menteeProfile.value.supportLevelMSThree, qMenteeAttendance(prop.selectedMentee.menteeID, 'Milestone 3'), menteeProfile.value.msThreeRequiredShiftModifier, menteeProfile.value.msThreeRequiredCountModifier)
         msFourData.value = await calcProgress(menteeProfile.value.supportLevelMSFour, qMenteeAttendance(prop.selectedMentee.menteeID, 'Milestone 4'), menteeProfile.value.msFourRequiredShiftModifier, menteeProfile.value.msFourRequiredCountModifier)

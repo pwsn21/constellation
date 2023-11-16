@@ -166,14 +166,31 @@ export const msMeetingTable = async () => {
         const required = ref('')
         const msSupportSnap = await getFSDoc('supportLevels', m.currentSupport)
         const attendance = await qMenteeAttendance(mentee.id, m.currentMilestone)
-        const count = await getCountFromServer(attendance)
+        const countQ = await getCountFromServer(attendance)
+        let countMod = ref(0)
+        if (m.currentMilestone == 'Milestone 2'){
+            countMod.value = m.msTwoRequiredCountModifier
+        } else if (m.currentMilestone == 'Milestone 3'){
+            countMod.value = m.msThreeRequiredCountModifier
+        } else if (m.currentMilestone == 'Milestone 4'){
+            countMod.value = m.msFourRequiredCountModifier
+        } 
+        const count = countQ.data().count + countMod.value
         required.value = msSupportSnap.data().requiredShifts
-        const progress = required.value - (count.data().count)
-        if (progress < 9 || m.needDPMeeting) {
+        const progress = required.value - count
+        if (progress < 9 || m.needDPMeeting || (m.currentSupport === 'High' && count >= 12 && !m.closeDevelopmentPlanMeeting)) {
             m.menteeID = mentee.id
             m.name = `${getUD(m.uid).firstName} ${getUD(m.uid).lastName}`
             m.currentRequired = required.value,
-            m.currentCount = count.data().count,
+            m.currentCount = count,
+            m.pped = getUD(m.pped).name
+            if (progress < 9) {
+                m.meetingType = 'MS Meeting'
+            } else if (m.currentSupport === 'High' && count >= 12) {
+                m.meetingType = 'Close DP'
+            } else  {
+                m.meetingType = 'DP Meeting'
+            }
             data.mentee.push(m)
         }
     }     

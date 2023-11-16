@@ -11,8 +11,8 @@
                     </q-input>
                 </div>
                 <div>
-                    <q-table :rows="mentees" :columns="menteeColumns" row-key="id" title-class="text-h4" :filter="filter"
-                        table-header-class="bg-primary text-white" @row-click="menteeSelection"
+                    <q-table :rows="props.mentees" :columns="menteeColumns" row-key="id" title-class="text-h4"
+                        :filter="filter" table-header-class="bg-primary text-white" @row-click="menteeSelection"
                         :pagination="{ sortBy: 'cohort', descending: true, rowsPerPage: 10 }">
                     </q-table>
                 </div>
@@ -31,13 +31,12 @@ const menteeSelection = (event, row) => {
     showTable.value = false
 };
 
-const table = defineProps(['openTable'])
+const props = defineProps(['openTable', 'mentees'])
 
 const filter = ref('')
-const mentees = menteesData()
 
 watchEffect(() => {
-    showTable.value = table.openTable
+    showTable.value = props.openTable
 })
 
 const menteeColumns = [
